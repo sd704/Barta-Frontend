@@ -1,0 +1,24 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500&display=swap');
+
+@import "tailwindcss";
+
+@plugin "daisyui" {
+    themes: light --default, dark --prefersdark;
+}
+
+/* light light -> bg-[#f0f0f3] */
+/* light dark -> bg-[#e0e0e0] */
+/* dark dark -> bg-[#14181f] */
+
+.neumo-shadow-light {
+    box-shadow: 4px 4px 8px 0px rgba(163, 177, 198, 0.6), -4px -4px 8px 0px rgba(255, 255, 255, 0.9);
+}
+
+.neumo-shadow-dark {
+    /* box-shadow: rgba(0, 0, 0, 0.8) 4px 4px 8px 0px, rgba(50, 50, 55, 0.3) -4px -4px 8px 0px */
+    box-shadow: rgb(12, 14, 18) 4px 4px 8px 0px, rgb(39, 44, 53) -4px -4px 8px 0px
+}
+
+.neumo-inner-shadow-light {
+    box-shadow: rgba(163, 177, 198, 0.6) 4px 4px 8px 0px inset, rgba(255, 255, 255, 0.9) -4px -4px 8px 0px inset
+}
