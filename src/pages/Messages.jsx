@@ -22,7 +22,7 @@ const Messages = () => {
 
                         {/* Menu button */}
                         <motion.button whileTap={{ scale: 0.95 }} style={{ boxShadow: "6px 6px 12px rgba(0,0,0,0.15), -4px -4px 10px rgba(255,255,255,0.7)" }}
-                            className="w-10 h-10 bg-zinc-200 rounded-xl flex items-center justify-center"
+                            className="w-10 h-10 bg-zinc-200 rounded-xl flex items-center justify-center cursor-pointer "
                         >
                             <Menu size={20} className="text-zinc-700" />
                         </motion.button>
@@ -39,16 +39,15 @@ const Messages = () => {
 
                         {/* Settings Button */}
                         <motion.button whileTap={{ scale: 0.95 }} style={{ boxShadow: "6px 6px 12px rgba(0,0,0,0.15), -4px -4px 10px rgba(255,255,255,0.7)" }}
-                            className="w-10 h-10 bg-zinc-200 rounded-xl flex items-center justify-center"
+                            className="w-10 h-10 bg-zinc-200 rounded-xl flex items-center justify-center cursor-pointer "
                         >
                             <Settings size={20} className="text-zinc-700" />
                         </motion.button>
                     </div>
 
                     {/* Online Status Display */}
-                    <motion.div style={{ boxShadow: "inset 4px 4px 8px rgba(0,0,0,0.1), inset -3px -3px 6px rgba(255,255,255,0.8)" }}
-                        className="mb-6 p-4 bg-zinc-200 rounded-2xl"
-                    >
+                    {/* mb-6 p-4 style={{ boxShadow: "inset 4px 4px 8px rgba(0,0,0,0.1), inset -3px -3px 6px rgba(255,255,255,0.8)" }} */}
+                    <motion.div className="p-2 bg-zinc-200 rounded-2xl">
                         <div className="flex items-center justify-between">
                             <div className="flex items-center gap-3">
                                 <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse" style={{ boxShadow: "0 0 8px rgba(34,197,94,0.6)" }} />

@@ -37,7 +37,7 @@ const Chat = () => {
                 <ChatHeader name="ALEX_K" status="ONLINE" isOnline={true} avatar="AK" onBack={() => console.log("Go back")} />
 
                 {/* Messages Container */}
-                <div className="flex-1 overflow-y-auto p-4">
+                <div className="flex-1 overflow-y-auto p-4 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] ">
                     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.5 }}>
 
                         {/* Date */}
