@@ -11,7 +11,7 @@ const Messages = () => {
 
     const [searchQuery, setSearchQuery] = useState("")
     const [activeTab, setActiveTab] = useState("ALL");
-    const tabs = ["ALL", "UNREAD", "GROUPS", "ARCHIVE"]
+    const FILTERS = ["ALL", "UNREAD", "GROUPS", "ARCHIVE"]
     const filteredChats = chats.filter(chat => chat.name.toLowerCase().includes(searchQuery.toLowerCase()) || chat.message.toLowerCase().includes(searchQuery.toLowerCase()))
 
     return (
@@ -21,7 +21,7 @@ const Messages = () => {
                     <div className="flex items-center justify-between mb-6">
 
                         {/* Menu button */}
-                        <motion.button whileTap={{ scale: 0.95 }} style={{ boxShadow: "6px 6px 12px rgba(0,0,0,0.15), -4px -4px 10px rgba(255,255,255,0.7)" }}
+                        <motion.button whileTap={{ scale: 0.90 }} style={{ boxShadow: "6px 6px 12px rgba(0,0,0,0.15), -4px -4px 10px rgba(255,255,255,0.7)" }}
                             className="w-10 h-10 bg-zinc-200 rounded-xl flex items-center justify-center cursor-pointer "
                         >
                             <Menu size={20} className="text-zinc-700" />
@@ -38,7 +38,7 @@ const Messages = () => {
                         </div>
 
                         {/* Settings Button */}
-                        <motion.button whileTap={{ scale: 0.95 }} style={{ boxShadow: "6px 6px 12px rgba(0,0,0,0.15), -4px -4px 10px rgba(255,255,255,0.7)" }}
+                        <motion.button whileTap={{ scale: 0.90 }} style={{ boxShadow: "6px 6px 12px rgba(0,0,0,0.15), -4px -4px 10px rgba(255,255,255,0.7)" }}
                             className="w-10 h-10 bg-zinc-200 rounded-xl flex items-center justify-center cursor-pointer "
                         >
                             <Settings size={20} className="text-zinc-700" />
@@ -60,11 +60,11 @@ const Messages = () => {
                     </motion.div>
 
                     {/* Search */}
-                    <SearchBar value={searchQuery} onChange={setSearchQuery} />
+                    <SearchBar value={searchQuery} placeholder="SEARCH CHATS..." onChange={setSearchQuery} />
 
                     {/* Tabs */}
-                    <div className="flex gap-3 mb-6 ">
-                        {tabs.map((tab) => <TabButton key={tab} label={tab} isActive={activeTab === tab} onClick={() => setActiveTab(tab)} />)}
+                    <div className="flex gap-3 mb-6">
+                        {FILTERS.map((tab, i) => <TabButton key={i} label={tab} isActive={activeTab === tab} onClick={() => setActiveTab(tab)} />)}
                     </div>
                 </div>
 

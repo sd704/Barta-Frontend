@@ -1,9 +1,12 @@
 import { motion } from "motion/react"
 
 const TabButton = ({ label, isActive, onClick }) => {
+
+    // "ALL", "UNREAD", "GROUPS", "ARCHIVE" on Messages Page
+
     return (
         <motion.button
-            className={`px-6 py-2 font-mono text-xs tracking-widest rounded-xl cursor-pointer ${isActive ? "text-zinc-900" : "text-zinc-500"}`}
+            className={`px-6 py-2 font-mono text-xs tracking-widest rounded-xl cursor-pointer hover:text-zinc-900 ${isActive ? "text-zinc-900" : "text-zinc-500"}`}
             onClick={onClick}
             animate={{
                 boxShadow: isActive

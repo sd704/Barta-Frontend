@@ -1,6 +1,9 @@
 import { motion } from "motion/react"
 
 const PostCard = ({ imageUrl, likes, comments, date }) => {
+
+    // Post Card on Profile Page
+
     const defaultShadow = "8px 8px 16px #c5c5c8, -8px -8px 16px #ffffff"
     const hoverShadow = "12px 12px 24px #c5c5c8, -12px -12px 24px #ffffff"
 
@@ -13,7 +16,7 @@ const PostCard = ({ imageUrl, likes, comments, date }) => {
             className="bg-[#e4e4e7] rounded-2xl overflow-hidden cursor-pointer relative"
         >
 
-            <div className="absolute top-4 right-4 z-20 text-xs font-mono font-bold text-zinc-200 rounded-lg">{date}</div>
+            <div className="absolute top-4 right-4 z-20 text-xs font-mono font-bold tracking-wider text-zinc-200 rounded-lg">{date}</div>
 
             <div className="aspect-square overflow-hidden">
                 <motion.img

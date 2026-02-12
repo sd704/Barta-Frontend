@@ -3,6 +3,8 @@ import { motion } from "motion/react"
 
 const SubmitButton = ({ children, onClick, variant = "primary" }) => {
 
+    // Login page Submit Button
+
     const [isPressed, setIsPressed] = useState(false);
     const isPrimary = variant === "primary";
 

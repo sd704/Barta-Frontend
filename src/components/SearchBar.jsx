@@ -2,7 +2,7 @@ import { useState } from "react"
 import { motion } from "motion/react"
 import { Search } from "lucide-react"
 
-const SearchBar = ({ value, onChange }) => {
+const SearchBar = ({ value, placeholder, onChange }) => {
     const [isFocused, setIsFocused] = useState(false)
 
     return (
@@ -16,8 +16,8 @@ const SearchBar = ({ value, onChange }) => {
         >
             <div className="flex items-center gap-3 px-4 py-3">
                 <Search size={16} className="text-zinc-500" />
-                <input type="text" value={value} onChange={(e) => onChange(e.target.value)} onFocus={() => setIsFocused(true)} onBlur={() => setIsFocused(false)} placeholder="SEARCH CHATS..."
-                    className="flex-1 bg-transparent border-none outline-none font-mono text-sm text-zinc-900 placeholder:text-zinc-400" />
+                <input type="text" value={value} onChange={(e) => onChange(e.target.value)} onFocus={() => setIsFocused(true)} onBlur={() => setIsFocused(false)} placeholder={placeholder}
+                    className="flex-1 bg-transparent border-none outline-none font-mono text-sm text-zinc-900 placeholder:text-zinc-500" />
             </div>
         </motion.div>
     )

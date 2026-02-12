@@ -1,6 +1,9 @@
 import { motion } from "motion/react"
 
 const ProfileHeaderButton = ({ variant = 'default', onClickAction, children }) => {
+
+    // Connect/Chat/Settings button on Profile page header
+
     return (
         <motion.button
             className={`px-6 py-2.5 rounded-xl cursor-pointer ${variant === 'default' ? 'bg-zinc-200 text-zinc-900' : 'bg-orange-500 text-white'}`}

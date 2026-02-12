@@ -1,6 +1,9 @@
 import { motion } from "motion/react"
 
 const ModeSwitch = ({ isOn, onToggle }) => {
+
+    // "SIGNIN"/"LOGIN" toggle switch
+
     return (
         <button
             onClick={onToggle}

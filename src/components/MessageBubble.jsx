@@ -1,6 +1,9 @@
 import { motion } from "motion/react"
 
 const MessageBubble = ({ text, time, isSent, isRead }) => {
+
+    // isSent true -> txt send by logged in user
+
     return (
         <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3 }}
             className={`flex ${isSent ? "justify-end" : "justify-start"} mb-4`}    >
