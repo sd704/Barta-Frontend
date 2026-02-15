@@ -6,7 +6,7 @@ const SearchBar = ({ value, placeholder, onChange }) => {
     const [isFocused, setIsFocused] = useState(false)
 
     return (
-        <motion.div className="relative rounded-2xl bg-zinc-200 mb-6"
+        <motion.div className="relative rounded-2xl bg-zinc-200"
             animate={{
                 boxShadow: isFocused ?
                     "inset 6px 6px 12px rgba(0,0,0,0.12), inset -4px -4px 10px rgba(255,255,255,0.9)"

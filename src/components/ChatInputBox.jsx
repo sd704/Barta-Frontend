@@ -22,21 +22,21 @@ const ChatInputBox = ({ onSend }) => {
     }
 
     return (
-        <div className="bg-zinc-200 p-4 sticky bottom-0">
+        <div className="bg-zinc-200 py-4 px-6 sticky bottom-0">
             <div className="flex items-end gap-2">
 
                 {/* Action Buttons */}
                 <div className="flex gap-2 pb-1">
 
                     {/* Attachment */}
-                    <motion.button className="w-9 h-9 bg-zinc-200 rounded-xl flex items-center justify-center"
+                    <motion.button className="w-10 h-10 bg-zinc-200 rounded-xl flex items-center justify-center"
                         whileTap={{ scale: 0.95 }}
                         style={{ boxShadow: "5px 5px 10px rgba(0,0,0,0.15), -4px -4px 8px rgba(255,255,255,0.7)" }}>
                         <Paperclip size={16} className="text-zinc-600" />
                     </motion.button>
 
                     {/* Emoji */}
-                    <motion.button className="w-9 h-9 bg-zinc-200 rounded-xl flex items-center justify-center"
+                    <motion.button className="w-10 h-10 bg-zinc-200 rounded-xl flex items-center justify-center"
                         whileTap={{ scale: 0.95 }}
                         style={{ boxShadow: "5px 5px 10px rgba(0,0,0,0.15), -4px -4px 8px rgba(255,255,255,0.7)" }}>
                         <Smile size={16} className="text-zinc-600" />

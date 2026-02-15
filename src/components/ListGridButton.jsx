@@ -1,4 +1,4 @@
-import { Icon } from 'lucide-react';
+// import { Icon } from 'lucide-react'
 import { motion } from "motion/react"
 
 const ListGridButton = ({ icon: Icon, label, isActive, onClick }) => {
@@ -13,6 +13,9 @@ const ListGridButton = ({ icon: Icon, label, isActive, onClick }) => {
             animate={{
                 boxShadow: isActive ? activeShadow : inactiveShadow,
                 color: isActive ? "#18181b" : "#71717a",
+            }}
+            whileHover={{
+                color: "#18181b"
             }}
             whileTap={!isActive ? { boxShadow: tapShadow } : undefined}
             transition={{ duration: 0.2, ease: "easeInOut", }}

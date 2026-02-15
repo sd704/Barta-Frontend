@@ -1,4 +1,4 @@
-import { useState, useCallback } from "react"
+import { useState } from "react"
 import { motion, AnimatePresence } from "motion/react"
 import USERS from "../utils/dummyUsers"
 import SearchBar from "../components/SearchBar"
@@ -9,11 +9,11 @@ const Connections = () => {
     const FILTERS = ["DISCOVER", "CONNECTED", "BLOCKED"]
     const [search, setSearch] = useState("")
     const [activeTab, setTab] = useState(FILTERS[0])
-    const [filteredList, setFilteredList] = useState(USERS.slice(0, 5));
+    const [filteredList, setFilteredList] = useState(USERS.slice(0, 20));
 
     const handleFilter = (tab) => {
         switch (tab) {
-            case "DISCOVER": setFilteredList(USERS.slice(0, 5))
+            case "DISCOVER": setFilteredList(USERS.slice(0, 20))
                 break;
             case "CONNECTED": setFilteredList(USERS.slice(5, 7))
                 break;
@@ -26,7 +26,7 @@ const Connections = () => {
     }
 
     return (
-        <div className="min-h-screen bg-zinc-200 p-4 sm:p-8">
+        <div className="h-screen bg-zinc-200 p-4 sm:p-8 overflow-y-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
             <div className="max-w-2xl mx-auto">
 
                 {/* Header */}
@@ -36,8 +36,9 @@ const Connections = () => {
                 </motion.div>
 
                 {/* Search */}
-                <SearchBar value={search} placeholder="Search People..." onChange={setSearch} />
-
+                <div className="mb-6">
+                    <SearchBar value={search} placeholder="Search People..." onChange={setSearch} />
+                </div>
 
                 {/* Tabs */}
                 <div className="flex gap-3 mb-4">

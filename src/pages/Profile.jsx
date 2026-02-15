@@ -12,7 +12,7 @@ const Profile = () => {
     const [isFollowing, setIsFollowing] = useState(false);
 
     return (
-        <div className="min-h-screen bg-zinc-200 p-6 md:p-12">
+        <div className="h-screen bg-zinc-200 p-6 md:p-12 overflow-y-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
             <div className="max-w-6xl mx-auto">
 
 
@@ -87,7 +87,7 @@ const Profile = () => {
                 {/* Posts Grid */}
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     {dummyPosts.map((post) => (
-                        <PostCard key={post.id} imageUrl={post.imageUrl} likes={post.likes} comments={post.comments} date="10 Nov, 2025"/>
+                        <PostCard key={post.id} imageUrl={post.imageUrl} likes={post.likes} comments={post.comments} date="10 Nov, 2025" />
                     ))}
                 </div>
 

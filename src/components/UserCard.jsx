@@ -5,9 +5,9 @@ const UserCard = ({ name, handle, avatar, bio, mode, onClickPrimary, onClickSeco
 
     const TactileButton = ({ onClick, variant, icon, label, }) => {
         return <motion.button
-            whileTap={{ scale: 0.90 }}            
+            whileTap={{ scale: 0.90 }}
             onClick={onClick}
-            className={`rounded-xl px-3 py-2.5 flex items-center gap-2 text-xs font-bold font-mono transition-all cursor-pointer
+            className={`rounded-xl px-3 py-2.5 flex items-center gap-2 text-xs font-bold font-mono cursor-pointer
                 ${variant === "primary"
                     ? "bg-orange-600 text-zinc-200 hover:bg-orange-500"
                     : "bg-zinc-300 text-zinc-900 hover:bg-[#C7C7C7]"
