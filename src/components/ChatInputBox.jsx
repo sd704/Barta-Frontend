@@ -22,7 +22,7 @@ const ChatInputBox = ({ onSend }) => {
     }
 
     return (
-        <div className="bg-zinc-200 py-4 px-6 sticky bottom-0">
+        <div className="py-4 px-6 sticky bottom-0">
             <div className="flex items-end gap-2">
 
                 {/* Action Buttons */}

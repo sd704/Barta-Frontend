@@ -26,7 +26,7 @@ const Connections = () => {
     }
 
     return (
-        <div className="h-screen bg-zinc-200 p-4 sm:p-8 overflow-y-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
+        <div className="h-screen p-4 sm:p-8 overflow-y-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
             <div className="max-w-2xl mx-auto">
 
                 {/* Header */}
@@ -46,7 +46,7 @@ const Connections = () => {
                 </div>
 
                 {/* Status bar */}
-                <div className="bg-zinc-200 rounded-xl py-2.5 mb-4 flex items-center justify-between">
+                <div className="rounded-xl py-2.5 mb-4 flex items-center justify-between">
                     <span className="text-xs font-mono text-zinc-500 uppercase tracking-widest">
                         {activeTab} · {filteredList.length} results
                     </span>

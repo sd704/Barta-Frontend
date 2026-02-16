@@ -17,7 +17,7 @@ const Messages = () => {
     const filteredChats = chats.filter(chat => chat.name.toLowerCase().includes(searchQuery.toLowerCase()) || chat.message.toLowerCase().includes(searchQuery.toLowerCase()))
 
     return (
-        <div className="bg-zinc-200 min-h-screen flex justify-center">
+        <div className="h-screen flex justify-center">
             <div className="w-2xl h-screen flex flex-col">
 
                 {/* Message Page Header */}
@@ -50,7 +50,7 @@ const Messages = () => {
 
                 {/* Online Status Display */}
                 {/* mb-6 p-4 style={{ boxShadow: "inset 4px 4px 8px rgba(0,0,0,0.1), inset -3px -3px 6px rgba(255,255,255,0.8)" }} */}
-                <motion.div className="py-2 px-6 bg-zinc-200 rounded-2xl">
+                <motion.div className="py-2 px-6 rounded-2xl">
                     <div className="flex items-center justify-between">
                         <div className="flex items-center gap-3">
                             <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse" style={{ boxShadow: "0 0 8px rgba(34,197,94,0.6)" }} />

@@ -3,7 +3,7 @@ import { ArrowLeft, Phone, Video, MoreVertical } from "lucide-react"
 
 const ChatHeader = ({ name, status, isOnline, avatar, onBack }) => {
     return (
-        <div className="bg-zinc-200 py-4 px-6 sticky top-0 z-10">
+        <div className="py-4 px-6 sticky top-0 z-10">
             <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3 flex-1">
 

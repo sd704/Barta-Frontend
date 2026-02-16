@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react"
-import { useNavigate } from 'react-router-dom'
+import { useDispatch } from "react-redux"
+import { addUser } from "../redux/userSlice"
 import { motion, AnimatePresence } from "motion/react"
 import ModeSwitch from "../components/ModeSwitch"
 import LoginInputBox from "../components/LoginInputBox"
@@ -8,7 +9,7 @@ import { LOGIN_URL, SIGNUP_URL } from "../utils/ApiRoutes"
 import { validateEmail, validatePass } from "../utils/validate"
 
 const Login = () => {
-    const navigate = useNavigate()
+    const dispatch = useDispatch()
     const [isSignup, setIsSignup] = useState(false)
     const [email, setEmail] = useState("")
     const [password, setPassword] = useState("")
@@ -72,8 +73,7 @@ const Login = () => {
             }
 
             // Success
-            navigate("/messages")
-
+            dispatch(addUser(data?.data))
         } catch (err) {
             setIsProcessing(false)
             setError("Something went wrong!")
@@ -89,7 +89,6 @@ const Login = () => {
 
         return () => clearInterval(interval); // cleanup
     }, [isProcessing]);
-
 
     return (
         <div className="min-h-screen bg-zinc-200 flex items-center justify-center p-4">
@@ -137,45 +136,42 @@ const Login = () => {
                     <div className="absolute bottom-4 right-4 w-3 h-3 bg-zinc-200 rounded-full"
                         style={{ boxShadow: "3px 3px 6px rgba(0,0,0,0.2), -2px -2px 4px rgba(255,255,255,0.7), inset 1px 1px 2px rgba(255,100,0,0.3)" }} />
 
-                    <div className="space-y-6">
-                        <AnimatePresence mode="wait">
-                            {isSignup && (
-                                <motion.div key="name" initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: "auto" }} exit={{ opacity: 0, height: 0 }} transition={{ duration: 0.3 }}
-                                    className="m-0">
-                                    <LoginInputBox label="Firstname" type="text" value={firstName} onChange={setFirstName} placeholder="Enter your firstname" />
-                                    <LoginInputBox label="Lastname" type="text" value={lastName} onChange={setLastName} placeholder="Enter your lastname" />
-                                </motion.div>
-                            )}
-                        </AnimatePresence>
+                    <AnimatePresence mode="wait">
+                        {isSignup && (
+                            <motion.div key="name" initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: "auto" }} exit={{ opacity: 0, height: 0 }} transition={{ duration: 0.3 }}
+                                className="m-0">
+                                <LoginInputBox label="Firstname" type="text" value={firstName} onChange={setFirstName} placeholder="Enter your firstname" />
+                                <LoginInputBox label="Lastname" type="text" value={lastName} onChange={setLastName} placeholder="Enter your lastname" />
+                            </motion.div>
+                        )}
+                    </AnimatePresence>
 
-                        <LoginInputBox label="Email" type="email" value={email} onChange={setEmail} placeholder="user@domain.com" />
-                        <LoginInputBox label="Password" type="password" value={password} onChange={setPassword} placeholder="••••••••" />
+                    <LoginInputBox label="Email" type="email" value={email} onChange={setEmail} placeholder="user@domain.com" />
+                    <LoginInputBox label="Password" type="password" value={password} onChange={setPassword} placeholder="••••••••" />
 
-                        {errorMsg && <p className="pr-2 text-right text-xs font-mono tracking-widest text-red-500 uppercase">{errorMsg}</p>}
+                    {errorMsg && <p className="pr-2 text-right text-xs font-mono tracking-widest text-red-500 uppercase">{errorMsg}</p>}
 
-                        {/* Submit Button */}
-                        <div className="pt-4">
-                            <SubmitButton onClick={handleSubmit} variant="primary">{isSignup ? "CREATE ACCOUNT" : "LOG IN"}</SubmitButton>
+                    {/* Submit Button */}
+                    <div className="pt-4">
+                        <SubmitButton onClick={handleSubmit} variant="primary">{isSignup ? "CREATE ACCOUNT" : "LOG IN"}</SubmitButton>
+                    </div>
+
+
+                    {/* Corner Details - dots */}
+                    <div className="flex flex-row-reverse justify-between items-center px-4 mt-6">
+                        <div className="flex gap-2">
+                            {[0, 1, 2].map((num) => {
+                                const activeDot = num === index
+                                return <div key={num}
+                                    className={`w-2 h-2 rounded-full ${activeDot ? "bg-orange-500" : "bg-zinc-200"}`}
+                                    style={{
+                                        boxShadow: activeDot
+                                            ? "3px 3px 6px rgba(255,100,0,0.4), -2px -2px 4px rgba(255,150,50,0.3)"
+                                            : "inset 2px 2px 4px rgba(0,0,0,0.15), inset -1px -1px 2px rgba(255,255,255,0.7)",
+                                    }}
+                                />
+                            })}
                         </div>
-
-
-                        {/* Corner Details - dots */}
-                        <div className="flex flex-row-reverse justify-between items-center px-4">
-                            <div className="flex gap-2">
-                                {[0, 1, 2].map((num) => {
-                                    const activeDot = num === index
-                                    return <div key={num}
-                                        className={`w-2 h-2 rounded-full ${activeDot ? "bg-orange-500" : "bg-zinc-200"}`}
-                                        style={{
-                                            boxShadow: activeDot
-                                                ? "3px 3px 6px rgba(255,100,0,0.4), -2px -2px 4px rgba(255,150,50,0.3)"
-                                                : "inset 2px 2px 4px rgba(0,0,0,0.15), inset -1px -1px 2px rgba(255,255,255,0.7)",
-                                        }}
-                                    />
-                                })}
-                            </div>
-                        </div>
-
                     </div>
                 </motion.div>
 
