@@ -24,7 +24,7 @@ const StatsCard = ({ label, value }) => {
             <div className="text-zinc-500 text-sm uppercase tracking-wider mb-2 font-mono">
                 {label}
             </div>
-            <motion.div className="text-[#18181b] text-3xl font-mono flex ">
+            <motion.div className="text-zinc-900 text-3xl font-mono flex ">
                 {formatted(number).split("").map((char, index) => {
 
                     // If number → roll

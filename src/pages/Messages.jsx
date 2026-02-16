@@ -1,5 +1,5 @@
 import { useState } from "react"
-import { motion } from "motion/react"
+import { motion, AnimatePresence } from "motion/react"
 import { Settings, Menu } from "lucide-react"
 import SearchBar from "../components/SearchBar"
 import TabButton from "../components/TabButton"
@@ -9,6 +9,7 @@ import Chat from "./Chat"
 
 
 const Messages = () => {
+    const [showChat, setShowChat] = useState(false)
 
     const [searchQuery, setSearchQuery] = useState("")
     const [activeTab, setActiveTab] = useState("ALL");
@@ -78,14 +79,15 @@ const Messages = () => {
                     {filteredChats.map((chat, index) => (
                         <motion.div key={chat.id} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: index * 0.05 }}>
                             <ChatItem name={chat.name} message={chat.message} time={chat.time} unread={chat.unread} isOnline={chat.isOnline} avatar={chat.avatar}
-                                onClick={() => console.log(`Open chat: ${chat.name}`)} />
+                                onClick={() => setShowChat(true)} />
                         </motion.div>
                     ))}
                 </motion.div>
 
             </div>
-
-            <Chat />
+            <AnimatePresence mode="wait">
+                {showChat && <Chat setShowChat={() => setShowChat(false)} />}
+            </AnimatePresence>
         </div>
     )
 }

@@ -2,10 +2,10 @@ import ChatHeader from "../components/ChatHeader"
 import MessageBubble from "../components/MessageBubble"
 import dummyTexts from "../utils/dummyTexts"
 import { useState, useRef, useEffect } from "react"
-import { motion } from "motion/react"
+import { motion, AnimatePresence } from "motion/react"
 import ChatInputBox from "../components/ChatInputBox"
 
-const Chat = () => {
+const Chat = ({ setShowChat }) => {
 
     const [messages, setMessages] = useState(dummyTexts)
     const messagesEndRef = useRef(null);
@@ -30,11 +30,12 @@ const Chat = () => {
     }
 
     return (
-        //<div className="h-screen bg-zinc-200">
-        <div className="w-2xl h-screen flex flex-col">
+        //<div className="h-screen bg-zinc-200">       
+        <motion.div className="w-2xl h-screen flex flex-col"
+            key="chat-window" initial={{ opacity: 0, x: -100 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -100 }} transition={{ duration: 0.3 }}>
 
             {/* Header */}
-            <ChatHeader name="ALEX_K" status="ONLINE" isOnline={true} avatar="AK" onBack={() => console.log("Go back")} />
+            <ChatHeader name="ALEX_K" status="ONLINE" isOnline={true} avatar="AK" onBack={() => setShowChat()} />
 
             {/* Messages Container */}
             <div className="flex-1 overflow-y-auto py-4 px-6 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] ">
@@ -70,7 +71,7 @@ const Chat = () => {
             {/* Input Area */}
             <ChatInputBox onSend={handleSendMessage} />
 
-        </div>
+        </motion.div>
         //</div>
     )
 }

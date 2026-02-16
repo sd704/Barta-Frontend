@@ -4,7 +4,7 @@ import { motion } from "motion/react"
 import StatsCard from '../components/StatsCard'
 import ProfileHeaderButton from '../components/ProfileHeaderButton'
 import ListGridButton from '../components/ListGridButton'
-import dummyPosts from "../utils/dummyPosts"
+import POSTDATA from "../utils/dummyPosts"
 import PostCard from '../components/PostCard'
 
 const Profile = () => {
@@ -86,7 +86,7 @@ const Profile = () => {
 
                 {/* Posts Grid */}
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    {dummyPosts.map((post) => (
+                    {POSTDATA.map((post) => (
                         <PostCard key={post.id} imageUrl={post.imageUrl} likes={post.likes} comments={post.comments} date="10 Nov, 2025" />
                     ))}
                 </div>

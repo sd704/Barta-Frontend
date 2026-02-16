@@ -18,7 +18,7 @@ const SideNavbar = ({ children }) => {
                 <div className="flex items-center justify-center w-14 h-14 rounded-full bg-cover bg-center bg-no-repeat bg-[url('https://www.fomostore.in/cdn/shop/files/BISTAM375_1_819d72f0-fb42-459e-8eec-2d70e9888a19.jpg')]"
                     onClick={() => { handleClick('profile') }}></div>
 
-                <div className="h-px w-full bg-white"></div>
+                {/* <div className="h-px w-full bg-white"></div> */}
                 <SideNavbarButton icon={Newspaper} isActive={page == "feed"} onClick={() => { handleClick('feed') }} />
                 <SideNavbarButton icon={MessageCircle} isActive={page == "messages"} onClick={() => { handleClick('messages') }} />
                 <SideNavbarButton icon={Users} isActive={page == "connections"} onClick={() => { handleClick('connections') }} />

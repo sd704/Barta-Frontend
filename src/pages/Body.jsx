@@ -1,5 +1,4 @@
 import { createBrowserRouter, RouterProvider } from "react-router-dom"
-import Chat from "./Chat"
 import Connections from "./Connections"
 import Login from "./Login"
 import Messages from "./Messages"
