@@ -1,33 +1,24 @@
 import { useState } from "react"
+import { useDispatch, useSelector } from "react-redux"
 import { motion, AnimatePresence } from "motion/react"
-import USERS from "../utils/dummyUsers"
 import SearchBar from "../components/SearchBar"
 import TabButtonAccent from "../components/TabButtonAccent"
 import UserCard from "../components/UserCard"
+import useFetchAllConnections from "../hooks/useFetchAllConnections"
 
 const Connections = () => {
-    const FILTERS = ["DISCOVER", "CONNECTED", "BLOCKED"]
+    const connectionStore = useSelector(store => store.connection)
+    const FILTERS = ["DISCOVER", "RECEIVED", "PENDING", "CONNECTED", "BLOCKED"]
     const [search, setSearch] = useState("")
-    const [activeTab, setTab] = useState(FILTERS[0])
-    const [filteredList, setFilteredList] = useState(USERS.slice(0, 20));
-
-    const handleFilter = (tab) => {
-        switch (tab) {
-            case "DISCOVER": setFilteredList(USERS.slice(0, 20))
-                break;
-            case "CONNECTED": setFilteredList(USERS.slice(5, 7))
-                break;
-            case "BLOCKED": setFilteredList(USERS.slice(7))
-                break;
-            default: setFilteredList([])
-                console.log(`Unknown Filter ${tab}`);
-        }
-        setTab(tab)
-    }
+    const [activeTab, setActiveTab] = useState(0)
+    const activeKey = FILTERS[activeTab].toLowerCase()
+    let activeList = connectionStore[activeKey] || []
+    let filteredList = activeList.filter(person => `${person.firstName} ${person.lastName}`.toLowerCase().includes(search.toLowerCase()))
+    useFetchAllConnections()
 
     return (
         <div className="h-screen p-4 sm:p-8 overflow-y-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
-            <div className="max-w-2xl mx-auto">
+            <div className="max-w-4xl mx-auto">
 
                 {/* Header */}
                 <motion.div initial={{ opacity: 0, x: 10 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.5 }} className="mb-8">
@@ -42,17 +33,23 @@ const Connections = () => {
 
                 {/* Tabs */}
                 <div className="flex gap-3 mb-4">
-                    {FILTERS.map((tab, i) => <TabButtonAccent key={i} label={tab} count={filteredList.length} isActive={tab === activeTab} onClick={() => handleFilter(tab)} />)}
+                    {FILTERS.map((tab, i) => <TabButtonAccent
+                        key={tab}
+                        label={tab}
+                        count={connectionStore[FILTERS[i].toLowerCase()]?.length}
+                        isActive={i === activeTab}
+                        onClick={() => setActiveTab(i)}
+                    />)}
                 </div>
 
                 {/* Status bar */}
                 <div className="rounded-xl py-2.5 mb-4 flex items-center justify-between">
                     <span className="text-xs font-mono text-zinc-500 uppercase tracking-widest">
-                        {activeTab} · {filteredList.length} results
+                        {FILTERS[activeTab]} · {activeList.length} results
                     </span>
                     <div className="flex gap-2">
-                        {[0, 1, 2].map((num) => {
-                            const activeDot = num === FILTERS.indexOf(activeTab)
+                        {FILTERS.map((_, num) => {
+                            const activeDot = num === activeTab
                             return <div key={num}
                                 className={`w-2 h-2 rounded-full ${activeDot ? "bg-orange-500" : "bg-zinc-200"}`}
                                 style={{
@@ -69,8 +66,7 @@ const Connections = () => {
                 <div className="space-y-3">
                     <AnimatePresence mode="popLayout">
                         {filteredList.map(person => (
-                            <UserCard key={person.id} name={person.name} handle={person.handle} avatar={person.avatar} bio={person.bio} mode={activeTab}
-                                onClickPrimary={() => { }} onClickSecondary={() => { }} />
+                            <UserCard key={person?._id} id={person?._id} mode={activeTab} userObj={person} />
                         ))}
                     </AnimatePresence>
 

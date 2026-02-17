@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { Grid, List, Settings, Heart, MessageCircle, Users } from 'lucide-react'
 import { motion } from "motion/react"
+import { useSelector } from "react-redux"
 import StatsCard from '../components/StatsCard'
 import ProfileHeaderButton from '../components/ProfileHeaderButton'
 import ListGridButton from '../components/ListGridButton'
@@ -8,6 +9,7 @@ import POSTDATA from "../utils/dummyPosts"
 import PostCard from '../components/PostCard'
 
 const Profile = () => {
+    const user = useSelector(store => store.user)
     const [activeTab, setActiveTab] = useState('grid');
     const [isFollowing, setIsFollowing] = useState(false);
 
@@ -24,7 +26,7 @@ const Profile = () => {
                         {/* Profile Picture */}
                         <div className="w-32 h-32 rounded-full overflow-hidden ring-4 ring-zinc-200" style={{ boxShadow: "inset 6px 6px 12px rgba(0,0,0,0.15), inset -6px -6px 12px rgba(255,255,255,0.7)" }}>
                             <img className="w-full h-full object-cover" alt="Profile"
-                                src="https://www.fomostore.in/cdn/shop/files/BISTAM375_1_819d72f0-fb42-459e-8eec-2d70e9888a19.jpg"
+                                src={`${user?.pfp}`}
                             />
                         </div>
 
@@ -32,7 +34,7 @@ const Profile = () => {
                         <div className="flex-1">
                             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-4">
                                 <div>
-                                    <h1 className="text-zinc-900 mb-1 font-mono">alex_design</h1>
+                                    <h1 className="text-zinc-900 mb-1 font-mono">{user?.firstName + " " + user?.lastName}</h1>
                                     <p className="text-zinc-500 text-sm font-mono">Digital Creator & Visual Artist</p>
                                 </div>
 

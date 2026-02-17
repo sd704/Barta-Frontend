@@ -1,22 +1,71 @@
+import { useDispatch, useSelector } from "react-redux"
 import { motion } from "motion/react"
-import { UserPlus, X, UserMinus, Undo2 } from "lucide-react"
+import { Hourglass, UserPlus, X, UserMinus, Undo2 } from "lucide-react"
+import TactileButton from "./TactileButton"
+import { CONNECT_URL, IGNORE_URL, ACCEPT_URL, REJECT_URL, WITHDRAW_URL, REMOVE_URL, BLOCK_URL, UNBLOCK_URL, DISCOVER_URL, RECEIVED_URL, PENDING_URL, CONNECTED_URL, BLOCKED_URL } from "../utils/ApiRoutes"
+import { updateDiscover, updateReceived, updatePending, updateConnected, updateBlocked } from "../redux/connectionSlice"
 
-const UserCard = ({ name, handle, avatar, bio, mode, onClickPrimary, onClickSecondary }) => {
+const UserCard = ({ mode, userObj }) => {
+    const connectionStore = useSelector(store => store.connection)
+    const dispatch = useDispatch()
 
-    const TactileButton = ({ onClick, variant, icon, label, }) => {
-        return <motion.button
-            whileTap={{ scale: 0.90 }}
-            onClick={onClick}
-            className={`rounded-xl px-3 py-2.5 flex items-center gap-2 text-xs font-bold font-mono cursor-pointer
-                ${variant === "primary"
-                    ? "bg-orange-600 text-zinc-200 hover:bg-orange-500"
-                    : "bg-zinc-300 text-zinc-900 hover:bg-[#C7C7C7]"
-                }`}
-            style={{ boxShadow: "3px 3px 6px #b8b8b8, -3px -3px 6px #f5f5f5" }}
-        >
-            {icon}
-            {label && <span className="hidden sm:inline">{label}</span>}
-        </motion.button>
+    const id = userObj._id
+    const name = userObj.firstName + " " + userObj.lastName
+    const handle = userObj.email
+    const avatar = userObj.pfp
+    const bio = userObj.about
+
+    const endpoints = {
+        discover: { filter: "discover", url: DISCOVER_URL, reducer: updateDiscover },
+        received: { filter: "received", url: RECEIVED_URL, reducer: updateReceived },
+        pending: { filter: "pending", url: PENDING_URL, reducer: updatePending },
+        connected: { filter: "connected", url: CONNECTED_URL, reducer: updateConnected },
+        blocked: { filter: "blocked", url: BLOCKED_URL, reducer: updateBlocked },
+    }
+
+    const handleUpdate = async (URL) => {
+        try {
+            const res = await fetch(URL, {
+                method: "GET",
+                headers: { "Content-Type": "application/json", },
+                credentials: "include"
+            })
+            const data = await res.json()
+            return data?.data
+        } catch (err) {
+            console.error(err)
+            return null
+        }
+    }
+
+    const handleRequest = async (URL, removeFromArr, addToArr) => {
+        try {
+            const res = await fetch(URL(id), {
+                method: "POST",
+                headers: { "Content-Type": "application/json", },
+                credentials: "include"
+            })
+
+            const data = await res.json()
+            // console.log(data?.data)
+
+            if (!res.ok) {
+                console.error(data?.message)
+                return
+            }
+
+            for (const item of removeFromArr) {
+                const updatedData = connectionStore[item.filter].filter(obj => obj._id !== id)
+                dispatch(item.reducer(updatedData))
+            }
+
+            for (const item of addToArr) {
+                const updatedData = [...connectionStore[item.filter], userObj]
+                dispatch(item.reducer(updatedData))
+            }
+        } catch (err) {
+            console.error(err)
+        }
     }
 
     return (
@@ -36,22 +85,48 @@ const UserCard = ({ name, handle, avatar, bio, mode, onClickPrimary, onClickSeco
 
             <div className="flex-1 min-w-0">
                 <h3 className="font-mono font-bold text-zinc-900 text-sm truncate">{name}</h3>
-                <p className="text-zinc-500 text-xs font-mono">@{handle}</p>
+                <p className="text-zinc-500 text-xs font-mono">@{handle?.split("@")[0]}</p>
                 <p className="text-zinc-500 text-xs mt-1 line-clamp-1">{bio}</p>
             </div>
 
             <div className="flex gap-2 shrink-0">
-                {mode === "DISCOVER" && (
+
+                {/* DISCOVER */}
+                {mode === 0 && (
                     <>
-                        <TactileButton onClick={onClickPrimary} variant="primary" icon={<UserPlus size={16} />} label="Connect" />
-                        <TactileButton onClick={onClickSecondary} variant="muted" icon={<X size={16} />} label="Ignore" />
+                        <TactileButton onClick={() => handleRequest(CONNECT_URL, [endpoints.discover], [endpoints.pending])}
+                            variant="primary" icon={<UserPlus size={16} />} label="Connect" />
+                        <TactileButton onClick={() => handleRequest(IGNORE_URL, [endpoints.discover], [])}
+                            variant="muted" icon={<X size={16} />} label="Ignore" />
                     </>
                 )}
-                {mode === "CONNECTED" && (
-                    <TactileButton onClick={onClickPrimary} variant="muted" icon={<UserMinus size={16} />} label="Remove" />
+
+                {/* RECEIVED */}
+                {mode === 1 && (
+                    <>
+                        <TactileButton onClick={() => handleRequest(ACCEPT_URL, [endpoints.received], [endpoints.connected])}
+                            variant="primary" icon={<UserPlus size={16} />} label="Accept" />
+                        <TactileButton onClick={() => handleRequest(REJECT_URL, [endpoints.received], [])}
+                            variant="muted" icon={<X size={16} />} label="Reject" />
+                    </>
                 )}
-                {mode === "BLOCKED" && (
-                    <TactileButton onClick={onClickPrimary} variant="primary" icon={<Undo2 size={16} />} label="Unblock" />
+
+                {/* PENDING */}
+                {mode === 2 && (
+                    <TactileButton onClick={() => handleRequest(WITHDRAW_URL, [endpoints.pending], [endpoints.discover])}
+                        variant="muted" icon={<Hourglass size={16} />} label="Withdraw" />
+                )}
+
+                {/* CONNECTED */}
+                {mode === 3 && (
+                    <TactileButton onClick={() => handleRequest(REMOVE_URL, [endpoints.connected], [endpoints.discover])}
+                        variant="muted" icon={<UserMinus size={16} />} label="Remove" />
+                )}
+
+                {/* BLOCKED */}
+                {mode === 4 && (
+                    <TactileButton onClick={() => handleRequest(UNBLOCK_URL, [endpoints.blocked], [])}
+                        variant="muted" icon={<Undo2 size={16} />} label="Unblock" />
                 )}
             </div>
         </motion.div>
