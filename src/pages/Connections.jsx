@@ -14,6 +14,7 @@ const Connections = () => {
     const activeKey = FILTERS[activeTab].toLowerCase()
     let activeList = connectionStore[activeKey] || []
     let filteredList = activeList.filter(person => `${person.firstName} ${person.lastName}`.toLowerCase().includes(search.toLowerCase()))
+    const variants = { initial: { opacity: 0 }, animate: { opacity: 1, transition: { duration: 0.5, staggerChildren: 0.05 } } }
     useFetchAllConnections()
 
     return (
@@ -28,7 +29,7 @@ const Connections = () => {
 
                 {/* Search */}
                 <div className="mb-6">
-                    <SearchBar value={search} placeholder="Search People..." onChange={setSearch} />
+                    <SearchBar id="search" value={search} placeholder="Search People..." onChange={setSearch} />
                 </div>
 
                 {/* Tabs */}
@@ -63,11 +64,13 @@ const Connections = () => {
                 </div>
 
                 {/* List */}
-                <div className="space-y-3">
+                <div>
                     <AnimatePresence mode="popLayout">
-                        {filteredList.map(person => (
-                            <UserCard key={person?._id} id={person?._id} mode={activeTab} userObj={person} />
-                        ))}
+                        <motion.div key={FILTERS[activeTab]} variants={variants} initial="initial" animate="animate" className="space-y-3">
+                            {filteredList.map(person => (
+                                <UserCard key={person?._id} id={person?._id} mode={activeTab} userObj={person} />
+                            ))}
+                        </motion.div>
                     </AnimatePresence>
 
                     {/* No Results Message */}

@@ -1,16 +1,19 @@
-import { useState } from "react"
 import { motion } from "motion/react"
 
 const ChatItem = ({ name, message, time, unread, isOnline, avatar, onClick }) => {
-    const [isPressed, setIsPressed] = useState(false)
+
+    const variants = { initial: { opacity: 0, y: 20 }, animate: { opacity: 1, y: 0 } }
 
     return (
-        <motion.div onMouseDown={() => setIsPressed(true)} onMouseUp={() => setIsPressed(false)} onMouseLeave={() => setIsPressed(false)} onClick={onClick}
-            animate={{ scale: isPressed ? 0.98 : 1 }}
+        <motion.div
+            variants={variants}
             transition={{ type: "spring", stiffness: 400, damping: 25 }}
             style={{ boxShadow: "8px 8px 16px rgba(0,0,0,0.15), -6px -6px 12px rgba(255,255,255,0.7)" }}
             className="relative p-4 bg-zinc-200 rounded-2xl cursor-pointer mb-3"
+            whileTap={{ scale: 0.98 }}
+            onClick={onClick}
         >
+
             <div className="flex items-center gap-4">
                 {/* Avatar */}
                 <div className="relative shrink-0">

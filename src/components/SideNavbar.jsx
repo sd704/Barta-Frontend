@@ -5,7 +5,7 @@ import { Newspaper, Users, MessageCircle, User, LogOut } from "lucide-react"
 import SideNavbarButton from './SideNavbarButton'
 
 const SideNavbar = () => {
-    const location = useLocation();
+    const location = useLocation()
     const user = useSelector(store => store.user)
     const [page, setPage] = useState(location.pathname.split("/")[1])
     const navigate = useNavigate()
@@ -25,7 +25,7 @@ const SideNavbar = () => {
                 {/* <div className="h-px w-full bg-white"></div> */}
                 <SideNavbarButton icon={Newspaper} isActive={page == "feed"} onClick={() => { handleClick('feed') }} />
                 <SideNavbarButton icon={MessageCircle} isActive={page == "messages"} onClick={() => { handleClick('messages') }} />
-                <SideNavbarButton icon={Users} isActive={page == "connections"} onClick={() => { handleClick('connections') }} />
+                <SideNavbarButton icon={Users} isActive={page == "people"} onClick={() => { handleClick('people') }} />
                 <SideNavbarButton icon={User} isActive={page == "profile"} onClick={() => { handleClick('profile') }} />
                 <SideNavbarButton icon={LogOut} isActive={page == "logout"} onClick={() => { handleClick('logout') }} />
             </div >

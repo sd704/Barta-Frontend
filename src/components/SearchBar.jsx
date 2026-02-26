@@ -16,7 +16,7 @@ const SearchBar = ({ value, placeholder, onChange }) => {
         >
             <div className="flex items-center gap-3 px-4 py-3">
                 <Search size={16} className="text-zinc-500" />
-                <input type="text" value={value} onChange={(e) => onChange(e.target.value)} onFocus={() => setIsFocused(true)} onBlur={() => setIsFocused(false)} placeholder={placeholder}
+                <input type="text" name="search" value={value} onChange={(e) => onChange(e.target.value)} onFocus={() => setIsFocused(true)} onBlur={() => setIsFocused(false)} placeholder={placeholder}
                     className="flex-1 bg-transparent border-none outline-none font-mono text-sm text-zinc-900 placeholder:text-zinc-500" />
             </div>
         </motion.div>

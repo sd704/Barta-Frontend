@@ -15,6 +15,7 @@ const Messages = () => {
     const [activeTab, setActiveTab] = useState("ALL");
     const FILTERS = ["ALL", "UNREAD", "GROUPS", "ARCHIVE"]
     const filteredChats = chats.filter(chat => chat.name.toLowerCase().includes(searchQuery.toLowerCase()) || chat.message.toLowerCase().includes(searchQuery.toLowerCase()))
+    const variants = { initial: { opacity: 0 }, animate: { opacity: 1, transition: { duration: 0.5, staggerChildren: 0.05 } } }
 
     return (
         <div className="h-screen flex justify-center">
@@ -74,13 +75,10 @@ const Messages = () => {
 
 
                 {/* Chat List */}
-                <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.5 }}
-                    className="py-4 px-6 flex-1 overflow-y-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
-                    {filteredChats.map((chat, index) => (
-                        <motion.div key={chat.id} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: index * 0.05 }}>
-                            <ChatItem name={chat.name} message={chat.message} time={chat.time} unread={chat.unread} isOnline={chat.isOnline} avatar={chat.avatar}
-                                onClick={() => setShowChat(true)} />
-                        </motion.div>
+                <motion.div variants={variants} initial="initial" animate="animate" className="py-4 px-6 flex-1 overflow-y-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
+                    {filteredChats.map(chat => (
+                        <ChatItem key={chat.id} name={chat.name} message={chat.message} time={chat.time} unread={chat.unread} isOnline={chat.isOnline} avatar={chat.avatar}
+                            onClick={() => setShowChat(true)} />
                     ))}
                 </motion.div>
 

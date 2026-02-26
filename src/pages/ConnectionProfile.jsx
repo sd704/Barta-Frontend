@@ -1,24 +1,33 @@
 import { useState } from 'react'
-import { useLocation } from 'react-router-dom'
-import { Grid, List, Settings, Heart, MessageCircle, Users,Info } from 'lucide-react'
+import { useParams } from 'react-router-dom'
+import { Grid, List, Settings, Heart, MessageCircle, Users, Info } from 'lucide-react'
 import { useSelector } from "react-redux"
+import useFetchProfile from '../hooks/useFetchProfile'
 import StatsCard from '../components/StatsCard'
 import ProfileHeaderButton from '../components/ProfileHeaderButton'
 import ListGridButton from '../components/ListGridButton'
 import POSTDATA from "../utils/dummyPosts"
 import PostCard from '../components/PostCard'
 
-const Profile = () => {
-    const location = useLocation()
-    const user = useSelector(store => store.user)
-    const [activeTab, setActiveTab] = useState('grid');
-    const [isFollowing, setIsFollowing] = useState(false);
+const ConnectionProfile = () => {
+    const [loading, setLoading] = useState(true)
+    const [activeTab, setActiveTab] = useState('grid')
 
-    const path = location.pathname.split("/")[1]
-    const name = path == "profile" ? user?.firstName + " " + user?.lastName : ""
-    const pfp = path == "profile" ? user?.pfp : ""
-    const about = path == "profile" ? user?.about : ""
-    const description = path == "profile" ? user?.description : ""
+    const people = useSelector(store => store.people)
+    const { uid } = useParams()
+    const person = people?.[uid]
+    const name = person?.firstName + " " + person?.lastName
+    const pfp = person?.pfp
+    const about = person?.about
+    const description = person?.description
+    const status = person?.connectionData?.status
+    const isBlocked = person?.connectionData?.isBlocked
+    const isConnected = (["rejected", "ignored", ""].includes(status)) ? false : true
+    const statusButtonText = isBlocked ? "Blocked" : (!isConnected ? "Connect" : (status === "accepted" ? "Connected" : "Pending"))
+
+    useFetchProfile(uid, setLoading)
+
+    if (loading) return (<></>)
 
     return (
         <div className="h-screen p-6 md:p-12 overflow-y-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
@@ -45,15 +54,15 @@ const Profile = () => {
 
                                 {/* Profile Header Top Right Corner Buttons */}
                                 <div className="flex gap-3">
-                                    <ProfileHeaderButton variant={!isFollowing ? 'accent' : 'default'} onClickAction={() => setIsFollowing(!isFollowing)}>
-                                        {isFollowing ? 'Following' : 'Follow'}
+                                    <ProfileHeaderButton variant={!isConnected ? 'accent' : 'default'} onClickAction={() => { }}>
+                                        {statusButtonText}
                                     </ProfileHeaderButton>
 
-                                    <ProfileHeaderButton variant='default' onClickAction={() => setIsFollowing(!isFollowing)}>
+                                    <ProfileHeaderButton variant='default' onClickAction={() => { }}>
                                         <MessageCircle size={18} />
                                     </ProfileHeaderButton>
 
-                                    <ProfileHeaderButton variant='default' onClickAction={() => setIsFollowing(!isFollowing)}>
+                                    <ProfileHeaderButton variant='default' onClickAction={() => { }}>
                                         <Info size={18} />
                                     </ProfileHeaderButton>
                                 </div>
@@ -105,4 +114,4 @@ const Profile = () => {
     )
 }
 
-export default Profile
+export default ConnectionProfile
