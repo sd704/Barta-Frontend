@@ -1,5 +1,5 @@
 import { useState } from "react"
-import { useDispatch, useSelector } from "react-redux"
+import { useSelector } from "react-redux"
 import { motion, AnimatePresence } from "motion/react"
 import SearchBar from "../components/SearchBar"
 import TabButtonAccent from "../components/TabButtonAccent"
@@ -12,9 +12,10 @@ const Connections = () => {
     const [search, setSearch] = useState("")
     const [activeTab, setActiveTab] = useState(0)
     const activeKey = FILTERS[activeTab].toLowerCase()
-    let activeList = connectionStore[activeKey] || []
+    let activeList = Object.values(connectionStore[activeKey] || {})
     let filteredList = activeList.filter(person => `${person.firstName} ${person.lastName}`.toLowerCase().includes(search.toLowerCase()))
     const variants = { initial: { opacity: 0 }, animate: { opacity: 1, transition: { duration: 0.5, staggerChildren: 0.05 } } }
+
     useFetchAllConnections()
 
     return (
@@ -37,7 +38,7 @@ const Connections = () => {
                     {FILTERS.map((tab, i) => <TabButtonAccent
                         key={tab}
                         label={tab}
-                        count={connectionStore[FILTERS[i].toLowerCase()]?.length}
+                        count={Object.keys(connectionStore[FILTERS[i].toLowerCase()] || {}).length}
                         isActive={i === activeTab}
                         onClick={() => setActiveTab(i)}
                     />)}

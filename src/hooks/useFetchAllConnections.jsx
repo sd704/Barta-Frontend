@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react"
 import { useDispatch, useSelector } from "react-redux"
 import { DISCOVER_URL, RECEIVED_URL, PENDING_URL, CONNECTED_URL, BLOCKED_URL } from "../utils/ApiRoutes"
-import { fillDiscover, fillReceived, fillPending, fillConnected, fillBlocked } from "../redux/connectionSlice"
+import { fillConnections } from "../redux/connectionSlice"
 
 const useFetchAllConnections = () => {
     const connectionStore = useSelector(store => store.connection)
@@ -9,14 +9,14 @@ const useFetchAllConnections = () => {
     const [loading, setLoading] = useState(false)
     const [error, setError] = useState(null)
     const endpoints = [
-        { filter: "discover", url: DISCOVER_URL, reducer: fillDiscover },
-        { filter: "received", url: RECEIVED_URL, reducer: fillReceived },
-        { filter: "pending", url: PENDING_URL, reducer: fillPending },
-        { filter: "connected", url: CONNECTED_URL, reducer: fillConnected },
-        { filter: "blocked", url: BLOCKED_URL, reducer: fillBlocked },
+        { filter: "discover", url: DISCOVER_URL },
+        { filter: "received", url: RECEIVED_URL },
+        { filter: "pending", url: PENDING_URL },
+        { filter: "connected", url: CONNECTED_URL },
+        { filter: "blocked", url: BLOCKED_URL },
     ]
 
-    const fetchList = async ({ filter, url, reducer }) => {
+    const fetchList = async ({ filter, url }) => {
         if (connectionStore[filter].length > 0) return
         const res = await fetch(url, {
             method: "GET",
@@ -24,7 +24,7 @@ const useFetchAllConnections = () => {
             credentials: "include"
         })
         const data = await res.json()
-        dispatch(reducer(data?.data))
+        dispatch(fillConnections({ filter, listData: data?.data }))
     }
 
     const fetchAll = async () => {
