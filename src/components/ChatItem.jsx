@@ -37,7 +37,7 @@ const ChatItem = ({ name, message, time, unread, isOnline, avatar, onClick }) =>
                 </div>
 
                 {/* Unread Badge */}
-                {typeof unread !== 'undefined' && unread > 0 && (<div className="shrink-0 w-6 h-6 bg-orange-500 rounded-full flex items-center justify-center"
+                {typeof unread !== 'undefined' && unread > 0 && (<div className="shrink-0 w-6 h-6 bg-orange-600 rounded-full flex items-center justify-center"
                     style={{ boxShadow: "3px 3px 6px rgba(255,100,0,0.4), -2px -2px 4px rgba(255,150,50,0.3)" }}>
                     <span className="text-xs font-mono text-white">{unread}</span>
                 </div>)}

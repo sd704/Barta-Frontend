@@ -17,6 +17,7 @@ const PostCard = ({ imageUrl, likes, comments, date }) => {
         >
 
             <div className="absolute top-4 right-4 z-20 text-xs font-mono font-bold tracking-wider text-zinc-200 rounded-lg">{date}</div>
+            {/* style={{ textShadow: "1px 1px 2px #3f3f46" }} */}
 
             <div className="aspect-square overflow-hidden">
                 <motion.img

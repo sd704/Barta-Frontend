@@ -1,14 +1,16 @@
 import { createBrowserRouter, RouterProvider } from "react-router-dom"
 import { useState } from "react"
-import useFetchLoggedInUser from "../hooks/useFetchLoggedInUser";
-import Connections from "./Connections"
-import ConnectionProfile from "./ConnectionProfile";
-import Login from "./Login"
-import Messages from "./Messages"
-import Profile from "./Profile"
+import useFetchLoggedInUser from "../hooks/useFetchLoggedInUser"
 import SideNavbar from "../components/SideNavbar"
 import ProtectedRoute from "../components/ProtectedRoute"
 import PublicRoute from "../components/PublicRoute"
+import Login from "./Login"
+import Messages from "./Messages"
+import Connections from "./Connections"
+import ConnectionProfile from "./ConnectionProfile"
+import Profile from "./Profile"
+import Logout from "./Logout"
+import NotFound from "./NotFound"
 
 const Body = () => {
   const [loading, setLoading] = useState(true)
@@ -30,7 +32,8 @@ const Body = () => {
           ]
         },
         { path: "profile", element: <Profile /> },
-        { path: "logout", element: "LOGOUT" }
+        { path: "logout", element: <Logout /> },
+        { path: "*", element: <NotFound /> }
       ]
     }
   ])

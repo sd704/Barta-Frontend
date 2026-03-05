@@ -15,7 +15,12 @@ const SideNavbar = () => {
     const user = useSelector(store => store.user)
 
     return (
-        <div className='h-screen w-screen bg-zinc-200'>
+        <div className='h-screen w-screen bg-zinc-200'
+            style={{
+                backgroundImage: `linear-gradient(to right, rgba(0,0,0,0.04) 1px, transparent 1px), linear-gradient(to bottom, rgba(0,0,0,0.04) 1px, transparent 1px)`,
+                backgroundSize: '20px 20px'
+            }}>
+
             <div className="fixed left-0 z-40 w-20 h-screen py-4 flex flex-col items-center gap-6">
 
                 <NavLink to="/profile">

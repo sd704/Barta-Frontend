@@ -6,7 +6,7 @@ const TabButton = ({ label, isActive, onClick }) => {
 
     return (
         <motion.button
-            className={`px-6 py-2 font-mono text-xs tracking-widest rounded-xl cursor-pointer hover:text-zinc-900 ${isActive ? "text-zinc-900" : "text-zinc-500"}`}
+            className={`px-6 py-2 font-mono text-xs tracking-widest rounded-xl cursor-pointer bg-zinc-200 ${isActive ? "text-zinc-900" : "text-zinc-500 hover:text-zinc-900"}`}
             onClick={onClick}
             animate={{
                 boxShadow: isActive

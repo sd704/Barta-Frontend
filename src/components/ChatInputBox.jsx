@@ -65,7 +65,7 @@ const ChatInputBox = ({ onSend }) => {
                 {/* Send/Record Button */}
                 {message.trim() ? (
                     <motion.button initial={{ scale: 0 }} animate={{ scale: 1 }}
-                        className="w-11 h-11 bg-orange-500 rounded-full flex items-center justify-center shrink-0"
+                        className="w-11 h-11 bg-orange-600 rounded-full flex items-center justify-center shrink-0"
                         whileTap={{ scale: 0.9 }}
                         onClick={handleSend}
                         style={{ boxShadow: "6px 6px 12px rgba(0,0,0,0.4), -3px -3px 8px rgba(40,40,40,0.2)" }}>
@@ -73,7 +73,7 @@ const ChatInputBox = ({ onSend }) => {
                     </motion.button>
                 ) : (
                     <motion.button
-                        className={`w-11 h-11 rounded-full flex items-center justify-center shrink-0 ${isRecording ? "bg-orange-500" : "bg-zinc-200"}`}
+                        className={`w-11 h-11 rounded-full flex items-center justify-center shrink-0 ${isRecording ? "bg-orange-600" : "bg-zinc-200"}`}
                         whileTap={{ scale: 0.9 }}
                         onMouseDown={() => setIsRecording(true)}
                         onMouseUp={() => setIsRecording(false)}

@@ -53,7 +53,7 @@ const Connections = () => {
                         {FILTERS.map((_, num) => {
                             const activeDot = num === activeTab
                             return <div key={num}
-                                className={`w-2 h-2 rounded-full ${activeDot ? "bg-orange-500" : "bg-zinc-200"}`}
+                                className={`w-2 h-2 rounded-full ${activeDot ? "bg-orange-600" : "bg-zinc-200"}`}
                                 style={{
                                     boxShadow: activeDot
                                         ? "3px 3px 6px rgba(255,100,0,0.4), -2px -2px 4px rgba(255,150,50,0.3)"

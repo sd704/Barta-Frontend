@@ -112,9 +112,9 @@ const ConnectionProfile = () => {
 
                     {/* Quick Actions */}
                     <div className="bg-zinc-200 rounded-xl px-4 py-2 shadow-[6px_6px_12px_#c5c5c8,-6px_-6px_12px_#ffffff] flex items-center gap-4 font-mono text-sm text-zinc-500">
-                        <button className="flex items-center gap-2 hover:text-orange-500 transition-colors"><Heart size={16} /><span>Liked</span></button>
+                        <button className="flex items-center gap-2 hover:text-orange-600 transition-colors"><Heart size={16} /><span>Liked</span></button>
                         <div className="w-px h-4 bg-[#c5c5c8]" />
-                        <button className="flex items-center gap-2 hover:text-orange-500 transition-colors"><Users size={16} /><span>Tagged</span></button>
+                        <button className="flex items-center gap-2 hover:text-orange-600 transition-colors"><Users size={16} /><span>Tagged</span></button>
                     </div>
                 </div>
 

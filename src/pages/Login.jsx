@@ -91,7 +91,12 @@ const Login = () => {
     }, [isProcessing]);
 
     return (
-        <div className="min-h-screen bg-zinc-200 flex items-center justify-center p-4">
+        <div className="min-h-screen bg-zinc-200 flex items-center justify-center p-4"
+            style={{
+                backgroundImage: `linear-gradient(to right, rgba(0,0,0,0.04) 1px, transparent 1px), linear-gradient(to bottom, rgba(0,0,0,0.04) 1px, transparent 1px)`,
+                backgroundSize: '20px 20px'
+            }}>
+
             <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }} className="w-full max-w-md">
 
                 {/* Header */}
@@ -102,7 +107,7 @@ const Login = () => {
                             style={{ boxShadow: "8px 8px 16px rgba(0,0,0,0.2), -8px -8px 16px rgba(255,255,255,0.8)" }}>
                             <div className="w-12 h-12 bg-zinc-200 rounded-full"
                                 style={{ boxShadow: "inset 4px 4px 8px rgba(0,0,0,0.15), inset -4px -4px 8px rgba(255,255,255,0.7)" }}>
-                                <div className="absolute top-3 left-1/2 w-0.5 h-4 bg-orange-500 origin-bottom" />
+                                <div className="absolute top-3 left-1/2 w-0.5 h-4 bg-orange-600 origin-bottom" />
                             </div>
                         </div>
                     </motion.div>
@@ -163,7 +168,7 @@ const Login = () => {
                             {[0, 1, 2].map((num) => {
                                 const activeDot = num === index
                                 return <div key={num}
-                                    className={`w-2 h-2 rounded-full ${activeDot ? "bg-orange-500" : "bg-zinc-200"}`}
+                                    className={`w-2 h-2 rounded-full ${activeDot ? "bg-orange-600" : "bg-zinc-200"}`}
                                     style={{
                                         boxShadow: activeDot
                                             ? "3px 3px 6px rgba(255,100,0,0.4), -2px -2px 4px rgba(255,150,50,0.3)"
@@ -178,14 +183,14 @@ const Login = () => {
 
                 {/* Footer Info */}
                 <div className="mt-8 text-center">
-                    <div className="inline-flex items-center gap-3 text-xs font-mono text-zinc-500 px-4 py-2 bg-zinc-200 rounded-xl"
-                        style={{ boxShadow: "4px 4px 8px rgba(0,0,0,0.15), -4px -4px 8px rgba(255,255,255,0.7)" }}                    >
-                        <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"
-                            style={{ boxShadow: "0 0 8px rgba(34,197,94,0.6)" }} />
+                    <div className="inline-flex items-center gap-3 text-xs font-mono text-zinc-500 px-4 py-2 rounded-xl bg-zinc-200"
+                        style={{ boxShadow: "4px 4px 8px rgba(0,0,0,0.15), -4px -4px 8px rgba(255,255,255,0.7)" }}>
+                        <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse" style={{ boxShadow: "0 0 8px rgba(34,197,94,0.6)" }} />
                         <span>SECURE CONNECTION</span>
                     </div>
                 </div>
             </motion.div>
+
         </div>
     )
 }

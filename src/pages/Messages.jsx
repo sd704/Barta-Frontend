@@ -37,7 +37,7 @@ const Messages = () => {
                         <div className="flex items-center justify-center gap-1 mt-1">
                             <div className="w-1 h-1 bg-zinc-400 rounded-full" />
                             <div className="w-1 h-1 bg-zinc-400 rounded-full" />
-                            <div className="w-1 h-1 bg-orange-500 rounded-full" />
+                            <div className="w-1 h-1 bg-orange-600 rounded-full" />
                         </div>
                     </div>
 
