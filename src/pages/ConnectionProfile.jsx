@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { useParams } from 'react-router-dom'
+import { Navigate, useParams } from 'react-router-dom'
 import { Grid, List, Settings, Heart, MessageCircle, Users, Info } from 'lucide-react'
 import { useDispatch, useSelector } from "react-redux"
 import useFetchProfile from '../hooks/useFetchProfile'
@@ -23,6 +23,7 @@ const getStatusButtonText = (person, loggedUser) => {
 
 const ConnectionProfile = () => {
     const [loading, setLoading] = useState(true)
+    const [notFound, setNotFound] = useState(false)
     const [activeTab, setActiveTab] = useState('grid')
     const dispatch = useDispatch()
 
@@ -37,10 +38,14 @@ const ConnectionProfile = () => {
     const statusButtonText = getStatusButtonText(person, loggedUser)
     const isAccent = ["Connect", "Accept"].includes(statusButtonText)
 
-    useFetchProfile(uid, setLoading)
+    useFetchProfile(uid, setLoading, setNotFound)
+
+    if (uid === loggedUser?._id) {
+        return <Navigate to="/profile" replace />
+    }
 
     if (loading) return (<></>)
-
+    if (notFound) return <>User Not Found</>
     return (
         <div className="h-screen p-6 md:p-12 overflow-y-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
             <div className="max-w-6xl mx-auto">

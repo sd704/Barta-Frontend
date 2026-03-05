@@ -3,7 +3,7 @@ import { useSelector, useDispatch } from "react-redux"
 import { addPerson } from "../redux/peopleSlice"
 import { GET_USER_BY_ID } from "../utils/ApiRoutes"
 
-const useFetchProfile = (uid, setLoading) => {
+const useFetchProfile = (uid, setLoading, setNotFound) => {
     const dispatch = useDispatch()
     const loggedUser = useSelector(store => store.user)
     const people = useSelector(store => store.people)
@@ -22,8 +22,9 @@ const useFetchProfile = (uid, setLoading) => {
         }
     }
 
-    const fetchUser = async (uid) => {
+    const fetchUser = async () => {
         try {
+
             if (people?.[uid]) return
 
             for (const i of connectionTypes) {
@@ -41,8 +42,13 @@ const useFetchProfile = (uid, setLoading) => {
                 credentials: "include"
             })
             const data = await res.json()
-            dispatch(addPerson(data?.data))
+            if (data?.data) {
+                dispatch(addPerson(data.data))
+            } else {
+                setNotFound(true)
+            }
         } catch (err) {
+            setNotFound(true)
             console.error(err)
         } finally {
             setLoading(false)
@@ -50,8 +56,12 @@ const useFetchProfile = (uid, setLoading) => {
     }
 
     useEffect(() => {
-        fetchUser(uid)
-    }, [uid])
+        if (!uid || !loggedUser) return
+
+        if (uid === loggedUser?._id) return
+
+        fetchUser()
+    }, [uid, loggedUser])
 
 }
 

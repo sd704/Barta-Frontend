@@ -1,16 +1,14 @@
 import { useLocation, useNavigate, Outlet } from 'react-router-dom'
 import { useSelector } from "react-redux"
-import { useState } from "react"
 import { Newspaper, Users, MessageCircle, User, LogOut } from "lucide-react"
 import SideNavbarButton from './SideNavbarButton'
 
 const SideNavbar = () => {
     const location = useLocation()
     const user = useSelector(store => store.user)
-    const [page, setPage] = useState(location.pathname.split("/")[1])
+    const page = location.pathname.split("/")[1]
     const navigate = useNavigate()
     const handleClick = (route) => {
-        setPage(route)
         navigate('/' + route)  // Or navigate(-1) for back, navigate(1) for forward
     }
 
