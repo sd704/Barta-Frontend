@@ -3,10 +3,9 @@ import { useDispatch, useSelector } from "react-redux"
 import { DISCOVER_URL, RECEIVED_URL, PENDING_URL, CONNECTED_URL, BLOCKED_URL } from "../utils/ApiRoutes"
 import { fillConnections } from "../redux/connectionSlice"
 
-const useFetchAllConnections = () => {
+const useFetchAllConnections = (setLoading) => {
     const connectionStore = useSelector(store => store.connection)
     const dispatch = useDispatch()
-    const [loading, setLoading] = useState(false)
     const [error, setError] = useState(null)
     const endpoints = [
         { filter: "discover", url: DISCOVER_URL },
@@ -28,7 +27,6 @@ const useFetchAllConnections = () => {
     }
 
     const fetchAll = async () => {
-        setLoading(true)
         setError(null)
         try {
             await Promise.all(endpoints.map(fetchList))
@@ -43,12 +41,6 @@ const useFetchAllConnections = () => {
     useEffect(() => {
         fetchAll()
     }, [dispatch])
-
-    return {
-        loading,
-        error,
-        refetch: fetchAll
-    }
 }
 
 

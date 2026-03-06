@@ -5,8 +5,10 @@ import SearchBar from "../components/SearchBar"
 import TabButtonAccent from "../components/TabButtonAccent"
 import UserCard from "../components/UserCard"
 import useFetchAllConnections from "../hooks/useFetchAllConnections"
+import LoadingDots from '../components/LoadingDots'
 
 const Connections = () => {
+    const [loading, setLoading] = useState(true)
     const connectionStore = useSelector(store => store.connection)
     const FILTERS = ["DISCOVER", "RECEIVED", "PENDING", "CONNECTED", "BLOCKED"]
     const [search, setSearch] = useState("")
@@ -16,8 +18,9 @@ const Connections = () => {
     let filteredList = activeList.filter(person => `${person.firstName} ${person.lastName}`.toLowerCase().includes(search.toLowerCase()))
     const variants = { initial: { opacity: 0 }, animate: { opacity: 1, transition: { duration: 0.5, staggerChildren: 0.05 } } }
 
-    useFetchAllConnections()
+    useFetchAllConnections(setLoading)
 
+    if (loading) return (<LoadingDots />)
     return (
         <div className="h-screen p-4 sm:p-8 overflow-y-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
             <div className="max-w-4xl mx-auto">

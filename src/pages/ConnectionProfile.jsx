@@ -9,6 +9,8 @@ import ProfileHeaderButton from '../components/ProfileHeaderButton'
 import ListGridButton from '../components/ListGridButton'
 import POSTDATA from "../utils/dummyPosts"
 import PostCard from '../components/PostCard'
+import UserNotFound from './UserNotFound'
+import LoadingDots from '../components/LoadingDots'
 
 const getStatusButtonText = (person, loggedUser) => {
     if (!person?.connectionData) return ""
@@ -44,8 +46,8 @@ const ConnectionProfile = () => {
         return <Navigate to="/profile" replace />
     }
 
-    if (loading) return (<></>)
-    if (notFound) return <>User Not Found</>
+    if (loading) return (<LoadingDots />)
+    if (notFound) return (<UserNotFound />)
     return (
         <div className="h-screen p-6 md:p-12 overflow-y-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
             <div className="max-w-6xl mx-auto">
