@@ -27,7 +27,7 @@ const Connections = () => {
 
                 {/* Header */}
                 <motion.div initial={{ opacity: 0, x: 10 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.5 }} className="mb-8">
-                    <h1 className="text-2xl sm:text-3xl font-bold text-zinc-900 tracking-tight">PEOPLE_</h1>
+                    <h1 className="text-2xl sm:text-3xl font-bold text-zinc-900 tracking-tight">PEOPLE</h1>
                     <p className="text-zinc-500 text-xs font-mono mt-1 uppercase tracking-widest">Find · Connect · Curate</p>
                 </motion.div>
 
@@ -81,7 +81,7 @@ const Connections = () => {
                     {filteredList.length === 0 && (
                         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}
                             className="p-10 text-center">
-                            <p className="text-zinc-500 font-mono text-sm">NO_RESULTS_</p>
+                            <p className="text-zinc-500 font-mono text-sm">NO_RESULTS</p>
                             <p className="text-zinc-400 text-xs mt-1">Try a different filter or tab</p>
                         </motion.div>
                     )}

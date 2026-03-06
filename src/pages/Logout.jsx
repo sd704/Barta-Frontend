@@ -32,7 +32,7 @@ const Logout = () => {
 
     return (
         <div className="size-full flex items-center justify-center">
-            <motion.div className="w-full max-w-sm rounded-3xl bg-zinc-200 p-8 relative"
+            <motion.div className="w-full max-w-sm rounded-3xl bg-zinc-200 px-8 py-10 relative"
                 style={{ boxShadow: "12px 12px 24px rgba(0,0,0,0.2), -12px -12px 24px rgba(255,255,255,0.8)" }}
                 initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}>
 
@@ -55,7 +55,7 @@ const Logout = () => {
                 </div>
 
                 {/* Message */}
-                <h1 className="mb-2 text-center text-lg font-bold uppercase font-mono tracking-widest text-zinc-900 ">End Session?</h1>
+                <h1 className="mb-2 text-center text-xl uppercase font-mono tracking-widest text-zinc-900 ">End Session?</h1>
                 <p className="mb-8 text-center text-xs leading-relaxed tracking-wide font-mono text-zinc-500">
                     Are you sure you want to log out?
                     <br />
