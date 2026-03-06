@@ -5,6 +5,7 @@ export const BASE_URL = "http://localhost:7000/api"
 export const LOGIN_URL = BASE_URL + "/auth/login"
 export const SIGNUP_URL = BASE_URL + "/users"
 export const GET_USER_URL = BASE_URL + "/users"
+export const LOGOUT_URL = BASE_URL + "/auth/logout"
 
 // GET CONNECTIONS API
 export const DISCOVER_URL = BASE_URL + "/connections/feed"

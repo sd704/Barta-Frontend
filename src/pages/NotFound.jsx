@@ -4,7 +4,7 @@ const NotFound = () => {
     return (
         <div className="size-full flex items-center justify-center overflow-hidden relative">
 
-            <div className="relative z-10 flex flex-col items-center gap-12 px-6">
+            <div className="relative z-10 flex flex-col items-center px-6">
 
                 <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }} className="relative">
                     {/* Neumorphic container */}
@@ -33,13 +33,13 @@ const NotFound = () => {
 
                         {/* Status indicator */}
                         <div className="absolute -bottom-3 left-1/2 -translate-x-1/2 bg-zinc-200 px-6 py-2 rounded-xl shadow-[6px_6px_12px_#c5c5c5,-6px_-6px_12px_#ffffff]">
-                            <span className="font-mono text-xs tracking-wider text-[#666] uppercase">Page Not Found</span>
+                            <span className="font-mono text-xs text-[#666] uppercase">Page Not Found</span>
                         </div>
                     </div>
                 </motion.div>
 
                 {/* Message */}
-                <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.3, duration: 0.6 }} className="text-center max-w-md">
+                <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.3, duration: 0.6 }} className="text-center max-w-md mt-12">
                     <p className="font-mono text-sm text-[#666] leading-relaxed tracking-wide">
                         The content you're looking for has drifted into the void.
                         It might have been deleted, moved, or never existed.
@@ -48,7 +48,7 @@ const NotFound = () => {
 
                 {/* Error code - minimalist detail */}
                 <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.7, duration: 0.6 }}
-                    className="font-mono text-[10px] text-[#999] tracking-widest uppercase">
+                    className="font-mono text-[10px] text-[#999] tracking-widest uppercase mt-6">
                     ERR_404_SOCIAL_MEDIA_APP
                 </motion.div>
             </div>

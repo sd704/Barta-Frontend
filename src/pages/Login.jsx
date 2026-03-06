@@ -158,7 +158,7 @@ const Login = () => {
 
                     {/* Submit Button */}
                     <div className="pt-4">
-                        <SubmitButton onClick={handleSubmit} variant="primary">{isSignup ? "CREATE ACCOUNT" : "LOG IN"}</SubmitButton>
+                        <SubmitButton onClick={handleSubmit}>{isSignup ? "CREATE ACCOUNT" : "LOG IN"}</SubmitButton>
                     </div>
 
 
