@@ -1,5 +1,5 @@
 import { motion } from "motion/react"
-import { Power } from "lucide-react"
+import { Power, LogOut } from "lucide-react"
 import SubmitButton from "../components/SubmitButton"
 import { LOGOUT_URL } from "../utils/ApiRoutes"
 import { removeUser } from "../redux/userSlice"
@@ -70,7 +70,7 @@ const Logout = () => {
                     </span>
                 </div>
 
-                {!isLoggingOut && <SubmitButton onClick={handleLogout}>LOG OUT</SubmitButton>}
+                {!isLoggingOut && <SubmitButton onClick={handleLogout}><LogOut size={16} />LOG OUT</SubmitButton>}
 
 
                 {/* Corner Details - dots */}

@@ -9,6 +9,7 @@ import Messages from "./Messages"
 import Connections from "./Connections"
 import ConnectionProfile from "./ConnectionProfile"
 import Profile from "./Profile"
+import ProfileInfo from "./ProfileInfo"
 import Logout from "./Logout"
 import NotFound from "./NotFound"
 
@@ -28,10 +29,22 @@ const Body = () => {
           path: "people",
           children: [
             { index: true, element: <Connections /> },  //connections
-            { path: ":uid", element: <ConnectionProfile /> } //connections/john.doe
+            {
+              path: ":uid",
+              children: [
+                { index: true, element: <ConnectionProfile /> },  //connections/john.doe
+                { path: "info", element: <ProfileInfo /> } //connections/john.doe/info
+              ]
+            }
           ]
         },
-        { path: "profile", element: <Profile /> },
+        {
+          path: "profile",
+          children: [
+            { index: true, element: <Profile /> },  //profile
+            { path: "info", element: <ProfileInfo /> } //profile/info
+          ]
+        },
         { path: "logout", element: <Logout /> },
         { path: "*", element: <NotFound /> }
       ]

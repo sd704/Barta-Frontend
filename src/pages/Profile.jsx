@@ -1,6 +1,6 @@
 import { useState } from 'react'
-import { useLocation } from 'react-router-dom'
-import { Grid, List, Settings, Heart, MessageCircle, Users,Info } from 'lucide-react'
+import { useNavigate, useLocation } from 'react-router-dom'
+import { Grid, List, Settings, Heart, MessageCircle, ExternalLink, Users, User, Info } from 'lucide-react'
 import { useSelector } from "react-redux"
 import StatsCard from '../components/StatsCard'
 import ProfileHeaderButton from '../components/ProfileHeaderButton'
@@ -9,10 +9,10 @@ import POSTDATA from "../utils/dummyPosts"
 import PostCard from '../components/PostCard'
 
 const Profile = () => {
+    const navigate = useNavigate()
     const location = useLocation()
     const user = useSelector(store => store.user)
-    const [activeTab, setActiveTab] = useState('grid');
-    const [isFollowing, setIsFollowing] = useState(false);
+    const [activeTab, setActiveTab] = useState('grid')
 
     const path = location.pathname.split("/")[1]
     const name = path == "profile" ? user?.firstName + " " + user?.lastName : ""
@@ -31,8 +31,10 @@ const Profile = () => {
                     <div className="flex flex-col md:flex-row items-start md:items-center gap-8">
 
                         {/* Profile Picture */}
-                        <div className="w-32 h-32 rounded-full overflow-hidden ring-4 ring-zinc-200" style={{ boxShadow: "inset 6px 6px 12px rgba(0,0,0,0.15), inset -6px -6px 12px rgba(255,255,255,0.7)" }}>
-                            <img className="w-full h-full object-cover" alt="Profile" src={`${pfp}`} />
+                        <div className={`w-32 h-32 rounded-full overflow-hidden ring-4 ring-zinc-200 ${pfp ? "" : "flex items-center justify-center text-zinc-200 bg-zinc-900"}`}
+                            style={{ boxShadow: "8px 8px 16px rgba(0,0,0,0.4), -4px -4px 12px rgba(60,60,60,0.3), inset 1px 1px 2px rgba(255,255,255,0.1)" }}>
+                            {pfp && <img className="w-full h-full object-cover" alt="Profile" src={`${pfp}`} />}
+                            {!pfp && <User size={60} />}
                         </div>
 
                         {/* Profile Info */}
@@ -45,16 +47,18 @@ const Profile = () => {
 
                                 {/* Profile Header Top Right Corner Buttons */}
                                 <div className="flex gap-3">
-                                    <ProfileHeaderButton variant={!isFollowing ? 'accent' : 'default'} onClickAction={() => setIsFollowing(!isFollowing)}>
-                                        {isFollowing ? 'Following' : 'Follow'}
-                                    </ProfileHeaderButton>
 
-                                    <ProfileHeaderButton variant='default' onClickAction={() => setIsFollowing(!isFollowing)}>
-                                        <MessageCircle size={18} />
-                                    </ProfileHeaderButton>
-
-                                    <ProfileHeaderButton variant='default' onClickAction={() => setIsFollowing(!isFollowing)}>
+                                    <ProfileHeaderButton variant='default' onClickAction={() => { navigate("/profile/info") }}>
                                         <Info size={18} />
+                                        {/* Profile Info */}
+                                    </ProfileHeaderButton>
+
+                                    <ProfileHeaderButton variant='default' onClickAction={() => { }}>
+                                        <Settings size={18} />
+                                    </ProfileHeaderButton>
+
+                                    <ProfileHeaderButton variant='default' onClickAction={() => { }}>
+                                        <ExternalLink size={18} />
                                     </ProfileHeaderButton>
                                 </div>
                             </div>

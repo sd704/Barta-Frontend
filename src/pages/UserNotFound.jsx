@@ -1,5 +1,5 @@
 import { motion } from "motion/react"
-import { UserX } from "lucide-react"
+import { UserX, ArrowLeft } from "lucide-react"
 import SubmitButton from "../components/SubmitButton"
 import { useNavigate } from 'react-router-dom'
 
@@ -39,7 +39,7 @@ const UserNotFound = () => {
                     The profile you're looking for doesn't exist or may have been removed.
                 </p>
 
-                <SubmitButton onClick={handleBack}>GO BACK</SubmitButton>
+                <SubmitButton onClick={handleBack}><ArrowLeft size={16} />GO BACK</SubmitButton>
 
 
                 {/* Corner Details - dots */}

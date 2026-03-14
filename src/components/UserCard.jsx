@@ -1,7 +1,7 @@
 import { useNavigate } from 'react-router-dom'
 import { useDispatch } from "react-redux"
 import { motion } from "motion/react"
-import { Hourglass, UserPlus, X, UserMinus, Undo2, UserX, Ban } from "lucide-react"
+import { Hourglass, UserPlus, X, UserMinus, Undo2, UserX, Ban, User } from "lucide-react"
 import TactileButton from "./TactileButton"
 import handleRequest from "../utils/handleRequest"
 
@@ -27,10 +27,12 @@ const UserCard = ({ mode, userObj }) => {
             style={{ boxShadow: "6px 6px 12px #b8b8b8, -6px -6px 12px #f5f5f5" }}
             onClick={() => { navigate('/people/' + id) }}
         >
-            <div className="w-14 h-14 rounded-xl flex items-center justify-center overflow-hidden shrink-0"
+            <div className={`w-14 h-14 rounded-xl flex items-center justify-center overflow-hidden shrink-0 ${pfp ? "" : "text-orange-600"}`}
                 style={{ boxShadow: "inset 3px 3px 6px #b8b8b8, inset -3px -3px 6px #f5f5f5" }}
             >
-                <img src={pfp} alt={name} className="w-full h-full object-cover rounded-xl" />
+                {pfp && <img src={pfp} alt={name} className="w-full h-full object-cover rounded-xl" />}
+                {!pfp && <User />}
+
             </div>
 
             <div className="flex-1 min-w-0">

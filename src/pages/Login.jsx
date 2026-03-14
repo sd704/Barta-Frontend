@@ -3,7 +3,7 @@ import { useDispatch } from "react-redux"
 import { addUser } from "../redux/userSlice"
 import { motion, AnimatePresence } from "motion/react"
 import ModeSwitch from "../components/ModeSwitch"
-import LoginInputBox from "../components/LoginInputBox"
+import InputBox from "../components/InputBox"
 import SubmitButton from "../components/SubmitButton"
 import { LOGIN_URL, SIGNUP_URL } from "../utils/ApiRoutes"
 import { validateEmail, validatePass } from "../utils/validate"
@@ -145,14 +145,14 @@ const Login = () => {
                         {isSignup && (
                             <motion.div key="name" initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: "auto" }} exit={{ opacity: 0, height: 0 }} transition={{ duration: 0.3 }}
                                 className="m-0">
-                                <LoginInputBox label="Firstname" type="text" value={firstName} onChange={setFirstName} placeholder="Enter your firstname" />
-                                <LoginInputBox label="Lastname" type="text" value={lastName} onChange={setLastName} placeholder="Enter your lastname" />
+                                <InputBox label="Firstname" type="text" value={firstName} onChange={setFirstName} placeholder="Enter your firstname" />
+                                <InputBox label="Lastname" type="text" value={lastName} onChange={setLastName} placeholder="Enter your lastname" />
                             </motion.div>
                         )}
                     </AnimatePresence>
 
-                    <LoginInputBox label="Email" type="email" value={email} onChange={setEmail} placeholder="user@domain.com" />
-                    <LoginInputBox label="Password" type="password" value={password} onChange={setPassword} placeholder="••••••••" />
+                    <InputBox label="Email" type="email" value={email} onChange={setEmail} placeholder="user@domain.com" />
+                    <InputBox label="Password" type="password" value={password} onChange={setPassword} placeholder="••••••••" />
 
                     {errorMsg && <p className="pr-2 text-right text-xs font-mono tracking-widest text-red-500 uppercase">{errorMsg}</p>}
 

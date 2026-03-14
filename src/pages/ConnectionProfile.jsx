@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { Navigate, useParams } from 'react-router-dom'
-import { Grid, List, Settings, Heart, MessageCircle, Users, Info } from 'lucide-react'
+import { Grid, List, Settings, Heart, MessageCircle, Users, User, Info } from 'lucide-react'
 import { useDispatch, useSelector } from "react-redux"
 import useFetchProfile from '../hooks/useFetchProfile'
 import handleRequest from "../utils/handleRequest"
@@ -59,8 +59,10 @@ const ConnectionProfile = () => {
                     <div className="flex flex-col md:flex-row items-start md:items-center gap-8">
 
                         {/* Profile Picture */}
-                        <div className="w-32 h-32 rounded-full overflow-hidden ring-4 ring-zinc-200" style={{ boxShadow: "inset 6px 6px 12px rgba(0,0,0,0.15), inset -6px -6px 12px rgba(255,255,255,0.7)" }}>
-                            <img className="w-full h-full object-cover" alt="Profile" src={`${pfp}`} />
+                        <div className={`w-32 h-32 rounded-full overflow-hidden ring-4 ring-zinc-200 ${pfp ? "" : "flex items-center justify-center text-zinc-200 bg-zinc-900"}`}
+                            style={{ boxShadow: "8px 8px 16px rgba(0,0,0,0.4), -4px -4px 12px rgba(60,60,60,0.3), inset 1px 1px 2px rgba(255,255,255,0.1)" }}>
+                            {pfp && <img className="w-full h-full object-cover" alt="Profile" src={`${pfp}`} />}
+                            {!pfp && <User size={60} />}
                         </div>
 
                         {/* Profile Info */}
@@ -81,10 +83,12 @@ const ConnectionProfile = () => {
 
                                     <ProfileHeaderButton variant='default' onClickAction={() => { }}>
                                         <MessageCircle size={18} />
+                                        {/* Chat */}
                                     </ProfileHeaderButton>
 
                                     <ProfileHeaderButton variant='default' onClickAction={() => { }}>
                                         <Info size={18} />
+                                        {/* Info */}
                                     </ProfileHeaderButton>
                                 </div>
                             </div>
