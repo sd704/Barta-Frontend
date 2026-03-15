@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Navigate, useParams } from 'react-router-dom'
+import { Navigate, useNavigate, useParams, useLocation } from 'react-router-dom'
 import { Grid, List, Settings, Heart, MessageCircle, Users, User, Info } from 'lucide-react'
 import { useDispatch, useSelector } from "react-redux"
 import useFetchProfile from '../hooks/useFetchProfile'
@@ -24,6 +24,8 @@ const getStatusButtonText = (person, loggedUser) => {
 }
 
 const ConnectionProfile = () => {
+    const navigate = useNavigate()
+    const location = useLocation()
     const [loading, setLoading] = useState(true)
     const [notFound, setNotFound] = useState(false)
     const [activeTab, setActiveTab] = useState('grid')
@@ -86,9 +88,8 @@ const ConnectionProfile = () => {
                                         {/* Chat */}
                                     </ProfileHeaderButton>
 
-                                    <ProfileHeaderButton variant='default' onClickAction={() => { }}>
+                                    <ProfileHeaderButton variant='default' onClickAction={() => { navigate(location.pathname + "/info") }}>
                                         <Info size={18} />
-                                        {/* Info */}
                                     </ProfileHeaderButton>
                                 </div>
                             </div>

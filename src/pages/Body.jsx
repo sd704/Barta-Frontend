@@ -8,6 +8,7 @@ import Login from "./Login"
 import Messages from "./Messages"
 import Connections from "./Connections"
 import ConnectionProfile from "./ConnectionProfile"
+import ConnectionProfileInfo from "./ConnectionProfileInfo"
 import Profile from "./Profile"
 import ProfileInfo from "./ProfileInfo"
 import Logout from "./Logout"
@@ -33,7 +34,7 @@ const Body = () => {
               path: ":uid",
               children: [
                 { index: true, element: <ConnectionProfile /> },  //connections/john.doe
-                { path: "info", element: <ProfileInfo /> } //connections/john.doe/info
+                { path: "info", element: <ConnectionProfileInfo /> } //connections/john.doe/info
               ]
             }
           ]

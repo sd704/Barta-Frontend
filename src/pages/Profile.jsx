@@ -48,9 +48,9 @@ const Profile = () => {
                                 {/* Profile Header Top Right Corner Buttons */}
                                 <div className="flex gap-3">
 
+                                    {/* Profile Info */}
                                     <ProfileHeaderButton variant='default' onClickAction={() => { navigate("/profile/info") }}>
                                         <Info size={18} />
-                                        {/* Profile Info */}
                                     </ProfileHeaderButton>
 
                                     <ProfileHeaderButton variant='default' onClickAction={() => { }}>
