@@ -3,7 +3,7 @@ import { Navigate } from "react-router-dom"
 
 const ProtectedRoute = ({ children }) => {
     const user = useSelector(store => store.user)
-    if (!user) {
+    if (!user?._id) {
         return <Navigate to="/auth" replace />
     }
 

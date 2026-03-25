@@ -6,6 +6,7 @@ import ProtectedRoute from "../components/ProtectedRoute"
 import PublicRoute from "../components/PublicRoute"
 import Login from "./Login"
 import Messages from "./Messages"
+import Chat from "./Chat"
 import Connections from "./Connections"
 import ConnectionProfile from "./ConnectionProfile"
 import ConnectionProfileInfo from "./ConnectionProfileInfo"
@@ -25,7 +26,13 @@ const Body = () => {
       element: <ProtectedRoute><SideNavbar /></ProtectedRoute>,
       children: [
         { path: "feed", element: "FEED" },
-        { path: "messages", element: <Messages /> },
+        {
+          path: "messages",
+          element: <Messages />, //messages
+          children: [
+            { path: ":uid", element: <Chat /> } //messages/john.doe
+          ]
+        },
         {
           path: "people",
           children: [

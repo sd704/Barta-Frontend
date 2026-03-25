@@ -34,7 +34,7 @@ const UserNotFound = () => {
                 </div>
 
                 {/* Message */}
-                <h1 className="mb-2 text-center text-xl uppercase font-mono tracking-widest text-zinc-900 ">User Not Found</h1>
+                <h1 className="mb-2 text-center text-xl uppercase font-mono tracking-widest text-zinc-900 ">User Not Found!</h1>
                 <p className="mb-8 text-center text-xs leading-relaxed tracking-wide font-mono text-zinc-500">
                     The profile you're looking for doesn't exist or may have been removed.
                 </p>

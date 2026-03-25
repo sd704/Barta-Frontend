@@ -27,3 +27,7 @@ export const UNBLOCK = (uid) => ({ url: BASE_URL + `/blocks/${uid}`, requestType
 
 // SEARCH
 export const GET_USER_BY_ID = (uid) => BASE_URL + `/search/id?id=${uid}`
+
+// CHAT
+export const GET_CHATS = BASE_URL + `/chats/`
+export const GET_MESSSAGES = (uid) => BASE_URL + `/chats/${uid}`

@@ -83,9 +83,10 @@ const ConnectionProfile = () => {
                                         {statusButtonText}
                                     </ProfileHeaderButton>
 
-                                    <ProfileHeaderButton variant='default' onClickAction={() => { }}>
+                                    <ProfileHeaderButton variant='default' onClickAction={() => {
+                                        if (statusButtonText === "Connected") { navigate(`/messages/${uid}`) }
+                                    }}>
                                         <MessageCircle size={18} />
-                                        {/* Chat */}
                                     </ProfileHeaderButton>
 
                                     <ProfileHeaderButton variant='default' onClickAction={() => { navigate(location.pathname + "/info") }}>

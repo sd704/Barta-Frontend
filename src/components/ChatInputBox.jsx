@@ -29,17 +29,17 @@ const ChatInputBox = ({ onSend }) => {
                 <div className="flex gap-2 pb-1">
 
                     {/* Attachment */}
-                    <motion.button className="w-10 h-10 bg-zinc-200 rounded-xl flex items-center justify-center"
+                    <motion.button className="w-10 h-10 bg-zinc-200 rounded-xl flex items-center justify-center text-zinc-700 hover:text-orange-600"
                         whileTap={{ scale: 0.95 }}
                         style={{ boxShadow: "5px 5px 10px rgba(0,0,0,0.15), -4px -4px 8px rgba(255,255,255,0.7)" }}>
-                        <Paperclip size={16} className="text-zinc-600" />
+                        <Paperclip size={16} />
                     </motion.button>
 
                     {/* Emoji */}
-                    <motion.button className="w-10 h-10 bg-zinc-200 rounded-xl flex items-center justify-center"
+                    <motion.button className="w-10 h-10 bg-zinc-200 rounded-xl flex items-center justify-center text-zinc-700 hover:text-orange-600"
                         whileTap={{ scale: 0.95 }}
                         style={{ boxShadow: "5px 5px 10px rgba(0,0,0,0.15), -4px -4px 8px rgba(255,255,255,0.7)" }}>
-                        <Smile size={16} className="text-zinc-600" />
+                        <Smile size={16} />
                     </motion.button>
                 </div>
 
@@ -73,7 +73,7 @@ const ChatInputBox = ({ onSend }) => {
                     </motion.button>
                 ) : (
                     <motion.button
-                        className={`w-11 h-11 rounded-full flex items-center justify-center shrink-0 ${isRecording ? "bg-orange-600" : "bg-zinc-200"}`}
+                        className={`w-11 h-11 rounded-full flex items-center justify-center shrink-0 ${isRecording ? "bg-orange-600 text-zinc-200" : "bg-zinc-200 text-zinc-700 hover:text-orange-600"}`}
                         whileTap={{ scale: 0.9 }}
                         onMouseDown={() => setIsRecording(true)}
                         onMouseUp={() => setIsRecording(false)}
@@ -86,7 +86,7 @@ const ChatInputBox = ({ onSend }) => {
                         <motion.div
                             animate={{ scale: isRecording ? [1, 1.2, 1] : 1 }}
                             transition={{ repeat: isRecording ? Infinity : 0, duration: 1 }}>
-                            <Mic size={18} className={isRecording ? "text-white" : "text-zinc-600"} />
+                            <Mic size={18} />
                         </motion.div>
                     </motion.button>
                 )}

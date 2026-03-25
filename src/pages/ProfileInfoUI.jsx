@@ -20,6 +20,7 @@ const selectOptions = { "male": "Male", "female": "Female", "other": "Non-binary
 const ProfileInfoUI = ({ user, isEditAllowed }) => {
     const dispatch = useDispatch()
     const [isEditing, setIsEditing] = useState(false)
+    const [errorMsg, setError] = useState(null)
     const fileInputRef = useRef(null)
 
     const [fname, setFName] = useState(user?.firstName)
@@ -32,22 +33,26 @@ const ProfileInfoUI = ({ user, isEditAllowed }) => {
     const email = user?.email
 
     const handleImageUpload = async (e) => {
-        const file = e.target.files[0]
+        try {
+            const file = e.target.files[0]
 
-        if (file) {
-            const compressedFile = await imageCompression(file, imageOptions)
+            if (file) {
+                const compressedFile = await imageCompression(file, imageOptions)
 
-            // FileReader is a browser API that reads files from the user's computer
-            const reader = new FileReader()
+                // FileReader is a browser API that reads files from the user's computer
+                const reader = new FileReader()
 
-            reader.onloadend = () => {
-                const base64String = reader.result
-                setPfp(base64String)
+                reader.onloadend = () => {
+                    const base64String = reader.result
+                    setPfp(base64String)
+                }
+
+                // Base64 encoded image -> of compressed file
+                // readAsDataURL -> the result will be something like: data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAA...
+                reader.readAsDataURL(compressedFile)
             }
-
-            // Base64 encoded image -> of compressed file
-            // readAsDataURL -> the result will be something like: data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAA...
-            reader.readAsDataURL(compressedFile)
+        } catch (e) {
+            console.error("Something went wrong!")
         }
     }
 
@@ -66,39 +71,35 @@ const ProfileInfoUI = ({ user, isEditAllowed }) => {
     const compareData = (a, b) => userOptions.every(i => a[i] === b[i])
 
     const handleSave = async () => {
-        const updatedUserData = {
-            firstName: fname,
-            lastName: lname,
-            about,
-            description: desc,
-            pfp,
-            age,
-            gender: (gender === "null" ? null : gender)
-        }
+        try {
+            setError(null)
 
-        // If user made no changes and clicked save
-        if (compareData(user, updatedUserData)) {
-            setIsEditing(false)
-            return
-        }
+            const updatedUserData = { firstName: fname, lastName: lname, about, description: desc, pfp, age, gender: (gender === "null" ? null : gender) }
 
-        const res = await fetch(UPDATE_USER_URL, {
-            method: "PATCH",
-            headers: { "Content-Type": "application/json", },
-            credentials: "include",
-            body: JSON.stringify(updatedUserData),
-        })
-
-        if (!res.ok) {
-            console.log("Something went wrong!")
-        } else {
-            // console.log("Data Saved")
-            const updatedFields = (await res.json())?.updatedFields
-            // console.log(updatedFields)
-            if (updatedFields) {
-                dispatch(updateUser(updatedFields))
+            // If user made no changes and clicked save
+            if (compareData(user, updatedUserData)) {
+                setIsEditing(false)
+                return
             }
-            setIsEditing(false)
+
+            const res = await fetch(UPDATE_USER_URL, {
+                method: "PATCH",
+                headers: { "Content-Type": "application/json", },
+                credentials: "include",
+                body: JSON.stringify(updatedUserData),
+            })
+
+            if (!res.ok) {
+                setError("Something went wrong!")
+            } else {
+                const updatedFields = (await res.json())?.updatedFields
+                if (updatedFields) {
+                    dispatch(updateUser(updatedFields))
+                }
+                setIsEditing(false)
+            }
+        } catch (e) {
+            console.error("Something went wrong!")
         }
     }
 
@@ -169,7 +170,7 @@ const ProfileInfoUI = ({ user, isEditAllowed }) => {
                         <InputSelect label="Gender" value={gender ? gender : "null"} options={selectOptions} accent={true} onChange={setGender} placeholder="Select..." />
                     </div>}
 
-                    {/* {errorMsg && <p className="pr-2 text-right text-xs font-mono tracking-widest text-red-500 uppercase">{errorMsg}</p>} */}
+                    {errorMsg && <p className="pr-2 text-right text-xs font-mono tracking-widest text-red-500 uppercase">{errorMsg}</p>}
 
                     {/* Submit Button */}
                     {isEditAllowed && <div className="pt-4 flex gap-3">

@@ -30,13 +30,13 @@ const UserCard = ({ mode, userObj }) => {
             <div className={`w-14 h-14 rounded-xl flex items-center justify-center overflow-hidden shrink-0 ${pfp ? "" : "text-orange-600"}`}
                 style={{ boxShadow: "inset 3px 3px 6px #b8b8b8, inset -3px -3px 6px #f5f5f5" }}
             >
-                {pfp && <img src={pfp} alt={name} className="w-full h-full object-cover rounded-xl" />}
+                {pfp && <img src={pfp} alt={name} className="w-full h-full object-cover" />}
                 {!pfp && <User />}
 
             </div>
 
             <div className="flex-1 min-w-0">
-                <h3 className="font-mono font-bold text-zinc-900 text-sm truncate">{name}</h3>
+                <h3 className="font-mono font-bold text-zinc-900 group-hover:text-orange-600 text-sm truncate">{name}</h3>
                 <p className="text-zinc-500 text-xs font-mono">{handle}</p>
                 {about && <p className="text-zinc-500 text-xs font-mono mt-1 line-clamp-1">{about}</p>}
             </div>

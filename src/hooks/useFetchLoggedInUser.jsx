@@ -17,14 +17,14 @@ const useFetchLoggedInUser = (setLoading) => {
             const data = await res.json()
             dispatch(addUser(data?.data))
         } catch (err) {
-            console.error(err)
+            // console.error(err)
         } finally {
             setLoading(false)
         }
     }
 
     useEffect(() => {
-        if (user) return
+        if (user?._id) return
         fetchUser()
     }, [])
 

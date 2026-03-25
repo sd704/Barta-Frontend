@@ -1,21 +1,65 @@
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { motion, AnimatePresence } from "motion/react"
+import { Outlet, useNavigate } from "react-router-dom"
 import { Settings, Menu } from "lucide-react"
 import SearchBar from "../components/SearchBar"
 import TabButton from "../components/TabButton"
 import ChatItem from "../components/ChatItem"
-import chats from "../utils/dummyChats"
+// import chats from "../utils/dummyChats"
 import Chat from "./Chat"
+import { GET_CHATS } from "../utils/ApiRoutes"
 
 
 const Messages = () => {
+    const navigate = useNavigate()
     const [showChat, setShowChat] = useState(false)
-
+    const [chats, setChats] = useState([])
     const [searchQuery, setSearchQuery] = useState("")
     const [activeTab, setActiveTab] = useState("ALL");
     const FILTERS = ["ALL", "UNREAD", "GROUPS", "ARCHIVE"]
-    const filteredChats = chats.filter(chat => chat.name.toLowerCase().includes(searchQuery.toLowerCase()) || chat.message.toLowerCase().includes(searchQuery.toLowerCase()))
+    let filteredChats = chats.filter(chat => chat.name.toLowerCase().includes(searchQuery.toLowerCase())).filter(chat => {
+        if (activeTab === "UNREAD") return chat.unread > 0
+        if (activeTab === "GROUPS") return false
+        if (activeTab === "ARCHIVE") return false
+        return true // ALL
+    }).sort((a, b) => new Date(b.time) - new Date(a.time))
+
     const variants = { initial: { opacity: 0 }, animate: { opacity: 1, transition: { duration: 0.5, staggerChildren: 0.05 } } }
+
+
+    const fetchChats = async () => {
+        const res = await fetch(GET_CHATS, {
+            method: "GET",
+            headers: { "Content-Type": "application/json", },
+            credentials: "include"
+        })
+
+        const rawChats = await res.json()
+        const chats = rawChats?.data
+        const filter = chats.map(c => {
+            return {
+                id: c._id,
+                userData: c.userData,
+                name: c.userData.firstName + " " + c.userData.lastName,
+                message: ((c.userData._id === c.lastMessage.senderId) ? c.userData.firstName : 'You') + ': ' + c.lastMessage.text,
+                time: c.lastMessage.createdAt,
+                unread: 3,
+                isOnline: true,
+            }
+        })
+
+        setChats(filter)
+    }
+
+
+    useEffect(() => {
+        try {
+            fetchChats()
+        } catch (err) {
+            console.error(err)
+        }
+    }, [])
+
 
     return (
         <div className="h-screen flex justify-center">
@@ -26,9 +70,9 @@ const Messages = () => {
 
                     {/* Menu button */}
                     <motion.button whileTap={{ scale: 0.90 }} style={{ boxShadow: "6px 6px 12px rgba(0,0,0,0.15), -4px -4px 10px rgba(255,255,255,0.7)" }}
-                        className="w-10 h-10 bg-zinc-200 rounded-xl flex items-center justify-center cursor-pointer "
+                        className="w-10 h-10 bg-zinc-200 rounded-xl flex items-center justify-center cursor-pointer text-zinc-700 hover:text-orange-600"
                     >
-                        <Menu size={20} className="text-zinc-700" />
+                        <Menu size={20} />
                     </motion.button>
 
                     {/* MESSAGES Text */}
@@ -43,9 +87,9 @@ const Messages = () => {
 
                     {/* Settings Button */}
                     <motion.button whileTap={{ scale: 0.90 }} style={{ boxShadow: "6px 6px 12px rgba(0,0,0,0.15), -4px -4px 10px rgba(255,255,255,0.7)" }}
-                        className="w-10 h-10 bg-zinc-200 rounded-xl flex items-center justify-center cursor-pointer "
+                        className="w-10 h-10 bg-zinc-200 rounded-xl flex items-center justify-center cursor-pointer text-zinc-700 hover:text-orange-600"
                     >
-                        <Settings size={20} className="text-zinc-700" />
+                        <Settings size={20} />
                     </motion.button>
                 </div>
 
@@ -77,14 +121,27 @@ const Messages = () => {
                 {/* Chat List */}
                 <motion.div variants={variants} initial="initial" animate="animate" className="py-4 px-6 flex-1 overflow-y-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
                     {filteredChats.map(chat => (
-                        <ChatItem key={chat.id} name={chat.name} message={chat.message} time={chat.time} unread={chat.unread} isOnline={chat.isOnline} avatar={chat.avatar}
-                            onClick={() => setShowChat(true)} />
+                        <ChatItem key={chat.id} userData={chat.userData} name={chat.name} message={chat.message} time={chat.time} unread={chat.unread} isOnline={chat.isOnline}
+                            onClick={() => navigate(`/messages/${chat.userData._id}`)}
+                        />
                     ))}
+
+                    {/* No Results Message */}
+                    {filteredChats.length === 0 && (
+                        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}
+                            className="p-10 text-center">
+                            <p className="text-zinc-500 font-mono text-sm">NO_RESULTS</p>
+                            <p className="text-zinc-400 text-xs mt-1">Try a different filter or tab</p>
+                        </motion.div>
+                    )}
                 </motion.div>
 
             </div>
             <AnimatePresence mode="wait">
-                {showChat && <Chat setShowChat={() => setShowChat(false)} />}
+                {/* ChatWindow will render here */}
+                <Outlet />
+
+                {/* {showChat && <Chat setShowChat={() => setShowChat(false)} />} */}
             </AnimatePresence>
         </div>
     )
