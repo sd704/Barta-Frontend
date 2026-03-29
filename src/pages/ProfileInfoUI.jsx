@@ -1,7 +1,8 @@
 import { motion } from "motion/react"
 import { useState, useRef } from "react"
 import { useDispatch } from "react-redux"
-import { SquarePen, X, Check, User, Camera } from "lucide-react"
+import { useNavigate } from 'react-router-dom'
+import { SquarePen, X, Check, User, Camera, ArrowLeft } from "lucide-react"
 import InputBox from "../components/InputBox"
 import InputTextArea from "../components/InputTextArea"
 import InputSelect from "../components/InputSelect"
@@ -11,6 +12,7 @@ import { updateUser } from "../redux/userSlice"
 import imageCompression from "browser-image-compression"
 
 const userOptions = ["firstName", "lastName", "about", "description", "age", "gender", "pfp"]
+const orangeButton = "bg-orange-600 text-zinc-200 hover:bg-orange-500"
 
 // With useWebWorker: true, Compression runs in background thread, it prevents UI freezing.
 const imageOptions = { initialQuality: 0.6, maxWidthOrHeight: 320, useWebWorker: true }
@@ -19,6 +21,7 @@ const selectOptions = { "male": "Male", "female": "Female", "other": "Non-binary
 
 const ProfileInfoUI = ({ user, isEditAllowed }) => {
     const dispatch = useDispatch()
+    const navigate = useNavigate()
     const [isEditing, setIsEditing] = useState(false)
     const [errorMsg, setError] = useState(null)
     const fileInputRef = useRef(null)
@@ -153,11 +156,12 @@ const ProfileInfoUI = ({ user, isEditAllowed }) => {
                     </div>}
 
                     {/* LoggedIn user can see this even if about is empty */}
-                    {(about || isEditAllowed) && <InputBox readOnly={!isEditing} label="About" type="text" value={about} accent={isEditing} onChange={setAbout} placeholder="A short tagline..." />}
-                    {(desc || isEditAllowed) && <InputTextArea readOnly={!isEditing} label="Description" value={desc} accent={isEditing} rows="3" onChange={setDesc} placeholder="Tell us more about yourself..." />}
+                    {(about || isEditAllowed) && <InputBox readOnly={!isEditing} disabled={!isEditing} label="About" type="text" value={about} accent={isEditing} onChange={setAbout} placeholder="A short tagline..." />}
+                    {(desc || isEditAllowed) && <InputTextArea readOnly={!isEditing} disabled={!isEditing} label="Description" value={desc} accent={isEditing} rows="3" onChange={setDesc} placeholder="Tell us more about yourself..." />}
 
                     {!isEditing && (age || gender) && <InputBox
                         readOnly
+                        disabled
                         label={age && gender ? "Age, Gender" : (age ? "Age" : "Gender")}
                         type="text"
                         value={age && gender ? `${age}, ${selectOptions[gender]}` : age || selectOptions[gender]}
@@ -174,9 +178,14 @@ const ProfileInfoUI = ({ user, isEditAllowed }) => {
 
                     {/* Submit Button */}
                     {isEditAllowed && <div className="pt-4 flex gap-3">
-                        {!isEditing && <SubmitButton onClick={() => setIsEditing(true)}><SquarePen size={16} />EDIT</SubmitButton>}
+                        {!isEditing && <SubmitButton onClick={() => navigate(-1)}><ArrowLeft size={16} />Back</SubmitButton>}
+                        {!isEditing && <SubmitButton onClick={() => setIsEditing(true)} style={orangeButton}><SquarePen size={16} />EDIT</SubmitButton>}
                         {isEditing && <SubmitButton onClick={handleRefresh}><X size={16} />CANCEL</SubmitButton>}
-                        {isEditing && <SubmitButton onClick={handleSave} style="bg-orange-600 text-zinc-200 hover:bg-orange-500"><Check size={16} />SAVE</SubmitButton>}
+                        {isEditing && <SubmitButton onClick={handleSave} style={orangeButton}><Check size={16} />SAVE</SubmitButton>}
+                    </div>}
+
+                    {!isEditAllowed && <div className="pt-4 flex gap-3">
+                        <SubmitButton onClick={() => navigate(-1)}><ArrowLeft size={16} />Back</SubmitButton>
                     </div>}
 
 

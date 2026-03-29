@@ -1,11 +1,15 @@
 import io from "socket.io-client"
 import { BASE_URL } from "./ApiRoutes"
 
-export const createSocketConnection = () => {
-    if (location.hostname === "localhost") {
-        return io('http://localhost:7000')
+let socket = null
+
+export const getSocket = () => {
+    if (!socket) {
+        if (location.hostname === "localhost") {
+            socket = io('http://localhost:7000')
+        } else {
+            socket = io('/', { path: "/api/socket.io" })
+        }
     }
-    else {
-        return io('/', { path: "/api/socket.io" })
-    }
+    return socket
 }

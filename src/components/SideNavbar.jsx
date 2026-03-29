@@ -1,7 +1,10 @@
 import { NavLink, Outlet } from 'react-router-dom'
-import { useSelector } from "react-redux"
+import { useDispatch, useSelector } from "react-redux"
+import { useEffect } from "react"
 import { Newspaper, Users, MessageCircle, User, LogOut } from "lucide-react"
 import SideNavbarButton from './SideNavbarButton'
+import { getSocket } from "../utils/socket"
+import { addMsg } from "../redux/messageSlice"
 
 const navItems = [
     { route: "feed", icon: Newspaper },
@@ -12,8 +15,25 @@ const navItems = [
 ]
 
 const SideNavbar = () => {
+    const dispatch = useDispatch()
     const user = useSelector(store => store.user)
+    const loggedInUserId = user?._id
     const pfp = user?.pfp
+
+    useEffect(() => {
+        if (!loggedInUserId) { return }
+
+        const socket = getSocket()
+        socket.emit("joinRoom", { loggedInUserId })
+
+        // Receiving msg from server
+        socket.on("messageReceived", ({ id, lastMessage, receiver }) => {
+            dispatch(addMsg({ id, lastMessage, receiver }))
+        })
+
+        // When component unloads, disconnect socket
+        return () => { socket.disconnect() }
+    }, [loggedInUserId])
 
     return (
         <div className='h-screen w-screen bg-zinc-200'

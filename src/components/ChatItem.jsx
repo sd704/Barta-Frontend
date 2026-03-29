@@ -1,7 +1,7 @@
 import { motion } from "motion/react"
 import { User } from "lucide-react"
 
-const ChatItem = ({ userData, name, message, time, unread, isOnline, onClick }) => {
+const ChatItem = ({ userData, message, time, unread, isOnline, onClick }) => {
 
     const avatar = userData.pfp
     const variants = { initial: { opacity: 0, y: 20 }, animate: { opacity: 1, y: 0 } }
@@ -21,7 +21,7 @@ const ChatItem = ({ userData, name, message, time, unread, isOnline, onClick }) 
                 <div className="relative shrink-0">
                     <div className={`w-12 h-12 bg-zinc-200 rounded-full flex items-center justify-center overflow-hidden ${avatar ? "" : "text-orange-600"}`}
                         style={{ boxShadow: "inset 4px 4px 8px rgba(0,0,0,0.15), inset -3px -3px 6px rgba(255,255,255,0.7)" }}>
-                        {avatar && <img src={avatar} alt={name} className="w-full h-full object-cover" />}
+                        {avatar && <img src={avatar} alt={userData.name} className="w-full h-full object-cover" />}
                         {!avatar && <User />}
                     </div>
                     {isOnline && (
@@ -33,7 +33,7 @@ const ChatItem = ({ userData, name, message, time, unread, isOnline, onClick }) 
                 {/* Content */}
                 <div className="flex-1 min-w-0">
                     <div className="flex items-center justify-between mb-1">
-                        <h3 className="font-mono text-sm tracking-wider text-zinc-900 group-hover:text-orange-600 truncate">{name}</h3>
+                        <h3 className="font-mono text-sm tracking-wider text-zinc-900 group-hover:text-orange-600 truncate">{userData.name}</h3>
                         <span className="text-xs font-mono text-zinc-500 ml-2">{time}</span>
                     </div>
                     <p className="text-xs font-mono text-zinc-500 truncate">{message}</p>

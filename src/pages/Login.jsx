@@ -21,20 +21,9 @@ const Login = () => {
 
     const handleSubmit = async () => {
 
-        // Email validation
-        if (!validateEmail(email.trim())) {
-            setError("Invalid Email!")
-            return
-        }
-
-        // Password validation
-        if (!validatePass(password)) {
-            setError("Your password must be 8-60 characters and include at least one uppercase letter, one lowercase letter, one number, and one special character.")
-            return
-        }
-
         // Signup-only validation
         if (isSignup) {
+
             if (!firstName.trim()) {
                 setError("Firstname required!");
                 return;
@@ -43,6 +32,18 @@ const Login = () => {
             if (!lastName.trim()) {
                 setError("Lastname required!");
                 return;
+            }
+
+            // Email validation
+            if (!validateEmail(email.trim())) {
+                setError("Invalid Email!")
+                return
+            }
+
+            // Password validation
+            if (!validatePass(password)) {
+                setError("Your password must be 8-60 characters and include at least one uppercase letter, one lowercase letter, one number, and one special character.")
+                return
             }
         }
 

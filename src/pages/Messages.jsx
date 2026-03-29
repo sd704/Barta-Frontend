@@ -5,61 +5,32 @@ import { Settings, Menu } from "lucide-react"
 import SearchBar from "../components/SearchBar"
 import TabButton from "../components/TabButton"
 import ChatItem from "../components/ChatItem"
+import { useDispatch, useSelector } from "react-redux"
+import useFetchAllChats from "../hooks/useFetchAllChats"
+// import Chat from "./Chat"
 // import chats from "../utils/dummyChats"
-import Chat from "./Chat"
-import { GET_CHATS } from "../utils/ApiRoutes"
-
 
 const Messages = () => {
+    const chatStore = useSelector(store => store.messages ?? {})
+    const chats = Object.values(chatStore)
     const navigate = useNavigate()
-    const [showChat, setShowChat] = useState(false)
-    const [chats, setChats] = useState([])
     const [searchQuery, setSearchQuery] = useState("")
     const [activeTab, setActiveTab] = useState("ALL");
     const FILTERS = ["ALL", "UNREAD", "GROUPS", "ARCHIVE"]
-    let filteredChats = chats.filter(chat => chat.name.toLowerCase().includes(searchQuery.toLowerCase())).filter(chat => {
-        if (activeTab === "UNREAD") return chat.unread > 0
-        if (activeTab === "GROUPS") return false
-        if (activeTab === "ARCHIVE") return false
-        return true // ALL
-    }).sort((a, b) => new Date(b.time) - new Date(a.time))
+
+    const filteredChats = chats
+        .filter(chat => chat.userData.name.toLowerCase().includes(searchQuery.toLowerCase()))
+        .filter(chat => (chat.messages?.length ?? 0) > 0)
+        .filter(chat => {
+            if (activeTab === "UNREAD") return chat.unread > 0
+            if (activeTab === "GROUPS") return chat.isGroup
+            if (activeTab === "ARCHIVE") return chat.isArchive
+            return true // ALL
+        }).sort((a, b) => new Date(b.messages.at(-1).createdAt) - new Date(a.messages.at(-1).createdAt))
 
     const variants = { initial: { opacity: 0 }, animate: { opacity: 1, transition: { duration: 0.5, staggerChildren: 0.05 } } }
 
-
-    const fetchChats = async () => {
-        const res = await fetch(GET_CHATS, {
-            method: "GET",
-            headers: { "Content-Type": "application/json", },
-            credentials: "include"
-        })
-
-        const rawChats = await res.json()
-        const chats = rawChats?.data
-        const filter = chats.map(c => {
-            return {
-                id: c._id,
-                userData: c.userData,
-                name: c.userData.firstName + " " + c.userData.lastName,
-                message: ((c.userData._id === c.lastMessage.senderId) ? c.userData.firstName : 'You') + ': ' + c.lastMessage.text,
-                time: c.lastMessage.createdAt,
-                unread: 3,
-                isOnline: true,
-            }
-        })
-
-        setChats(filter)
-    }
-
-
-    useEffect(() => {
-        try {
-            fetchChats()
-        } catch (err) {
-            console.error(err)
-        }
-    }, [])
-
+    useFetchAllChats()
 
     return (
         <div className="h-screen flex justify-center">
@@ -120,11 +91,13 @@ const Messages = () => {
 
                 {/* Chat List */}
                 <motion.div variants={variants} initial="initial" animate="animate" className="py-4 px-6 flex-1 overflow-y-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
-                    {filteredChats.map(chat => (
-                        <ChatItem key={chat.id} userData={chat.userData} name={chat.name} message={chat.message} time={chat.time} unread={chat.unread} isOnline={chat.isOnline}
+                    {filteredChats.map(chat => {
+                        const lastMessage = chat.messages.at(-1)
+                        const text = ((chat.userData._id === lastMessage.senderId) ? chat.userData.firstName : 'You') + ': ' + lastMessage.text
+                        return <ChatItem key={chat.chatId} userData={chat.userData} message={text} time={lastMessage.createdAt} unread={chat.unread} isOnline={chat.isOnline}
                             onClick={() => navigate(`/messages/${chat.userData._id}`)}
                         />
-                    ))}
+                    })}
 
                     {/* No Results Message */}
                     {filteredChats.length === 0 && (
@@ -140,8 +113,6 @@ const Messages = () => {
             <AnimatePresence mode="wait">
                 {/* ChatWindow will render here */}
                 <Outlet />
-
-                {/* {showChat && <Chat setShowChat={() => setShowChat(false)} />} */}
             </AnimatePresence>
         </div>
     )
