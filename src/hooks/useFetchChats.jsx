@@ -3,7 +3,7 @@ import { useDispatch } from "react-redux"
 import { fillConvo } from "../redux/messageSlice"
 import { useEffect } from "react"
 
-const useFetchChats = (targetUserId, loggedInUserId) => {
+const useFetchChats = (targetUserId, loggedInUserId, setLoading) => {
     const dispatch = useDispatch()
 
     const fetchChats = async () => {
@@ -35,6 +35,7 @@ const useFetchChats = (targetUserId, loggedInUserId) => {
 
             dispatch(fillConvo(chatObj))
         }
+        setLoading(false)
     }
 
     useEffect(() => {

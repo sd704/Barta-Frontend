@@ -24,11 +24,15 @@ const SideNavbar = () => {
         if (!loggedInUserId) { return }
 
         const socket = getSocket()
-        socket.emit("joinRoom", { loggedInUserId })
+        socket.emit("joinRoom")
 
         // Receiving msg from server
-        socket.on("messageReceived", ({ id, lastMessage, receiver }) => {
-            dispatch(addMsg({ id, lastMessage, receiver }))
+        socket.on("messageReceived", ({ chatId, lastMessage, receiver }) => {
+            dispatch(addMsg({ chatId, lastMessage, receiver }))
+        })
+
+        socket.on("connect_error", (err) => {
+            console.log(err) // "INVALID_TOKEN"
         })
 
         // When component unloads, disconnect socket

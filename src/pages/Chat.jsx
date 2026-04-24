@@ -1,16 +1,18 @@
 import { useParams, useNavigate } from "react-router-dom"
 import { useSelector } from "react-redux"
-import { useRef, useEffect } from "react"
+import { useRef, useEffect, useState } from "react"
 import { motion, AnimatePresence } from "motion/react"
 import ChatHeader from "../components/ChatHeader"
 import MessageBubble from "../components/MessageBubble"
 import ChatInputBox from "../components/ChatInputBox"
 import { getSocket } from "../utils/socket"
 import useFetchChats from "../hooks/useFetchChats"
+import LoadingDots from '../components/LoadingDots'
 // import dummyTexts from "../utils/dummyTexts"
 
 const Chat = () => {
     const navigate = useNavigate()
+    const [loading, setLoading] = useState(true)
     const { uid: targetUserId } = useParams()
     const loggedInUser = useSelector(store => store.user)
     const loggedInUserId = loggedInUser?._id
@@ -21,14 +23,16 @@ const Chat = () => {
 
     const handleSendMessage = (text) => {
         const socket = getSocket()
-        socket.emit("sendMessage", { loggedInUserId, targetUserId, text })
+        socket.emit("sendMessage", { targetUserId, text })
     }
 
     const scrollToBottom = () => { messagesEndRef.current?.scrollIntoView({ behavior: "smooth" }) }
 
+    useEffect(() => { setLoading(true) }, [targetUserId])
+
     useEffect(() => { scrollToBottom() }, [messages])
 
-    useFetchChats(targetUserId, loggedInUserId)
+    useFetchChats(targetUserId, loggedInUserId, setLoading)
 
     return (
         //<div className="h-screen bg-zinc-200">       
@@ -38,9 +42,11 @@ const Chat = () => {
             {/* Header */}
             <ChatHeader name={targetUserData?.name} uid={targetUserId} status="ONLINE" isOnline={true} avatar={targetUserData?.pfp} onBack={() => navigate("/messages")} />
 
+
+
             {/* Messages Container */}
             <div className="flex-1 overflow-y-auto py-4 px-6 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] ">
-                <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.5 }}>
+                {loading ? <LoadingDots /> : <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.5 }}>
 
                     {/* Date */}
                     <div className="flex items-center justify-center my-6">
@@ -54,7 +60,8 @@ const Chat = () => {
                         <MessageBubble key={message._id} text={message.text} time={message.createdAt} isSent={message.senderId === loggedInUserId} isRead={message.isRead || false} />
                     ))}
                     <div ref={messagesEndRef} />
-                </motion.div>
+                </motion.div>}
+
             </div>
 
             {/* Typing Indicator (optional) */}

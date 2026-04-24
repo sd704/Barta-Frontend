@@ -22,12 +22,12 @@ const messageSlice = createSlice({
             }
         },
         addMsg: (state, action) => {
-            const { id, lastMessage, receiver } = action.payload
+            const { chatId, lastMessage, receiver } = action.payload
             if (!receiver._id) return
 
             if (!state[receiver._id]) {
                 state[receiver._id] = {
-                    chatId: id,
+                    chatId,
                     isOnline: true,
                     unread: 3,
                     isGroup: false,
