@@ -2,7 +2,7 @@ import { motion } from "motion/react"
 import { ArrowLeft, Phone, Video, MoreVertical, User } from "lucide-react"
 import { useNavigate } from 'react-router-dom'
 
-const ChatHeader = ({ name, uid, status, isOnline, avatar, onBack }) => {
+const ChatHeader = ({ name, uid, isOnline, avatar, onBack }) => {
     const navigate = useNavigate()
 
     return (
@@ -37,7 +37,7 @@ const ChatHeader = ({ name, uid, status, isOnline, avatar, onBack }) => {
                         {/* Info */}
                         <div className="min-w-0">
                             <h2 className="font-mono font-bold text-sm tracking-wider text-zinc-900 group-hover:text-orange-600 truncate">{name}</h2>
-                            <p className="text-xs font-mono text-zinc-500">{status}</p>
+                            <p className="text-xs font-mono text-zinc-500">{isOnline ? "ONLINE" : "OFFLINE"}</p>
                         </div>
                     </div>
                 </div>

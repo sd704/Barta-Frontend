@@ -1,6 +1,7 @@
 import { NavLink, Outlet } from 'react-router-dom'
 import { useDispatch, useSelector } from "react-redux"
 import { useEffect } from "react"
+import { updateIsOnline } from "../redux/messageSlice"
 import { Newspaper, Users, MessageCircle, User, LogOut } from "lucide-react"
 import SideNavbarButton from './SideNavbarButton'
 import { getSocket } from "../utils/socket"
@@ -19,6 +20,9 @@ const SideNavbar = () => {
     const user = useSelector(store => store.user)
     const loggedInUserId = user?._id
     const pfp = user?.pfp
+    const chatStore = useSelector(store => store.messages ?? {})
+    const userIds = Object.keys(chatStore)
+    const userCount = userIds.length
 
     useEffect(() => {
         if (!loggedInUserId) { return }
@@ -35,9 +39,27 @@ const SideNavbar = () => {
             console.log(err) // "INVALID_TOKEN"
         })
 
+        const handleInitial = ({ uid, status }) => { dispatch(updateIsOnline({ uid, status })) }
+        const handleUpdate = ({ uid, status }) => { dispatch(updateIsOnline({ uid, status })) }
+
+        socket.on("presence:initial", handleInitial)
+        socket.on("presence:update", handleUpdate)
+
         // When component unloads, disconnect socket
-        return () => { socket.disconnect() }
+        return () => {
+            socket.off("presence:initial", handleInitial)
+            socket.off("presence:update", handleUpdate)
+            socket.disconnect()
+        }
     }, [loggedInUserId])
+
+    useEffect(() => {
+        const socket = getSocket()
+
+        if (userIds && userIds.length > 0) {
+            socket.emit("presence:subscribe", { userIds })
+        }
+    }, [userCount])
 
     return (
         <div className='h-screen w-screen bg-zinc-200'

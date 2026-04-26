@@ -40,7 +40,7 @@ const Chat = () => {
             key="chat-window" initial={{ opacity: 0, x: -100 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -100 }} transition={{ duration: 0.3 }}>
 
             {/* Header */}
-            <ChatHeader name={targetUserData?.name} uid={targetUserId} status="ONLINE" isOnline={true} avatar={targetUserData?.pfp} onBack={() => navigate("/messages")} />
+            <ChatHeader name={targetUserData?.name} uid={targetUserId} isOnline={targetUserData?.isOnline} avatar={targetUserData?.pfp} onBack={() => navigate("/messages")} />
 
 
 

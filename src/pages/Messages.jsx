@@ -7,17 +7,25 @@ import TabButton from "../components/TabButton"
 import ChatItem from "../components/ChatItem"
 import { useDispatch, useSelector } from "react-redux"
 import useFetchAllChats from "../hooks/useFetchAllChats"
+import useNetworkStatus from "../hooks/useNetworkStatus"
 // import Chat from "./Chat"
 // import chats from "../utils/dummyChats"
 
 const Messages = () => {
+    const networkStatus = useNetworkStatus()
     const chatStore = useSelector(store => store.messages ?? {})
     const chats = Object.values(chatStore)
+    const userCount = chats?.length
     const navigate = useNavigate()
     const [searchQuery, setSearchQuery] = useState("")
     const [activeTab, setActiveTab] = useState("ALL");
     const FILTERS = ["ALL", "UNREAD", "GROUPS", "ARCHIVE"]
-
+    let onlineUserCount = 0
+    let unreadChatsCount = 0
+    chats.forEach(c => {
+        if (c.userData.isOnline) { onlineUserCount += 1 }
+        if (parseInt(c.unread, 10) > 0) { unreadChatsCount += 1 }
+    })
     const filteredChats = chats
         .filter(chat => chat.userData.name.toLowerCase().includes(searchQuery.toLowerCase()))
         .filter(chat => (chat.messages?.length ?? 0) > 0)
@@ -30,7 +38,7 @@ const Messages = () => {
 
     const variants = { initial: { opacity: 0 }, animate: { opacity: 1, transition: { duration: 0.5, staggerChildren: 0.05 } } }
 
-    useFetchAllChats()
+    useFetchAllChats(userCount)
 
     return (
         <div className="h-screen flex justify-center">
@@ -69,11 +77,12 @@ const Messages = () => {
                 <motion.div className="py-2 px-6 rounded-2xl">
                     <div className="flex items-center justify-between">
                         <div className="flex items-center gap-3">
-                            <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse" style={{ boxShadow: "0 0 8px rgba(34,197,94,0.6)" }} />
-                            <span className="text-xs font-mono text-zinc-600 tracking-wider">ONLINE</span>
+                            <div className={`w-2 h-2 ${networkStatus ? "bg-green-500 animate-pulse" : "bg-zinc-600"} rounded-full`}
+                                style={networkStatus ? { boxShadow: "0 0 8px rgba(34,197,94,0.6)" } : {}} />
+                            <span className="text-xs font-mono text-zinc-600 tracking-wider">{networkStatus ? "ONLINE" : "OFFLINE"}</span>
                         </div>
                         <div className="flex gap-4 text-xs font-mono text-zinc-500">
-                            <span>24 ACTIVE</span><span className="text-zinc-300">|</span><span>3 UNREAD</span>
+                            <span>{`${onlineUserCount} ACTIVE`}</span><span className="text-zinc-300">|</span><span>{`${unreadChatsCount} UNREAD`}</span>
                         </div>
                     </div>
                 </motion.div>
@@ -94,7 +103,7 @@ const Messages = () => {
                     {filteredChats.map(chat => {
                         const lastMessage = chat.messages.at(-1)
                         const text = ((chat.userData._id === lastMessage.senderId) ? chat.userData.firstName : 'You') + ': ' + lastMessage.text
-                        return <ChatItem key={chat.chatId} userData={chat.userData} message={text} time={lastMessage.createdAt} unread={chat.unread} isOnline={chat.isOnline}
+                        return <ChatItem key={chat.chatId} userData={chat.userData} message={text} time={lastMessage.createdAt} unread={chat.unread} isOnline={chat.userData.isOnline}
                             onClick={() => navigate(`/messages/${chat.userData._id}`)}
                         />
                     })}

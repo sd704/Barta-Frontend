@@ -41,6 +41,12 @@ const messageSlice = createSlice({
             }
             state[receiver._id].messages.push(lastMessage)
         },
+        updateIsOnline: (state, action) => {
+            const { uid, status } = action.payload
+            if (!uid || !state[uid]) return
+            console.log(`${uid} online status: ${status}`)
+            state[uid].userData.isOnline = status
+        },
         removeMsg: (state, action) => {
             const id = action.payload
             delete state[id]
@@ -51,5 +57,5 @@ const messageSlice = createSlice({
     }
 })
 
-export const { addMsg, fillMsgs, fillConvo, removeMsg, clearMsgs } = messageSlice.actions
+export const { addMsg, fillMsgs, fillConvo, updateIsOnline, removeMsg, clearMsgs } = messageSlice.actions
 export default messageSlice.reducer

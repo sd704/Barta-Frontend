@@ -3,7 +3,7 @@ import { fillMsgs } from "../redux/messageSlice"
 import { useDispatch } from "react-redux"
 import { useEffect } from "react"
 
-const useFetchAllChats = () => {
+const useFetchAllChats = (userCount) => {
     const dispatch = useDispatch()
 
     const fetchAllChats = async () => {
@@ -17,14 +17,14 @@ const useFetchAllChats = () => {
         const chats = rawChats?.data // { _id, userData, lastMessage }
         const allMessages = chats.map(c => {
             return {
-                chatId: c._id,
-                isOnline: true,
+                chatId: c._id,                
                 unread: 3,
                 isGroup: false,
                 isArchive: false,
                 userData: {
                     ...c.userData,
                     name: c.userData.firstName + " " + c.userData.lastName,
+                    isOnline: false,
                 },
                 messages: [c.lastMessage]
             }
@@ -35,7 +35,9 @@ const useFetchAllChats = () => {
 
     useEffect(() => {
         try {
-            fetchAllChats()
+            if (userCount <= 0) {
+                fetchAllChats()
+            }
         } catch (err) {
             console.error(err)
         }
