@@ -30,7 +30,8 @@ const NotFound = () => {
                             <div className="font-mono text-[120px] leading-none tracking-tighter text-[#2d2d2d] select-none font-bold"
                                 style={{ textShadow: "4px 4px 8px rgba(0,0,0,0.2), -2px -2px 6px rgba(255,255,255,0.9)" }}>4</div>
                         </div>
-
+                        {/* <span className="font-mono tracking-widest text-xs text-orange-600 uppercase">Page Not Found</span> */}
+                        
                         {/* Status indicator */}
                         <div className="absolute -bottom-3 left-1/2 -translate-x-1/2 bg-zinc-200 px-6 py-2 rounded-xl shadow-[6px_6px_12px_#c5c5c5,-6px_-6px_12px_#ffffff]">
                             <span className="font-mono text-xs text-[#666] uppercase">Page Not Found</span>

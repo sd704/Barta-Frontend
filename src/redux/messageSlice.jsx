@@ -41,10 +41,21 @@ const messageSlice = createSlice({
             }
             state[receiver._id].messages.push(lastMessage)
         },
+        markAsSeen: (state, action) => {
+            const { receiverId, stringChatId, stringMessageIds } = action.payload
+            if (!receiverId || !stringChatId) return
+
+            if (state[receiverId]?.chatId === stringChatId) {
+                state[receiverId].messages.forEach(msg => {
+                    if (stringMessageIds.includes(msg._id) && !msg.isRead)
+                        msg.isRead = true
+                })
+            }
+        },
         updateIsOnline: (state, action) => {
             const { uid, status } = action.payload
+            // console.log(`${uid} online status: ${status}`)
             if (!uid || !state[uid]) return
-            console.log(`${uid} online status: ${status}`)
             state[uid].userData.isOnline = status
         },
         removeMsg: (state, action) => {
@@ -57,5 +68,5 @@ const messageSlice = createSlice({
     }
 })
 
-export const { addMsg, fillMsgs, fillConvo, updateIsOnline, removeMsg, clearMsgs } = messageSlice.actions
+export const { addMsg, fillMsgs, fillConvo, markAsSeen, updateIsOnline, removeMsg, clearMsgs } = messageSlice.actions
 export default messageSlice.reducer

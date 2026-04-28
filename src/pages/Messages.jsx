@@ -12,7 +12,11 @@ import useNetworkStatus from "../hooks/useNetworkStatus"
 // import chats from "../utils/dummyChats"
 
 const Messages = () => {
-    const networkStatus = useNetworkStatus()
+    const user = useSelector(store => store.user)
+
+    // Show online if network and socket are both connected
+    const networkStatus = useNetworkStatus() && user?.isOnline
+
     const chatStore = useSelector(store => store.messages ?? {})
     const chats = Object.values(chatStore)
     const userCount = chats?.length

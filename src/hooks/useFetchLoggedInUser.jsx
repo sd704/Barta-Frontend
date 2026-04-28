@@ -15,7 +15,9 @@ const useFetchLoggedInUser = (setLoading) => {
                 credentials: "include"
             })
             const data = await res.json()
-            dispatch(addUser(data?.data))
+            let obj = data?.data
+            obj["isOnline"] = false
+            dispatch(addUser(obj))
         } catch (err) {
             // console.error(err)
         } finally {

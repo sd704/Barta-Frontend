@@ -19,11 +19,16 @@ const userSlice = createSlice({
                 }
             })
         },
+        updateNetwork: (state, action) => {
+            if (!state) return
+
+            state["isOnline"] = action.payload
+        },
         removeUser: (state, action) => {
             return null
         }
     }
 })
 
-export const { addUser, updateUser, removeUser } = userSlice.actions
+export const { addUser, updateUser, updateNetwork, removeUser } = userSlice.actions
 export default userSlice.reducer
