@@ -14,11 +14,11 @@ const useFetchAllChats = (userCount) => {
         })
 
         const rawChats = await res.json()
-        const chats = rawChats?.data // { _id, userData, lastMessage }
+        const chats = rawChats?.data // [{ _id, userData, lastMessage, unreadCount }]
         const allMessages = chats.map(c => {
             return {
-                chatId: c._id,                
-                unread: 3,
+                chatId: c._id,
+                unread: c.unreadCount,
                 isGroup: false,
                 isArchive: false,
                 userData: {

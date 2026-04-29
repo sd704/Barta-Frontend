@@ -22,14 +22,16 @@ const messageSlice = createSlice({
             }
         },
         addMsg: (state, action) => {
-            const { chatId, lastMessage, receiver } = action.payload
+            const { chatId, lastMessage, receiver, loggedInUserId } = action.payload
             if (!receiver._id) return
 
+            // "receiver" is not technically receiver of "lastMessage" message
+            // Its just the other person in this convo beside the loggedInUser
             if (!state[receiver._id]) {
                 state[receiver._id] = {
                     chatId,
                     isOnline: true,
-                    unread: 3,
+                    unread: (lastMessage.senderId != loggedInUserId) ? 1 : 0,
                     isGroup: false,
                     isArchive: false,
                     userData: {
@@ -40,16 +42,25 @@ const messageSlice = createSlice({
                 }
             }
             state[receiver._id].messages.push(lastMessage)
+            state[receiver._id].unread += (lastMessage.senderId != loggedInUserId) ? 1 : 0
         },
         markAsSeen: (state, action) => {
-            const { receiverId, stringChatId, stringMessageIds } = action.payload
+            const { receiverId, msgReceiverId, stringChatId, stringMessageIds, loggedInUserId } = action.payload
             if (!receiverId || !stringChatId) return
 
+            // "receiver" is not technically receiver of "stringMessageIds"
+            // Its just the other person in this convo beside the loggedInUser
             if (state[receiverId]?.chatId === stringChatId) {
+                let isReadCount = 0
                 state[receiverId].messages.forEach(msg => {
-                    if (stringMessageIds.includes(msg._id) && !msg.isRead)
+                    if (stringMessageIds.includes(msg._id) && !msg.isRead) {
                         msg.isRead = true
+                        // Not all "stringMessageIds" will be marked as inRead=true [possibility]
+                        // so "isReadCount" is inside this condition
+                        if (msgReceiverId === loggedInUserId) { isReadCount += 1 }
+                    }
                 })
+                state[receiverId].unread -= isReadCount
             }
         },
         updateIsOnline: (state, action) => {

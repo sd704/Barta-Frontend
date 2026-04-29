@@ -13,6 +13,7 @@ import LoadingDots from '../components/LoadingDots'
 const Chat = () => {
     const navigate = useNavigate()
     const [loading, setLoading] = useState(true)
+    const [isTyping, setIsTyping] = useState(false)
     const { uid: targetUserId } = useParams()
     const loggedInUser = useSelector(store => store.user)
     const loggedInUserId = loggedInUser?._id
@@ -28,7 +29,19 @@ const Chat = () => {
 
     const scrollToBottom = () => { messagesEndRef.current?.scrollIntoView({ behavior: "smooth" }) }
 
-    useEffect(() => { setLoading(true) }, [targetUserId])
+    useEffect(() => {
+        setLoading(true)
+        const socket = getSocket()
+        const handleTyping = ({ userId, status }) => {
+            if (userId === targetUserId) {
+                setIsTyping(status)
+                scrollToBottom()
+            }
+        }
+        socket.on("typing", handleTyping)
+
+        return () => { socket.off("typing", handleTyping) }
+    }, [targetUserId])
 
     useEffect(() => {
         scrollToBottom()
@@ -52,8 +65,6 @@ const Chat = () => {
             {/* Header */}
             <ChatHeader name={targetUserData?.name} uid={targetUserId} isOnline={targetUserData?.isOnline} avatar={targetUserData?.pfp} onBack={() => navigate("/messages")} />
 
-
-
             {/* Messages Container */}
             <div className="flex-1 overflow-y-auto py-4 px-6 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] ">
                 {loading ? <LoadingDots /> : <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.5 }}>
@@ -69,25 +80,29 @@ const Chat = () => {
                     {messages.map((message, index) => (
                         <MessageBubble key={message._id} text={message.text} time={message.createdAt} isSent={message.senderId === loggedInUserId} isRead={message.isRead || false} />
                     ))}
+
+                    {/* Typing Indicator (optional) */}
+                    {isTyping && <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: "auto" }} className="mb-4 flex items-center gap-2">
+                        <div className="flex items-center gap-2">
+                            <div className="px-4 py-3 bg-zinc-200 rounded-xl rounded-bl-none inline-flex gap-1"
+                                style={{ boxShadow: "8px 8px 16px rgba(0,0,0,0.15), -6px -6px 12px rgba(255,255,255,0.7)" }}>
+                                <motion.div className="w-2 h-2 bg-zinc-500 rounded-full" animate={{ opacity: [0.3, 1, 0.3] }} transition={{ duration: 1.5, repeat: Infinity, delay: 0 }} />
+                                <motion.div className="w-2 h-2 bg-zinc-500 rounded-full" animate={{ opacity: [0.3, 1, 0.3] }} transition={{ duration: 1.5, repeat: Infinity, delay: 0.2 }} />
+                                <motion.div className="w-2 h-2 bg-zinc-500 rounded-full" animate={{ opacity: [0.3, 1, 0.3] }} transition={{ duration: 1.5, repeat: Infinity, delay: 0.4 }} />
+                            </div>
+                        </div>
+                        <span className="text-xs font-mono text-zinc-500">{`${targetUserData.firstName} is typing...`}</span>
+                    </motion.div>}
+
                     <div ref={messagesEndRef} />
                 </motion.div>}
 
             </div>
 
-            {/* Typing Indicator (optional) */}
-            <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: "auto" }} className="px-6 my-4">
-                <div className="flex items-center gap-2 mb-2">
-                    <div className="px-4 py-3 bg-zinc-200 rounded-xl rounded-bl-none inline-flex gap-1"
-                        style={{ boxShadow: "8px 8px 16px rgba(0,0,0,0.15), -6px -6px 12px rgba(255,255,255,0.7)" }}>
-                        <motion.div className="w-2 h-2 bg-zinc-500 rounded-full" animate={{ opacity: [0.3, 1, 0.3] }} transition={{ duration: 1.5, repeat: Infinity, delay: 0 }} />
-                        <motion.div className="w-2 h-2 bg-zinc-500 rounded-full" animate={{ opacity: [0.3, 1, 0.3] }} transition={{ duration: 1.5, repeat: Infinity, delay: 0.2 }} />
-                        <motion.div className="w-2 h-2 bg-zinc-500 rounded-full" animate={{ opacity: [0.3, 1, 0.3] }} transition={{ duration: 1.5, repeat: Infinity, delay: 0.4 }} />
-                    </div>
-                </div>
-            </motion.div>
+
 
             {/* Input Area */}
-            <ChatInputBox onSend={handleSendMessage} />
+            <ChatInputBox onSend={handleSendMessage} targetUserId={targetUserId} />
 
         </motion.div>
         //</div>

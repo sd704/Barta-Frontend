@@ -1,11 +1,13 @@
 import { motion } from "motion/react"
-import { useState } from "react"
+import { useState, useRef } from "react"
 import { Send, Paperclip, Smile, Mic } from "lucide-react"
+import { getSocket } from "../utils/socket"
 
-const ChatInputBox = ({ onSend }) => {
-    const [message, setMessage] = useState("");
-    const [isFocused, setIsFocused] = useState(false);
-    const [isRecording, setIsRecording] = useState(false);
+const ChatInputBox = ({ onSend, targetUserId }) => {
+    const [message, setMessage] = useState("")
+    const [isFocused, setIsFocused] = useState(false)
+    const [isRecording, setIsRecording] = useState(false)
+    const typingTimeoutRef = useRef(null)
 
     const handleSend = () => {
         if (message.trim()) {
@@ -19,6 +21,22 @@ const ChatInputBox = ({ onSend }) => {
             e.preventDefault()
             handleSend()
         }
+    }
+
+    const handleTyping = () => {
+        const socket = getSocket()
+        socket.emit("typing", { targetUserId, status: true })
+
+        if (typingTimeoutRef.current) { clearTimeout(typingTimeoutRef.current) }
+
+        typingTimeoutRef.current = setTimeout(() => {
+            socket.emit("typing", { targetUserId, status: false })
+        }, 1000)
+    }
+
+    const handleOnChange = (e) => {
+        setMessage(e.target.value)
+        handleTyping()
     }
 
     return (
@@ -46,7 +64,7 @@ const ChatInputBox = ({ onSend }) => {
                 {/* Input Field */}
                 <motion.textarea
                     value={message}
-                    onChange={(e) => setMessage(e.target.value)}
+                    onChange={handleOnChange}
                     onKeyDown={handleKeyPress}
                     onFocus={() => setIsFocused(true)}
                     onBlur={() => setIsFocused(false)}

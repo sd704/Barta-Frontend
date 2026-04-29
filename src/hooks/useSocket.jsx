@@ -14,17 +14,19 @@ const useSocket = (loggedInUserId) => {
         if (!loggedInUserId) { return }
 
         const socket = getSocket()
-        socket.emit("joinRoom")
+
+        const onConnect = () => { socket.emit("joinRoom") }
+        socket.on("connect", onConnect)
 
         // Receiving msg from server
         const addMsgHandler = ({ chatId, lastMessage, receiver }) => {
-            dispatch(addMsg({ chatId, lastMessage, receiver }))
+            dispatch(addMsg({ chatId, lastMessage, receiver, loggedInUserId }))
         }
         socket.on("messageReceived", addMsgHandler)
 
         // Update messages as seen
-        const msgSeenHandler = ({ receiverId, stringChatId, stringMessageIds }) => {
-            dispatch(markAsSeen({ receiverId, stringChatId, stringMessageIds }))
+        const msgSeenHandler = ({ receiverId, msgReceiverId, stringChatId, stringMessageIds }) => {
+            dispatch(markAsSeen({ receiverId, msgReceiverId, stringChatId, stringMessageIds, loggedInUserId }))
         }
         socket.on("msgSeenSuccess", msgSeenHandler)
 
@@ -49,6 +51,7 @@ const useSocket = (loggedInUserId) => {
 
         // When component unloads, disconnect socket
         return () => {
+            socket.off("connect", onConnect)
             socket.off("messageReceived", addMsgHandler)
             socket.off("msgSeenSuccess", msgSeenHandler)
             socket.off("connect_error")
