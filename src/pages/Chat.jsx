@@ -22,6 +22,47 @@ const Chat = () => {
     const messagesEndRef = useRef(null)
     const targetUserData = chatStore?.[targetUserId]?.userData
 
+    const getDateLabel = (msgTime) => {
+        const now = new Date()
+        const msgDate = new Date(msgTime)
+
+        const todayStr = now.toDateString()
+        const msgStr = msgDate.toDateString()
+
+        if (msgStr === todayStr) return "Today"
+
+        const yesterday = new Date()
+        yesterday.setDate(now.getDate() - 1)
+
+        if (msgStr === yesterday.toDateString()) return "Yesterday"
+
+        const diffDays = Math.floor((now - msgDate) / (1000 * 60 * 60 * 24))
+
+        // undefined -> tells the browser: Use the user’s system/browser locale automatically
+
+        if (diffDays < 7) { return msgDate.toLocaleDateString(undefined, { weekday: "long" }) }
+
+        return msgDate.toLocaleDateString(undefined, { day: "2-digit", month: "short", year: "numeric" })
+    }
+
+    const addDateSeparators = (messages) => {
+        const result = []
+        let lastDate = null
+
+        messages.forEach((msg) => {
+            const msgDate = new Date(msg.createdAt).toDateString()
+
+            if (msgDate !== lastDate) {
+                result.push({ type: "DATE", data: getDateLabel(msg.createdAt) })
+                lastDate = msgDate
+            }
+
+            result.push({ type: "MESSAGE", data: msg })
+        })
+
+        return result
+    }
+
     const handleSendMessage = (text) => {
         const socket = getSocket()
         socket.emit("sendMessage", { targetUserId, text })
@@ -35,7 +76,8 @@ const Chat = () => {
         const handleTyping = ({ userId, status }) => {
             if (userId === targetUserId) {
                 setIsTyping(status)
-                scrollToBottom()
+                if (status)
+                    scrollToBottom()
             }
         }
         socket.on("typing", handleTyping)
@@ -69,30 +111,39 @@ const Chat = () => {
             <div className="flex-1 overflow-y-auto py-4 px-6 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] ">
                 {loading ? <LoadingDots /> : <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.5 }}>
 
-                    {/* Date */}
-                    <div className="flex items-center justify-center my-6">
-                        <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }}
-                            className="px-4 py-2 bg-zinc-200 rounded-full">
-                            <span className="text-xs font-mono text-zinc-500 tracking-widest">TODAY</span>
-                        </motion.div>
-                    </div>
-
-                    {messages.map((message, index) => (
-                        <MessageBubble key={message._id} text={message.text} time={message.createdAt} isSent={message.senderId === loggedInUserId} isRead={message.isRead || false} />
-                    ))}
+                    {
+                        addDateSeparators(messages).map(({ type, data }) => {
+                            if (type === "DATE") {
+                                return <div className="flex items-center justify-center my-6">
+                                    <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }}
+                                        className="px-4 py-2 bg-zinc-200 rounded-full">
+                                        <span className="text-xs font-mono text-zinc-500 tracking-widest">{data}</span>
+                                    </motion.div>
+                                </div>
+                            }
+                            const message = data
+                            const timeStamp = new Date(message.createdAt)
+                            const strTime = timeStamp.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit", hour12: true })
+                            return <MessageBubble key={message._id} text={message.text} time={strTime} isSent={message.senderId === loggedInUserId} isRead={message.isRead || false} />
+                        })
+                    }
 
                     {/* Typing Indicator (optional) */}
-                    {isTyping && <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: "auto" }} className="mb-4 flex items-center gap-2">
-                        <div className="flex items-center gap-2">
-                            <div className="px-4 py-3 bg-zinc-200 rounded-xl rounded-bl-none inline-flex gap-1"
-                                style={{ boxShadow: "8px 8px 16px rgba(0,0,0,0.15), -6px -6px 12px rgba(255,255,255,0.7)" }}>
-                                <motion.div className="w-2 h-2 bg-zinc-500 rounded-full" animate={{ opacity: [0.3, 1, 0.3] }} transition={{ duration: 1.5, repeat: Infinity, delay: 0 }} />
-                                <motion.div className="w-2 h-2 bg-zinc-500 rounded-full" animate={{ opacity: [0.3, 1, 0.3] }} transition={{ duration: 1.5, repeat: Infinity, delay: 0.2 }} />
-                                <motion.div className="w-2 h-2 bg-zinc-500 rounded-full" animate={{ opacity: [0.3, 1, 0.3] }} transition={{ duration: 1.5, repeat: Infinity, delay: 0.4 }} />
-                            </div>
-                        </div>
-                        <span className="text-xs font-mono text-zinc-500">{`${targetUserData.firstName} is typing...`}</span>
-                    </motion.div>}
+                    <AnimatePresence mode="wait">
+                        {isTyping &&
+                            <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: "auto" }} exit={{ opacity: 0, height: 0 }} transition={{ duration: 0.3 }} className="mb-4 flex items-center gap-2">
+                                <div className="flex items-center gap-2">
+                                    <div className="px-4 py-3 bg-zinc-200 rounded-xl rounded-bl-none inline-flex gap-1 items-center"
+                                        style={{ boxShadow: "8px 8px 16px rgba(0,0,0,0.15), -6px -6px 12px rgba(255,255,255,0.7)" }}>
+                                        <span className="mr-1 text-sm font-mono text-orange-600">{`${targetUserData.firstName} is typing`}</span>
+                                        <motion.div className="w-2 h-2 bg-orange-600 rounded-full" animate={{ opacity: [0.3, 1, 0.3] }} transition={{ duration: 1.5, repeat: Infinity, delay: 0 }} />
+                                        <motion.div className="w-2 h-2 bg-orange-600 rounded-full" animate={{ opacity: [0.3, 1, 0.3] }} transition={{ duration: 1.5, repeat: Infinity, delay: 0.2 }} />
+                                        <motion.div className="w-2 h-2 bg-orange-600 rounded-full" animate={{ opacity: [0.3, 1, 0.3] }} transition={{ duration: 1.5, repeat: Infinity, delay: 0.4 }} />
+                                    </div>
+                                </div>
+
+                            </motion.div>}
+                    </AnimatePresence>
 
                     <div ref={messagesEndRef} />
                 </motion.div>}

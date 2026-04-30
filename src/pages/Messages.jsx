@@ -42,6 +42,32 @@ const Messages = () => {
 
     const variants = { initial: { opacity: 0 }, animate: { opacity: 1, transition: { duration: 0.5, staggerChildren: 0.05 } } }
 
+    const getDateLabel = (msgTime) => {
+        const now = new Date()
+        const msgDate = new Date(msgTime)
+
+        const todayStr = now.toDateString()
+        const msgStr = msgDate.toDateString()
+
+        if (msgStr === todayStr) {
+            const strTodayTime = msgDate.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit", hour12: true })
+            return strTodayTime
+        }
+
+        const yesterday = new Date()
+        yesterday.setDate(now.getDate() - 1)
+
+        if (msgStr === yesterday.toDateString()) return "Yesterday"
+
+        const diffDays = Math.floor((now - msgDate) / (1000 * 60 * 60 * 24))
+
+        // undefined -> tells the browser: Use the user’s system/browser locale automatically
+
+        if (diffDays < 7) { return msgDate.toLocaleDateString(undefined, { weekday: "long" }) }
+
+        return msgDate.toLocaleDateString(undefined, { day: "2-digit", month: "short", year: "numeric" })
+    }
+
     useFetchAllChats(userCount)
 
     return (
@@ -107,7 +133,7 @@ const Messages = () => {
                     {filteredChats.map(chat => {
                         const lastMessage = chat.messages.at(-1)
                         const text = ((chat.userData._id === lastMessage.senderId) ? chat.userData.firstName : 'You') + ': ' + lastMessage.text
-                        return <ChatItem key={chat.chatId} userData={chat.userData} message={text} time={lastMessage.createdAt} unread={chat.unread} isOnline={chat.userData.isOnline}
+                        return <ChatItem key={chat.chatId} userData={chat.userData} message={text} time={getDateLabel(lastMessage.createdAt)} unread={chat.unread} isOnline={chat.userData.isOnline}
                             onClick={() => navigate(`/messages/${chat.userData._id}`)}
                         />
                     })}
