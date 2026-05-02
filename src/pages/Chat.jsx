@@ -8,6 +8,7 @@ import ChatInputBox from "../components/ChatInputBox"
 import { getSocket } from "../utils/socket"
 import useFetchChats from "../hooks/useFetchChats"
 import LoadingDots from '../components/LoadingDots'
+import getDateLabel from '../utils/getDateLabel'
 // import dummyTexts from "../utils/dummyTexts"
 
 const Chat = () => {
@@ -17,33 +18,11 @@ const Chat = () => {
     const { uid: targetUserId } = useParams()
     const loggedInUser = useSelector(store => store.user)
     const loggedInUserId = loggedInUser?._id
+    const peopleStore = useSelector(store => store.people ?? {})
     const chatStore = useSelector(store => store.messages ?? {})
     const messages = chatStore?.[targetUserId]?.messages ?? []
     const messagesEndRef = useRef(null)
-    const targetUserData = chatStore?.[targetUserId]?.userData
-
-    const getDateLabel = (msgTime) => {
-        const now = new Date()
-        const msgDate = new Date(msgTime)
-
-        const todayStr = now.toDateString()
-        const msgStr = msgDate.toDateString()
-
-        if (msgStr === todayStr) return "Today"
-
-        const yesterday = new Date()
-        yesterday.setDate(now.getDate() - 1)
-
-        if (msgStr === yesterday.toDateString()) return "Yesterday"
-
-        const diffDays = Math.floor((now - msgDate) / (1000 * 60 * 60 * 24))
-
-        // undefined -> tells the browser: Use the user’s system/browser locale automatically
-
-        if (diffDays < 7) { return msgDate.toLocaleDateString(undefined, { weekday: "long" }) }
-
-        return msgDate.toLocaleDateString(undefined, { day: "2-digit", month: "short", year: "numeric" })
-    }
+    const targetUserData = peopleStore?.[targetUserId]
 
     const addDateSeparators = (messages) => {
         const result = []
@@ -114,7 +93,7 @@ const Chat = () => {
                     {
                         addDateSeparators(messages).map(({ type, data }) => {
                             if (type === "DATE") {
-                                return <div className="flex items-center justify-center my-6">
+                                return <div className="flex items-center justify-center my-6" key={data}>
                                     <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }}
                                         className="px-4 py-2 bg-zinc-200 rounded-full">
                                         <span className="text-xs font-mono text-zinc-500 tracking-widest">{data}</span>
@@ -149,8 +128,6 @@ const Chat = () => {
                 </motion.div>}
 
             </div>
-
-
 
             {/* Input Area */}
             <ChatInputBox onSend={handleSendMessage} targetUserId={targetUserId} />

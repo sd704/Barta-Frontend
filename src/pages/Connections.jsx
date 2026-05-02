@@ -6,19 +6,27 @@ import TabButtonAccent from "../components/TabButtonAccent"
 import UserCard from "../components/UserCard"
 import useFetchAllConnections from "../hooks/useFetchAllConnections"
 import LoadingDots from '../components/LoadingDots'
+import getActiveList from '../utils/getActiveList'
+
+const FILTERS = ["DISCOVER", "RECEIVED", "PENDING", "CONNECTED", "BLOCKED"] // Tabs List
 
 const Connections = () => {
     const [loading, setLoading] = useState(true)
-    const connectionStore = useSelector(store => store.connection)
-    const FILTERS = ["DISCOVER", "RECEIVED", "PENDING", "CONNECTED", "BLOCKED"]
-    const [search, setSearch] = useState("")
-    const [activeTab, setActiveTab] = useState(0)
+    const loggedInUser = useSelector(store => store.user)
+    const loggedInUserId = loggedInUser?._id
+    const peopleStore = useSelector(store => store.people ?? {})
+    const [search, setSearch] = useState("") // Search String
+    const [activeTab, setActiveTab] = useState(0) // Tab Index in Filters array
     const activeKey = FILTERS[activeTab].toLowerCase()
-    let activeList = Object.values(connectionStore[activeKey] || {})
-    let filteredList = activeList.filter(person => `${person.firstName} ${person.lastName}`.toLowerCase().includes(search.toLowerCase()))
-    const variants = { initial: { opacity: 0 }, animate: { opacity: 1, transition: { duration: 0.5, staggerChildren: 0.05 } } }
 
-    useFetchAllConnections(setLoading)
+    let activeList = getActiveList(activeKey, peopleStore, loggedInUserId).sort((a, b) => a.name.localeCompare(b.name))
+
+    // Filter for search
+    let filteredList = activeList.filter(person => `${person.firstName} ${person.lastName}`.toLowerCase().includes(search.toLowerCase()))
+
+    const variants = { initial: { opacity: 0 }, animate: { opacity: 1, transition: { duration: 0.5, staggerChildren: 0.05 } } } // For AnimatePresence
+
+    useFetchAllConnections(setLoading, loggedInUserId)
 
     if (loading) return (<LoadingDots />)
     return (
@@ -41,7 +49,7 @@ const Connections = () => {
                     {FILTERS.map((tab, i) => <TabButtonAccent
                         key={tab}
                         label={tab}
-                        count={Object.keys(connectionStore[FILTERS[i].toLowerCase()] || {}).length}
+                        count={getActiveList(FILTERS[i].toLowerCase(), peopleStore, loggedInUserId).length}
                         isActive={i === activeTab}
                         onClick={() => setActiveTab(i)}
                     />)}

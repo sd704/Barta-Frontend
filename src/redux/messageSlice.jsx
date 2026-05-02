@@ -5,10 +5,18 @@ const messageSlice = createSlice({
     initialState: {},
     reducers: {
         fillMsgs: (state, action) => {
-            const allMessages = action.payload // [{},{},{}]
-            allMessages.forEach(msg => {
-                if (msg.userData._id && !state[msg.userData._id]) {
-                    state[msg.userData._id] = msg // {}
+            const chats = action.payload // [{ _id, userData, lastMessage, unreadCount }, {...}, {...}]
+
+            chats.forEach(item => {
+                if (item.userData._id && !state[item.userData._id]) {
+                    state[item.userData._id] = {
+                        chatId: item._id,
+                        uid: item.userData._id,
+                        unread: item.unreadCount,
+                        isGroup: false,
+                        isArchive: false,
+                        messages: [item.lastMessage]
+                    }
                 }
             })
         },
@@ -63,12 +71,6 @@ const messageSlice = createSlice({
                 state[receiverId].unread -= isReadCount
             }
         },
-        updateIsOnline: (state, action) => {
-            const { uid, status } = action.payload
-            // console.log(`${uid} online status: ${status}`)
-            if (!uid || !state[uid]) return
-            state[uid].userData.isOnline = status
-        },
         removeMsg: (state, action) => {
             const id = action.payload
             delete state[id]
@@ -79,5 +81,5 @@ const messageSlice = createSlice({
     }
 })
 
-export const { addMsg, fillMsgs, fillConvo, markAsSeen, updateIsOnline, removeMsg, clearMsgs } = messageSlice.actions
+export const { addMsg, fillMsgs, fillConvo, markAsSeen, removeMsg, clearMsgs } = messageSlice.actions
 export default messageSlice.reducer

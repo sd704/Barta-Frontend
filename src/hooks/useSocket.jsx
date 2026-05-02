@@ -1,7 +1,8 @@
 import { useEffect } from "react"
 import { getSocket } from "../utils/socket"
 import { useDispatch, useSelector } from "react-redux"
-import { addMsg, markAsSeen, updateIsOnline } from "../redux/messageSlice"
+import { addMsg, markAsSeen } from "../redux/messageSlice"
+import { updateIsOnline } from "../redux/peopleSlice"
 import { updateNetwork } from "../redux/userSlice"
 
 const useSocket = (loggedInUserId) => {

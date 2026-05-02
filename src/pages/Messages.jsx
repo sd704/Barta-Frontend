@@ -8,15 +8,20 @@ import ChatItem from "../components/ChatItem"
 import { useDispatch, useSelector } from "react-redux"
 import useFetchAllChats from "../hooks/useFetchAllChats"
 import useNetworkStatus from "../hooks/useNetworkStatus"
+import LoadingDots from '../components/LoadingDots'
+import getDateLabel from '../utils/getDateLabel'
 // import Chat from "./Chat"
 // import chats from "../utils/dummyChats"
 
 const Messages = () => {
+    const [loading, setLoading] = useState(true)
     const user = useSelector(store => store.user)
+    const loggedInUserId = user?._id
 
     // Show online if network and socket are both connected
     const networkStatus = useNetworkStatus() && user?.isOnline
 
+    const peopleStore = useSelector(store => store.people ?? {})
     const chatStore = useSelector(store => store.messages ?? {})
     const chats = Object.values(chatStore)
     const userCount = chats?.length
@@ -27,11 +32,11 @@ const Messages = () => {
     let onlineUserCount = 0
     let unreadChatsCount = 0
     chats.forEach(c => {
-        if (c.userData.isOnline) { onlineUserCount += 1 }
+        if (peopleStore[c.uid]?.isOnline) { onlineUserCount += 1 }
         if (parseInt(c.unread, 10) > 0) { unreadChatsCount += 1 }
     })
     const filteredChats = chats
-        .filter(chat => chat.userData.name.toLowerCase().includes(searchQuery.toLowerCase()))
+        .filter(chat => peopleStore[chat.uid]?.name.toLowerCase().includes(searchQuery.toLowerCase()))
         .filter(chat => (chat.messages?.length ?? 0) > 0)
         .filter(chat => {
             if (activeTab === "UNREAD") return chat.unread > 0
@@ -42,33 +47,7 @@ const Messages = () => {
 
     const variants = { initial: { opacity: 0 }, animate: { opacity: 1, transition: { duration: 0.5, staggerChildren: 0.05 } } }
 
-    const getDateLabel = (msgTime) => {
-        const now = new Date()
-        const msgDate = new Date(msgTime)
-
-        const todayStr = now.toDateString()
-        const msgStr = msgDate.toDateString()
-
-        if (msgStr === todayStr) {
-            const strTodayTime = msgDate.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit", hour12: true })
-            return strTodayTime
-        }
-
-        const yesterday = new Date()
-        yesterday.setDate(now.getDate() - 1)
-
-        if (msgStr === yesterday.toDateString()) return "Yesterday"
-
-        const diffDays = Math.floor((now - msgDate) / (1000 * 60 * 60 * 24))
-
-        // undefined -> tells the browser: Use the user’s system/browser locale automatically
-
-        if (diffDays < 7) { return msgDate.toLocaleDateString(undefined, { weekday: "long" }) }
-
-        return msgDate.toLocaleDateString(undefined, { day: "2-digit", month: "short", year: "numeric" })
-    }
-
-    useFetchAllChats(userCount)
+    useFetchAllChats(userCount, setLoading, loggedInUserId)
 
     return (
         <div className="h-screen flex justify-center">
@@ -127,26 +106,26 @@ const Messages = () => {
                     {FILTERS.map((tab, i) => <TabButton key={i} label={tab} isActive={activeTab === tab} onClick={() => setActiveTab(tab)} />)}
                 </div>
 
+                {loading ? <LoadingDots /> :
 
-                {/* Chat List */}
-                <motion.div variants={variants} initial="initial" animate="animate" className="py-4 px-6 flex-1 overflow-y-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
-                    {filteredChats.map(chat => {
-                        const lastMessage = chat.messages.at(-1)
-                        const text = ((chat.userData._id === lastMessage.senderId) ? chat.userData.firstName : 'You') + ': ' + lastMessage.text
-                        return <ChatItem key={chat.chatId} userData={chat.userData} message={text} time={getDateLabel(lastMessage.createdAt)} unread={chat.unread} isOnline={chat.userData.isOnline}
-                            onClick={() => navigate(`/messages/${chat.userData._id}`)}
-                        />
-                    })}
+                    <motion.div variants={variants} initial="initial" animate="animate" className="py-4 px-6 flex-1 overflow-y-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
+                        {filteredChats.map(chat => {
+                            const lastMessage = chat.messages.at(-1)
+                            const text = ((chat.uid === lastMessage.senderId) ? peopleStore[chat.uid]?.firstName : 'You') + ': ' + lastMessage.text
+                            return <ChatItem key={chat.chatId} userData={peopleStore[chat.uid]} message={text} time={getDateLabel(lastMessage.createdAt, false)} unread={chat.unread} isOnline={peopleStore[chat.uid]?.isOnline}
+                                onClick={() => navigate(`/messages/${chat.uid}`)}
+                            />
+                        })}
 
-                    {/* No Results Message */}
-                    {filteredChats.length === 0 && (
-                        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}
-                            className="p-10 text-center">
-                            <p className="text-zinc-500 font-mono text-sm">NO_RESULTS</p>
-                            <p className="text-zinc-400 text-xs mt-1">Try a different filter or tab</p>
-                        </motion.div>
-                    )}
-                </motion.div>
+                        {/* No Results Message */}
+                        {filteredChats.length === 0 && (
+                            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}
+                                className="p-10 text-center">
+                                <p className="text-zinc-500 font-mono text-sm">NO_RESULTS</p>
+                                <p className="text-zinc-400 text-xs mt-1">Try a different filter or tab</p>
+                            </motion.div>
+                        )}
+                    </motion.div>}
 
             </div>
             <AnimatePresence mode="wait">

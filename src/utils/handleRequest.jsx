@@ -1,4 +1,3 @@
-import { fillConnections, removeConnection } from "../redux/connectionSlice"
 import { updatePerson } from "../redux/peopleSlice"
 import endpoints from "../utils/endpoints"
 
@@ -29,14 +28,14 @@ const handleRequest = async (event, userObj, type, dispatch) => {
             return
         }
 
+        // route -> request url
+        // removeFrom -> remove from list
+        // addTo -> add to list
+
         const { route, removeFrom, addTo } = endpoints[type]
 
         const reqObj = route(userObj._id)
-        const res = await fetch(reqObj.url, {
-            method: reqObj.requestType,
-            headers: { "Content-Type": "application/json", },
-            credentials: "include"
-        })
+        const res = await fetch(reqObj.url, { method: reqObj.requestType, headers: { "Content-Type": "application/json", }, credentials: "include" })
 
         const data = await res.json()
 
@@ -45,21 +44,13 @@ const handleRequest = async (event, userObj, type, dispatch) => {
             return
         }
 
-        if (removeFrom) {
-            dispatch(removeConnection({ filter: removeFrom.filter, id: userObj._id }))
-        }
-
-        if (addTo) {
-            dispatch(fillConnections({ filter: addTo.filter, listData: [userObj] }))
-        }
-
         const { sender, receiver, status } = data.data ?? {}
 
         let obj = { ...userObj }
         obj["connectionData"] = {
             senderId: sender?._id ?? '',
             receiverId: receiver?._id ?? '',
-            status: status ?? '',
+            status: status ?? (['block', 'unblock'].includes(type) ? obj.connectionData.status : ''),
             isBlocked: type === "block"
         }
         dispatch(updatePerson(obj))
