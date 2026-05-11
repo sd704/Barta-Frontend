@@ -70,7 +70,7 @@ const useSocket = (loggedInUserId) => {
         if (userIds && userIds.length > 0) {
             socket.emit("presence:subscribe", { userIds })
         }
-    }, [userCount])
+    }, [userIds])
 }
 
 export default useSocket

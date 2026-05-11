@@ -22,9 +22,16 @@ const messageSlice = createSlice({
         },
         fillConvo: (state, action) => {
             const chatObj = action.payload
-            if (!chatObj.userData._id) return
+            if (!chatObj.chatId && !chatObj.userData._id) return
             if (!state[chatObj.userData._id]) {
-                state[chatObj.userData._id] = chatObj
+                state[chatObj.userData._id] = {
+                    chatId: chatObj.chatId,
+                    uid: chatObj.userData._id,
+                    unread: 0,
+                    isGroup: false,
+                    isArchive: false,
+                    messages: [...chatObj.messages]
+                }
             } else {
                 state[chatObj.userData._id].messages = [...chatObj.messages]
             }

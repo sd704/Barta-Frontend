@@ -65,7 +65,7 @@ const Chat = () => {
     }, [targetUserId])
 
     useEffect(() => {
-        scrollToBottom()
+        if (!loading) { scrollToBottom() }
         const socket = getSocket()
         // msgs where targetUser is sender and isRead is false
         const stringMessageIds = messages.filter(msg => msg.senderId === targetUserId && !msg.isRead).map(m => m._id)
@@ -74,7 +74,7 @@ const Chat = () => {
         if (stringMessageIds.length > 0) {
             socket.emit("updateMsgSeen", { stringChatId, stringMessageIds })
         }
-    }, [targetUserId, messages])
+    }, [targetUserId, messages, loading])
 
     useFetchChats(targetUserId, loggedInUserId, setLoading)
 

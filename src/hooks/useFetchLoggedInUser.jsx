@@ -8,16 +8,16 @@ const useFetchLoggedInUser = (setLoading) => {
     const dispatch = useDispatch()
 
     const fetchUser = async () => {
+        const res = await fetch(GET_USER_URL, { method: "GET", headers: { "Content-Type": "application/json", }, credentials: "include" })
+        const data = await res.json()
+        let obj = data?.data
+        obj["isOnline"] = false
+        dispatch(addUser(obj))
+    }
+
+    const runFetchUser = async () => {
         try {
-            const res = await fetch(GET_USER_URL, {
-                method: "GET",
-                headers: { "Content-Type": "application/json", },
-                credentials: "include"
-            })
-            const data = await res.json()
-            let obj = data?.data
-            obj["isOnline"] = false
-            dispatch(addUser(obj))
+            if (!user?._id) { await fetchUser() }
         } catch (err) {
             // console.error(err)
         } finally {
@@ -26,8 +26,7 @@ const useFetchLoggedInUser = (setLoading) => {
     }
 
     useEffect(() => {
-        if (user?._id) return
-        fetchUser()
+        runFetchUser()
     }, [])
 
 }

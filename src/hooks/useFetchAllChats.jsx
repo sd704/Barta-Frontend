@@ -13,19 +13,20 @@ const useFetchAllChats = (userCount, setLoading, loggedInUserId) => {
         const chats = rawChats?.data // [{ _id, userData, lastMessage, unreadCount }, {...}, {...}]
         dispatch(addPeople({ filter: "connected", usersList: chats.map(c => c.userData), loggedInUserId }))
         dispatch(fillMsgs(chats))
-        setLoading(false)
     }
 
-    useEffect(() => {
+    const runFetchAllChats = async () => {
         try {
-            if (userCount <= 0) {
-                fetchAllChats()
-            }
+            if (userCount <= 0) { await fetchAllChats() }
         } catch (err) {
             console.error(err)
         } finally {
-
+            setLoading(false)
         }
+    }
+
+    useEffect(() => {
+        runFetchAllChats()
     }, [])
 }
 

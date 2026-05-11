@@ -7,43 +7,30 @@ const useFetchChats = (targetUserId, loggedInUserId, setLoading) => {
     const dispatch = useDispatch()
 
     const fetchChats = async () => {
-        const res = await fetch(GET_MESSSAGES(targetUserId), {
-            method: "GET",
-            headers: { "Content-Type": "application/json", },
-            credentials: "include"
-        })
+        const res = await fetch(GET_MESSSAGES(targetUserId), { method: "GET", headers: { "Content-Type": "application/json", }, credentials: "include" })
         const resObj = await res.json()
-        const chat = resObj?.data
-
-        // chat.data -> { _id, participants:[u1,u2], messages, lastMessage}
+        const chat = resObj?.data // chat -> { _id, participants:[u1,u2], messages}
 
         const targetUser = chat?.participants?.find(p => p._id !== loggedInUserId) || null
 
-        if (chat?._id) {
-            const chatObj = {
-                chatId: chat._id,
-                isOnline: true,
-                unread: 3,
-                isGroup: false,
-                isArchive: false,
-                userData: {
-                    ...targetUser,
-                    name: targetUser.firstName + " " + targetUser.lastName,
-                },
-                messages: chat.messages
-            }
-
+        if (chat?._id && targetUser) {
+            const chatObj = { chatId: chat._id, userData: { ...targetUser }, messages: chat.messages }
             dispatch(fillConvo(chatObj))
         }
-        setLoading(false)
+    }
+
+    const runFetchChats = async () => {
+        try {
+            await fetchChats()
+        } catch (err) {
+            console.error(err)
+        } finally {
+            setLoading(false)
+        }
     }
 
     useEffect(() => {
-        try {
-            fetchChats()
-        } catch (err) {
-            console.error(err)
-        }
+        runFetchChats()
     }, [targetUserId])
 }
 
