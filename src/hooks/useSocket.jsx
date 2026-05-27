@@ -7,6 +7,8 @@ import { updateNetwork } from "../redux/userSlice"
 
 const useSocket = (loggedInUserId) => {
     const dispatch = useDispatch()
+    // We subscribe isOnline data using chatStore uids, so if a new chat is opened, that uid is not subscribed
+    // So if new chat user is a friend, add to store to subscribe
     const chatStore = useSelector(store => store.messages ?? {})
     const userIds = Object.keys(chatStore)
     const userCount = userIds.length

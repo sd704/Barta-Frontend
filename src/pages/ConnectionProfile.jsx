@@ -15,9 +15,9 @@ import LoadingDots from '../components/LoadingDots'
 const getStatusButtonText = (person, loggedUser) => {
     if (!person?.connectionData) return ""
 
-    const { status, isBlocked, senderId } = person.connectionData
+    const { status, blockedByMe, senderId } = person.connectionData
 
-    if (isBlocked) return "Blocked"
+    if (blockedByMe) return "Blocked"
     if (status === "interested") return senderId === loggedUser?._id ? "Pending" : "Accept"
     if (status === "accepted") return "Connected"
     return "Connect"

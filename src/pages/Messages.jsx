@@ -130,7 +130,7 @@ const Messages = () => {
             </div>
             <AnimatePresence mode="wait">
                 {/* ChatWindow will render here */}
-                <Outlet />
+                {!loading && <Outlet />}
             </AnimatePresence>
         </div>
     )

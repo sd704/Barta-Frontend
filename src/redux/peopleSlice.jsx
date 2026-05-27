@@ -5,42 +5,19 @@ const peopleSlice = createSlice({
     initialState: {},
     reducers: {
         addPeople: (state, action) => {
-            const { filter, usersList, loggedInUserId } = action.payload
-            if (!filter || !Array.isArray(usersList) || !loggedInUserId) return
+            const usersList = action.payload
             usersList.forEach((user) => {
                 state[user._id] = user
                 state[user._id]["name"] = user.firstName + " " + user.lastName
                 state[user._id]["isOnline"] = false
-
-                let connectionData = {}
-                switch (filter) {
-                    case "discover":
-                        connectionData = { status: '', isBlocked: false }
-                        break
-                    case "received":
-                        connectionData = { senderId: user._id, status: 'interested', isBlocked: false }
-                        break
-                    case "pending":
-                        connectionData = { senderId: loggedInUserId, status: 'interested', isBlocked: false }
-                        break
-                    case "connected":
-                        connectionData = { status: 'accepted', isBlocked: false }
-                        break
-                    case "blocked":
-                        connectionData = { status: '', isBlocked: true }
-                        break
-                    default:
-                        console.log('Wrong Filter!')
-                        return
-                }
-
-                state[user._id]["connectionData"] = connectionData
             })
         },
         addPerson: (state, action) => {
             const personData = action.payload
             if (!personData?._id) return
             state[personData._id] = personData
+            state[personData._id]["name"] = personData.firstName + " " + personData.lastName
+            state[personData._id]["isOnline"] = false
         },
         updatePerson: (state, action) => {
             const personData = action.payload

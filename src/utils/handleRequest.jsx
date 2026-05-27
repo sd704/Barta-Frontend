@@ -47,11 +47,14 @@ const handleRequest = async (event, userObj, type, dispatch) => {
         const { sender, receiver, status } = data.data ?? {}
 
         let obj = { ...userObj }
+
+        // If status exists in res data, then save that status
+        // If not, then check the type, if block/unblock -> save previous status, else status=''
+
         obj["connectionData"] = {
             senderId: sender?._id ?? '',
-            receiverId: receiver?._id ?? '',
             status: status ?? (['block', 'unblock'].includes(type) ? obj.connectionData.status : ''),
-            isBlocked: type === "block"
+            blockedByMe: type === "block"
         }
         dispatch(updatePerson(obj))
 

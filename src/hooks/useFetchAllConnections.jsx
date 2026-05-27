@@ -16,6 +16,17 @@ const useFetchAllConnections = (setLoading, loggedInUserId) => {
         { filter: "blocked", url: BLOCKED_URL },
     ]
 
+    const generateConnectionData = (filter, user) => {
+        switch (filter) {
+            case "discover": return { status: null, senderId: null, blockedByMe: false, blockedMe: false }
+            case "received": return { status: 'interested', senderId: user._id, blockedByMe: false, blockedMe: false }
+            case "pending": return { status: 'interested', senderId: loggedInUserId, blockedByMe: false, blockedMe: false }
+            case "connected": return { status: 'accepted', senderId: null, blockedByMe: false, blockedMe: false }
+            case "blocked": return { status: null, senderId: null, blockedByMe: true, blockedMe: false }
+            default: return {}
+        }
+    }
+
     const fetchList = async ({ filter, url }) => {
         if (!loggedInUserId) return
         const listLength = getActiveList(filter, peopleStore, loggedInUserId).length
@@ -23,7 +34,7 @@ const useFetchAllConnections = (setLoading, loggedInUserId) => {
 
         const res = await fetch(url, { method: "GET", headers: { "Content-Type": "application/json", }, credentials: "include" })
         const data = await res.json()
-        dispatch(addPeople({ filter, usersList: data?.data, loggedInUserId }))
+        dispatch(addPeople(data?.data.map(obj => { return { ...obj, connectionData: generateConnectionData(filter, obj) } })))
     }
 
     const fetchAll = async () => {
