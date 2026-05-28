@@ -74,7 +74,9 @@ const Login = () => {
             }
 
             // Success
-            dispatch(addUser(data?.data))
+            let obj = data?.data
+            obj["isOnline"] = false
+            dispatch(addUser(obj))
         } catch (err) {
             setIsProcessing(false)
             setError("Something went wrong!")

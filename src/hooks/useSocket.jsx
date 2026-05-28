@@ -10,6 +10,8 @@ const useSocket = (loggedInUserId) => {
     // We subscribe isOnline data using chatStore uids, so if a new chat is opened, that uid is not subscribed
     // So if new chat user is a friend, add to store to subscribe
     const chatStore = useSelector(store => store.messages ?? {})
+    const peopleStore = useSelector(store => store.people ?? {})
+    // We don't need to subscribe to online status of blocked users, Done on API lvl
     const userIds = Object.keys(chatStore)
     const userCount = userIds.length
 
@@ -18,6 +20,7 @@ const useSocket = (loggedInUserId) => {
 
         const socket = getSocket()
 
+        socket.connect()
         const onConnect = () => { socket.emit("joinRoom") }
         socket.on("connect", onConnect)
 
@@ -49,8 +52,8 @@ const useSocket = (loggedInUserId) => {
 
 
         const handleDisconnect = (reason) => { dispatch(updateNetwork(false)) }
-        socket.on('disconnect', handleDisconnect)
         socket.on('disconnecting', handleDisconnect)
+        socket.on('disconnect', handleDisconnect)
 
         // When component unloads, disconnect socket
         return () => {
@@ -60,8 +63,8 @@ const useSocket = (loggedInUserId) => {
             socket.off("connect_error")
             socket.off("presence:initial", handlePresence)
             socket.off("presence:update", handlePresence)
-            socket.off("disconnect", handleDisconnect)
             socket.off("disconnecting", handleDisconnect)
+            socket.off("disconnect", handleDisconnect)
             socket.disconnect()
         }
     }, [loggedInUserId])

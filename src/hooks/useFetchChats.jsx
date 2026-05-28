@@ -35,11 +35,9 @@ const useFetchChats = (targetUserId, loggedInUserId, setLoading) => {
     const runFetch = async () => {
         try {
             if (!peopleStore?.[targetUserId]) {
-                console.log("fetchUser called")
                 await fetchUser()
             }
             if (peopleStore?.[targetUserId]) {
-                console.log("fetchChats called")
                 await fetchChats()
             }
         } catch (err) {

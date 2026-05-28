@@ -92,6 +92,7 @@ const Chat = () => {
                 isConnectionOk={isConnectionOk}
                 isConnected={isConnected}
                 isBlocked={targetUserData?.connectionData?.blockedByMe}
+                hasBlockedMe={targetUserData?.connectionData?.blockedMe}
                 name={targetUserData?.name}
                 uid={targetUserId}
                 isOnline={targetUserData?.isOnline}

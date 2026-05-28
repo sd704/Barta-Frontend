@@ -49,7 +49,7 @@ const ConnectionProfile = () => {
     }
 
     if (loading) return (<LoadingDots />)
-    if (notFound) return (<UserNotFound />)
+    if (notFound || person?.connectionData?.blockedMe) return (<UserNotFound />)
     return (
         <div className="h-screen p-6 md:p-12 overflow-y-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
             <div className="max-w-6xl mx-auto">

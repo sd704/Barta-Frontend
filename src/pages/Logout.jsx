@@ -3,6 +3,8 @@ import { Power, LogOut } from "lucide-react"
 import SubmitButton from "../components/SubmitButton"
 import { LOGOUT_URL } from "../utils/ApiRoutes"
 import { removeUser } from "../redux/userSlice"
+import { clearPeople } from "../redux/peopleSlice"
+import { clearMsgs } from "../redux/messageSlice"
 import { useDispatch } from "react-redux"
 import { useState } from "react"
 
@@ -23,6 +25,8 @@ const Logout = () => {
                 throw new Error("Logout Unsuccessful!")
             }
             dispatch(removeUser())
+            dispatch(clearPeople())
+            dispatch(clearMsgs())
         } catch (e) {
             console.error(e)
         } finally {
