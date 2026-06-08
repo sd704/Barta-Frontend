@@ -15,6 +15,7 @@ const peopleSlice = createSlice({
         addPerson: (state, action) => {
             const personData = action.payload
             if (!personData?._id) return
+            if (state[personData._id]) return
             state[personData._id] = personData
             state[personData._id]["name"] = personData.firstName + " " + personData.lastName
             state[personData._id]["isOnline"] = false

@@ -45,14 +45,10 @@ const messageSlice = createSlice({
             if (!state[receiver._id]) {
                 state[receiver._id] = {
                     chatId,
-                    isOnline: true,
-                    unread: (lastMessage.senderId != loggedInUserId) ? 1 : 0,
+                    uid: receiver._id,
+                    unread: 0,
                     isGroup: false,
                     isArchive: false,
-                    userData: {
-                        ...receiver,
-                        name: receiver.firstName + " " + receiver.lastName,
-                    },
                     messages: []
                 }
             }
@@ -70,7 +66,7 @@ const messageSlice = createSlice({
                 state[receiverId].messages.forEach(msg => {
                     if (stringMessageIds.includes(msg._id) && !msg.isRead) {
                         msg.isRead = true
-                        // Not all "stringMessageIds" will be marked as inRead=true [possibility]
+                        // Not all "stringMessageIds" will be marked as isRead=true [possibility]
                         // so "isReadCount" is inside this condition
                         if (msgReceiverId === loggedInUserId) { isReadCount += 1 }
                     }

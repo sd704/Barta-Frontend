@@ -2,7 +2,7 @@ import { useEffect } from "react"
 import { getSocket } from "../utils/socket"
 import { useDispatch, useSelector } from "react-redux"
 import { addMsg, markAsSeen } from "../redux/messageSlice"
-import { updateIsOnline } from "../redux/peopleSlice"
+import { addPerson, updateIsOnline } from "../redux/peopleSlice"
 import { updateNetwork } from "../redux/userSlice"
 
 const useSocket = (loggedInUserId) => {
@@ -25,7 +25,9 @@ const useSocket = (loggedInUserId) => {
         socket.on("connect", onConnect)
 
         // Receiving msg from server
-        const addMsgHandler = ({ chatId, lastMessage, receiver }) => {
+        const addMsgHandler = ({ chatId, lastMessage, receiver, connectionData }) => {
+            receiver["connectionData"] = connectionData
+            dispatch(addPerson(receiver))
             dispatch(addMsg({ chatId, lastMessage, receiver, loggedInUserId }))
         }
         socket.on("messageReceived", addMsgHandler)
