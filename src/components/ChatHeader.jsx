@@ -1,8 +1,9 @@
 import { motion } from "motion/react"
 import { ArrowLeft, Phone, Video, MoreVertical, User } from "lucide-react"
 import { useNavigate } from 'react-router-dom'
+import getLastSeenTime from "../utils/getLastSeenTime"
 
-const ChatHeader = ({ userExists, isConnectionOk, isConnected, isBlocked, hasBlockedMe, name, uid, isOnline, avatar, onBack }) => {
+const ChatHeader = ({ userExists, isConnectionOk, isConnected, isBlocked, hasBlockedMe, name, uid, isOnline, lastSeen, avatar, onBack }) => {
     const navigate = useNavigate()
 
     return (
@@ -37,7 +38,7 @@ const ChatHeader = ({ userExists, isConnectionOk, isConnected, isBlocked, hasBlo
                         {/* Info */}
                         <div className="min-w-0">
                             <h2 className="font-mono font-bold text-sm tracking-wider text-zinc-900 group-hover:text-orange-600 truncate">{name}</h2>
-                            <p className="text-xs font-mono text-zinc-500">{isBlocked ? ("BLOCKED") : (hasBlockedMe ? ("BLOCKED") : (isConnected ? (isOnline ? "ONLINE" : "OFFLINE") : ""))}</p>
+                            <p className="text-xs font-mono text-zinc-500">{isBlocked ? ("BLOCKED") : (hasBlockedMe ? ("BLOCKED") : (isConnected ? (isOnline ? "ONLINE" : (lastSeen ? `Last seen ${getLastSeenTime(lastSeen)}` : "OFFLINE")) : ""))}</p>
                         </div>
                     </div>}
 

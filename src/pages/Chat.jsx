@@ -96,6 +96,7 @@ const Chat = () => {
                 name={targetUserData?.name}
                 uid={targetUserId}
                 isOnline={targetUserData?.isOnline}
+                lastSeen={targetUserData?.lastSeen}
                 avatar={targetUserData?.pfp}
                 onBack={() => navigate("/messages")}
             />

@@ -1,12 +1,13 @@
 import { NavLink, Outlet } from 'react-router-dom'
 import { useDispatch, useSelector } from "react-redux"
-import { Newspaper, Users, MessageCircle, User, LogOut } from "lucide-react"
+import { Newspaper, Users, MessageCircle, Bell, User, LogOut } from "lucide-react"
 import SideNavbarButton from './SideNavbarButton'
 import useSocket from '../hooks/useSocket'
 
 const navItems = [
     { route: "feed", icon: Newspaper },
     { route: "messages", icon: MessageCircle },
+    { route: "notification", icon: Bell },
     { route: "people", icon: Users },
     { route: "profile", icon: User },
     { route: "logout", icon: LogOut }

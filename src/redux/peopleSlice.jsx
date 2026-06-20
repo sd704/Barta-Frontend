@@ -26,9 +26,10 @@ const peopleSlice = createSlice({
             state[personData._id] = personData
         },
         updateIsOnline: (state, action) => {
-            const { uid, status } = action.payload
+            const { uid, status, lastSeen } = action.payload
             if (!uid || !state[uid]) return
             state[uid].isOnline = status
+            state[uid].lastSeen = lastSeen
         },
         removePerson: (state, action) => {
             const id = action.payload

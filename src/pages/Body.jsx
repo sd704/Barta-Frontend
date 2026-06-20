@@ -33,6 +33,7 @@ const Body = () => {
             { path: ":uid", element: <Chat /> } //messages/john.doe
           ]
         },
+        { path: "notification", element: "NOTIFICATIONS" },
         {
           path: "people",
           children: [

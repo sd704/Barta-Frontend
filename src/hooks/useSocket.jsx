@@ -42,11 +42,11 @@ const useSocket = (loggedInUserId) => {
             console.log(err) // "INVALID_TOKEN"
         })
 
-        const handlePresence = ({ uid, status }) => {
+        const handlePresence = ({ uid, status, lastSeen }) => {
             if (uid === loggedInUserId) {
                 dispatch(updateNetwork(status))
             } else {
-                dispatch(updateIsOnline({ uid, status }))
+                dispatch(updateIsOnline({ uid, status, lastSeen }))
             }
         }
         socket.on("presence:initial", handlePresence)
