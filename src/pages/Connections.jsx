@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useMemo, useState } from "react"
 import { useSelector } from "react-redux"
 import { motion, AnimatePresence } from "motion/react"
 import SearchBar from "../components/SearchBar"
@@ -6,27 +6,43 @@ import TabButtonAccent from "../components/TabButtonAccent"
 import UserCard from "../components/UserCard"
 import useFetchAllConnections from "../hooks/useFetchAllConnections"
 import LoadingDots from '../components/LoadingDots'
-import getActiveList from '../utils/getActiveList'
+import { CONNECTION_ACTIONS, CONNECTION_TABS } from "../utils/connectionConfig"
+import useConnectionActions from "../hooks/useConnectionActions"
 
-const FILTERS = ["DISCOVER", "RECEIVED", "PENDING", "CONNECTED", "BLOCKED"] // Tabs List
+// Tabs List
+const TABS = Object.keys(CONNECTION_TABS)
+
+// For AnimatePresence
+const variants = { initial: { opacity: 0 }, animate: { opacity: 1, transition: { duration: 0.5, staggerChildren: 0.05 } } }
 
 const Connections = () => {
     const [loading, setLoading] = useState(true)
     const loggedInUser = useSelector(store => store.user)
     const loggedInUserId = loggedInUser?._id
     const peopleStore = useSelector(store => store.people ?? {})
+    const people = Object.values(peopleStore)
     const [search, setSearch] = useState("") // Search String
-    const [activeTab, setActiveTab] = useState(0) // Tab Index in Filters array
-    const activeKey = FILTERS[activeTab].toLowerCase()
+    const [activeTabIndex, setActiveTabIndex] = useState(0) // Tab Index in Filters array
+    const activeTab = TABS[activeTabIndex]
 
-    let activeList = getActiveList(activeKey, peopleStore, loggedInUserId).sort((a, b) => a.name.localeCompare(b.name))
+    const allLists = useMemo(() => (
+        Object.fromEntries(
+            TABS.map(tab => [tab, people.filter(p => CONNECTION_TABS[tab].filter(p, loggedInUserId))])
+        )
+    ), [people, loggedInUserId])
+
+    const activeList = useMemo(() => (
+        [...allLists[activeTab]].sort((a, b) => a.name.localeCompare(b.name))
+    ), [allLists, activeTab])
 
     // Filter for search
-    let filteredList = activeList.filter(person => `${person.firstName} ${person.lastName}`.toLowerCase().includes(search.toLowerCase()))
-
-    const variants = { initial: { opacity: 0 }, animate: { opacity: 1, transition: { duration: 0.5, staggerChildren: 0.05 } } } // For AnimatePresence
+    const filteredList = useMemo(() => (
+        activeList.filter(person => person.name.toLowerCase().includes(search.toLowerCase()))
+    ), [activeList, search])
 
     useFetchAllConnections(setLoading, loggedInUserId)
+
+    const connectionActions = useConnectionActions()
 
     if (loading) return (<LoadingDots />)
     return (
@@ -46,24 +62,24 @@ const Connections = () => {
 
                 {/* Tabs */}
                 <div className="flex gap-3 mb-4">
-                    {FILTERS.map((tab, i) => <TabButtonAccent
+                    {TABS.map((tab, i) => <TabButtonAccent
                         key={tab}
-                        label={tab}
-                        count={getActiveList(FILTERS[i].toLowerCase(), peopleStore, loggedInUserId).length}
-                        isActive={i === activeTab}
-                        onClick={() => setActiveTab(i)}
+                        label={CONNECTION_TABS[tab].label}
+                        count={allLists[tab].length}
+                        isActive={i === activeTabIndex}
+                        onClick={() => setActiveTabIndex(i)}
                     />)}
                 </div>
 
                 {/* Status bar */}
                 <div className="rounded-xl py-2.5 mb-4 flex items-center justify-between">
                     <span className="text-xs font-mono text-zinc-500 uppercase tracking-widest">
-                        {FILTERS[activeTab]} · {activeList.length} results
+                        {CONNECTION_TABS[activeTab].label} · {activeList.length} results
                     </span>
                     <div className="flex gap-2">
-                        {FILTERS.map((_, num) => {
-                            const activeDot = num === activeTab
-                            return <div key={num}
+                        {TABS.map((_, i) => {
+                            const activeDot = (i === activeTabIndex)
+                            return <div key={i}
                                 className={`w-2 h-2 rounded-full ${activeDot ? "bg-orange-600" : "bg-zinc-200"}`}
                                 style={{
                                     boxShadow: activeDot
@@ -78,9 +94,9 @@ const Connections = () => {
                 {/* List */}
                 <div>
                     <AnimatePresence mode="popLayout">
-                        <motion.div key={FILTERS[activeTab]} variants={variants} initial="initial" animate="animate" className="space-y-3">
+                        <motion.div key={activeTab} variants={variants} initial="initial" animate="animate" className="space-y-3">
                             {filteredList.map(person => (
-                                <UserCard key={person?._id} id={person?._id} mode={activeTab} userObj={person} />
+                                <UserCard key={person?._id} id={person?._id} activeTab={activeTab} userObj={person} connectionActions={connectionActions} />
                             ))}
                         </motion.div>
                     </AnimatePresence>

@@ -6,6 +6,14 @@ import getLastSeenTime from "../utils/getLastSeenTime"
 const ChatHeader = ({ userExists, isConnectionOk, isConnected, isBlocked, hasBlockedMe, name, uid, isOnline, lastSeen, avatar, onBack }) => {
     const navigate = useNavigate()
 
+    const getStatus = () => {
+        if (isBlocked || hasBlockedMe) return "BLOCKED"
+        if (!isConnected) return ""
+        if (isOnline) return "ONLINE"
+        if (lastSeen) return `Last seen ${getLastSeenTime(lastSeen)}`
+        return "OFFLINE"
+    }
+
     return (
         <div className="py-4 px-6 sticky top-0 z-10">
             <div className="flex items-center justify-between">
@@ -38,7 +46,7 @@ const ChatHeader = ({ userExists, isConnectionOk, isConnected, isBlocked, hasBlo
                         {/* Info */}
                         <div className="min-w-0">
                             <h2 className="font-mono font-bold text-sm tracking-wider text-zinc-900 group-hover:text-orange-600 truncate">{name}</h2>
-                            <p className="text-xs font-mono text-zinc-500">{isBlocked ? ("BLOCKED") : (hasBlockedMe ? ("BLOCKED") : (isConnected ? (isOnline ? "ONLINE" : (lastSeen ? `Last seen ${getLastSeenTime(lastSeen)}` : "OFFLINE")) : ""))}</p>
+                            <p className="text-xs font-mono text-zinc-500">{getStatus()}</p>
                         </div>
                     </div>}
 

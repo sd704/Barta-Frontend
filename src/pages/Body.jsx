@@ -26,6 +26,7 @@ const Body = () => {
       element: <ProtectedRoute><SideNavbar /></ProtectedRoute>,
       children: [
         { path: "feed", element: "FEED" },
+        { path: "journal", element: "JOURNAL" },
         {
           path: "messages",
           element: <Messages />, //messages

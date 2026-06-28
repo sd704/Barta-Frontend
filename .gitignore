@@ -23,6 +23,7 @@ dist-ssr
 *.sln
 *.sw?
 
-
+src/components/Toast.jsx
+src/hooks/useToast.jsx
 
 .env
