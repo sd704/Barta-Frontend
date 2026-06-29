@@ -1,9 +1,8 @@
 import { useState } from 'react'
 import { Navigate, useNavigate, useParams, useLocation } from 'react-router-dom'
 import { Grid, List, Settings, Heart, MessageCircle, Users, User, Info } from 'lucide-react'
-import { useDispatch, useSelector } from "react-redux"
+import { useSelector } from "react-redux"
 import useFetchProfile from '../hooks/useFetchProfile'
-import handleRequest from "../utils/handleRequest"
 import StatsCard from '../components/StatsCard'
 import ProfileHeaderButton from '../components/ProfileHeaderButton'
 import ListGridButton from '../components/ListGridButton'
@@ -11,6 +10,8 @@ import POSTDATA from "../utils/dummyPosts"
 import PostCard from '../components/PostCard'
 import UserNotFound from './UserNotFound'
 import LoadingDots from '../components/LoadingDots'
+import useConnectionActions from '../hooks/useConnectionActions'
+import { CONNECTION_ACTIONS } from '../utils/connectionConfig'
 
 const getStatusButtonText = (person, loggedUser) => {
     if (!person?.connectionData) return ""
@@ -29,20 +30,25 @@ const ConnectionProfile = () => {
     const [loading, setLoading] = useState(true)
     const [notFound, setNotFound] = useState(false)
     const [activeTab, setActiveTab] = useState('grid')
-    const dispatch = useDispatch()
 
     const loggedUser = useSelector(store => store.user)
     const people = useSelector(store => store.people)
     const { uid } = useParams()
     const person = people?.[uid]
-    const name = person ? `${person.firstName} ${person.lastName}` : ""
     const pfp = person?.pfp
-    const about = person?.about
-    const description = person?.description
     const statusButtonText = getStatusButtonText(person, loggedUser)
     const isAccent = ["Connect", "Accept"].includes(statusButtonText)
 
     useFetchProfile(uid, setLoading, setNotFound)
+
+    const { sendRequest, isLoading: isRequestLoading } = useConnectionActions()
+
+    const handleClick = () => {
+        if (isAccent) {
+            const action = CONNECTION_ACTIONS[statusButtonText.toLowerCase()]
+            sendRequest(null, person, action)
+        }
+    }
 
     if (uid === loggedUser?._id) {
         return <Navigate to="/profile" replace />
@@ -71,15 +77,16 @@ const ConnectionProfile = () => {
                         <div className="flex-1">
                             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-4">
                                 <div>
-                                    <h1 className="text-zinc-900 mb-1 font-mono">{name}</h1>
-                                    <p className="text-zinc-500 text-sm font-mono">{about}</p>
+                                    <h1 className="text-zinc-900 mb-1 font-mono">{person?.name}</h1>
+                                    <p className="text-zinc-500 text-sm font-mono">{person?.about}</p>
                                 </div>
 
                                 {/* Profile Header Top Right Corner Buttons */}
                                 <div className="flex gap-3">
-                                    <ProfileHeaderButton variant={isAccent ? 'accent' : 'default'} onClickAction={() => {
-                                        if (isAccent) { handleRequest(null, person, statusButtonText.toLowerCase(), dispatch) }
-                                    }}>
+                                    <ProfileHeaderButton
+                                        variant={isAccent ? 'accent' : 'default'}
+                                        disabled={isRequestLoading(person._id)}
+                                        onClickAction={handleClick}>
                                         {statusButtonText}
                                     </ProfileHeaderButton>
 
@@ -97,7 +104,7 @@ const ConnectionProfile = () => {
 
                             {/* leading-relaxed is a Tailwind CSS utility class that sets the CSS line-height property to 1.625 (162.5% of the font size) */}
                             <p className="text-zinc-700 mb-6 max-w-2xl leading-relaxed whitespace-pre-line">
-                                {description}
+                                {person?.description}
                             </p>
 
                             {/* Stats Grid */}
@@ -133,10 +140,7 @@ const ConnectionProfile = () => {
                     ))}
                 </div>
 
-
-
             </div>
-
         </div >
     )
 }
