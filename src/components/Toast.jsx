@@ -1,7 +1,7 @@
 import { motion } from "motion/react"
 import { User, X } from 'lucide-react'
 
-const Toast = ({ showPfp = true, hasPfp = false, pfp, text, onClose, addCloseBtn }) => {
+const Toast = ({ showPfp = true, hasPfp = false, pfp, text, onClose, addCloseBtn = false }) => {
     return (
         <motion.div
             initial={{ opacity: 0, y: -16, scale: 0.96 }}

@@ -10,6 +10,7 @@ import SubmitButton from "../components/SubmitButton"
 import { UPDATE_USER_URL } from "../utils/ApiRoutes"
 import { updateUser } from "../redux/userSlice"
 import imageCompression from "browser-image-compression"
+import useToast from "../hooks/useToast"
 
 const userOptions = ["firstName", "lastName", "about", "description", "age", "gender", "pfp"]
 const orangeButton = "bg-orange-600 text-zinc-200 hover:bg-orange-500"
@@ -22,6 +23,7 @@ const selectOptions = { "male": "Male", "female": "Female", "other": "Non-binary
 const ProfileInfoUI = ({ user, isEditAllowed }) => {
     const dispatch = useDispatch()
     const navigate = useNavigate()
+    const { ToastComponent, triggerToast } = useToast()
     const [isEditing, setIsEditing] = useState(false)
     const [errorMsg, setError] = useState(null)
     const fileInputRef = useRef(null)
@@ -82,6 +84,8 @@ const ProfileInfoUI = ({ user, isEditAllowed }) => {
             // If user made no changes and clicked save
             if (compareData(user, updatedUserData)) {
                 setIsEditing(false)
+                const toastProps = { hasPfp: true, pfp: updatedUserData.pfp, text: "No changes made!" }
+                triggerToast(toastProps)
                 return
             }
 
@@ -93,6 +97,8 @@ const ProfileInfoUI = ({ user, isEditAllowed }) => {
             })
 
             if (!res.ok) {
+                const toastProps = { hasPfp: true, pfp: updatedUserData.pfp, text: "Failed to save changes!" }
+                triggerToast(toastProps)
                 setError("Something went wrong!")
             } else {
                 const updatedFields = (await res.json())?.updatedFields
@@ -100,9 +106,13 @@ const ProfileInfoUI = ({ user, isEditAllowed }) => {
                     dispatch(updateUser(updatedFields))
                 }
                 setIsEditing(false)
+                const toastProps = { hasPfp: true, pfp: updatedUserData.pfp, text: "Changes saved successfully!" }
+                triggerToast(toastProps)
             }
         } catch (e) {
-            console.error("Something went wrong!")
+            const toastProps = { hasPfp: true, pfp: pfp, text: "Failed to save changes!" }
+            triggerToast(toastProps)
+            // console.error("Something went wrong!")
         }
     }
 
@@ -208,6 +218,7 @@ const ProfileInfoUI = ({ user, isEditAllowed }) => {
                 </motion.div>
 
             </motion.div>
+            {ToastComponent}
         </div >
     )
 }

@@ -63,8 +63,7 @@ const useConnectionActions = (triggerToast) => {
             const toastProps = {
                 hasPfp: Boolean(updatedUser.pfp),
                 pfp: updatedUser.pfp ?? '',
-                text: action.toast.success(updatedUser.name),
-                addCloseBtn: false
+                text: action.toast.success(updatedUser.name)
             }
             triggerToast(toastProps)
 
@@ -74,7 +73,6 @@ const useConnectionActions = (triggerToast) => {
                 hasPfp: Boolean(user.pfp),
                 pfp: user.pfp ?? '',
                 text: action.toast.error,
-                addCloseBtn: false
             }
             triggerToast(toastProps)
             console.error(err)

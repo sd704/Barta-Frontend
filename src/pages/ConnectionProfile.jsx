@@ -12,6 +12,7 @@ import UserNotFound from './UserNotFound'
 import LoadingDots from '../components/LoadingDots'
 import useConnectionActions from '../hooks/useConnectionActions'
 import { CONNECTION_ACTIONS } from '../utils/connectionConfig'
+import useToast from "../hooks/useToast"
 
 const getStatusButtonText = (person, loggedUser) => {
     if (!person?.connectionData) return ""
@@ -27,6 +28,7 @@ const getStatusButtonText = (person, loggedUser) => {
 const ConnectionProfile = () => {
     const navigate = useNavigate()
     const location = useLocation()
+    const { ToastComponent, triggerToast } = useToast()
     const [loading, setLoading] = useState(true)
     const [notFound, setNotFound] = useState(false)
     const [activeTab, setActiveTab] = useState('grid')
@@ -48,6 +50,25 @@ const ConnectionProfile = () => {
             const action = CONNECTION_ACTIONS[statusButtonText.toLowerCase()]
             sendRequest(null, person, action)
         }
+    }
+
+    const handleMsgOnClickToast = () => {
+        if (statusButtonText === "Connected") {
+            navigate(`/messages/${uid}`)
+            return
+        }
+
+        let text
+
+        switch (statusButtonText) {
+            case "Blocked": text = `Unblock ${person?.firstName} to start chatting.`;
+                break
+            case "Pending": text = `Waiting for ${person?.firstName} to accept your request.`;
+                break
+            default: text = `Connect with ${person?.firstName} to start chatting.`;
+        }
+
+        triggerToast({ showPfp: false, text, })
     }
 
     if (uid === loggedUser?._id) {
@@ -90,9 +111,7 @@ const ConnectionProfile = () => {
                                         {statusButtonText}
                                     </ProfileHeaderButton>
 
-                                    <ProfileHeaderButton variant='default' onClickAction={() => {
-                                        if (statusButtonText === "Connected") { navigate(`/messages/${uid}`) }
-                                    }}>
+                                    <ProfileHeaderButton variant='default' onClickAction={handleMsgOnClickToast}>
                                         <MessageCircle size={18} />
                                     </ProfileHeaderButton>
 
@@ -141,6 +160,7 @@ const ConnectionProfile = () => {
                 </div>
 
             </div>
+            {ToastComponent}
         </div >
     )
 }
