@@ -2,6 +2,7 @@ import { useNavigate } from 'react-router-dom'
 import { motion } from "motion/react"
 import TactileButton from "./TactileButton"
 import { CONNECTION_ACTIONS, CONNECTION_TABS } from "../utils/connectionConfig"
+import { User } from "lucide-react"
 
 const UserCard = ({ activeTab, userObj, connectionActions }) => {
     const navigate = useNavigate()

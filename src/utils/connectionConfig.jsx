@@ -7,56 +7,64 @@ export const CONNECTION_ACTIONS = {
         type: "connect", label: "Connect", icon: UserPlus, variant: "primary", endpoint: CONNECT,
         // removeFrom: "discover", addTo: "pending",
         toast: {
-            success: "Connection request sent", error: "Failed to send request!"
+            success: (name) => `Request sent to ${name}`,
+            error: "Failed to send request!"
         }
     },
     ignore: {
         type: "ignore", label: "Ignore", icon: X, variant: "muted", endpoint: IGNORE,
         // removeFrom: "discover", addTo: null,
         toast: {
-            success: "", error: ""
+            success: (name) => `Ignored ${name}`,
+            error: ""
         }
     },
     accept: {
         type: "accept", label: "Accept", icon: UserPlus, variant: "primary", endpoint: ACCEPT,
         // removeFrom: "received", addTo: "connected",
         toast: {
-            success: "Connection request accepted", error: "Failed to accept request!"
+            success: (name) => `You're now connected to ${name}`,
+            error: "Failed to accept request!"
         }
     },
     reject: {
         type: "reject", label: "Reject", icon: UserX, variant: "muted", endpoint: REJECT,
-        // removeFrom: "received", addTo: null,
+        // removeFrom: "received", addTo: discover,
         toast: {
-            success: "Connection request rejected", error: "Failed to reject request!"
+            success: (name) => `Connection request from ${name} rejected`,
+            error: "Failed to reject request!"
         }
     },
     withdraw: {
         type: "withdraw", label: "Withdraw", icon: Hourglass, variant: "muted", endpoint: WITHDRAW,
         // removeFrom: "pending", addTo: "discover",
         toast: {
-            success: "Connection request withdrawn", error: "Failed to withdraw request!"
+            success: (name) => `Connection request to ${name} withdrawn`,
+            error: "Failed to withdraw request!"
         }
     },
     remove: {
         type: "remove", label: "Remove", icon: UserMinus, variant: "muted", endpoint: REMOVE,
         // removeFrom: "connected", addTo: "discover",
         toast: {
-            success: "Connection removed successfully", error: "Failed to remove connection!"
+            success: (name) => `Removed ${name} from your connections`,
+            error: "Failed to remove connection!"
         }
     },
     block: {
         type: "block", label: "Block", icon: Ban, variant: "muted", endpoint: BLOCK,
         // removeFrom: "connected", addTo: "blocked",
         toast: {
-            success: "User blocked successfully", error: "Failed to block user!"
+            success: (name) => `${name} blocked successfully`,
+            error: "Failed to block user!"
         }
     },
     unblock: {
         type: "unblock", label: "Unblock", icon: Undo2, variant: "muted", endpoint: UNBLOCK,
         // removeFrom: "blocked", addTo: null,
         toast: {
-            success: "User unblocked successfully", error: "Failed to unblock user!"
+            success: (name) => `${name} un-blocked successfully`,
+            error: "Failed to unblock user!"
         }
     }
 }
@@ -66,7 +74,7 @@ export const CONNECTION_TABS = {
         label: "DISCOVER",
         endpoint: DISCOVER_URL,
         actions: ["connect", "ignore"],
-        filter: (user, myUid) => ([null, '', 'withdraw', 'remove'].includes(user.connectionData.status) && !user.connectionData.blockedByMe),
+        filter: (user, myUid) => ([null, '', 'withdraw', 'rejected', 'remove'].includes(user.connectionData.status) && !user.connectionData.blockedByMe),
         connectionData: (user, myUid) => { return { status: null, senderId: null, blockedByMe: false, blockedMe: false } }
     },
     received: {

@@ -8,6 +8,7 @@ import useFetchAllConnections from "../hooks/useFetchAllConnections"
 import LoadingDots from '../components/LoadingDots'
 import { CONNECTION_ACTIONS, CONNECTION_TABS } from "../utils/connectionConfig"
 import useConnectionActions from "../hooks/useConnectionActions"
+import useToast from "../hooks/useToast"
 
 // Tabs List
 const TABS = Object.keys(CONNECTION_TABS)
@@ -16,6 +17,7 @@ const TABS = Object.keys(CONNECTION_TABS)
 const variants = { initial: { opacity: 0 }, animate: { opacity: 1, transition: { duration: 0.5, staggerChildren: 0.05 } } }
 
 const Connections = () => {
+    const { ToastComponent, triggerToast } = useToast()
     const [loading, setLoading] = useState(true)
     const loggedInUser = useSelector(store => store.user)
     const loggedInUserId = loggedInUser?._id
@@ -42,7 +44,7 @@ const Connections = () => {
 
     useFetchAllConnections(setLoading, loggedInUserId)
 
-    const connectionActions = useConnectionActions()
+    const connectionActions = useConnectionActions(triggerToast)
 
     if (loading) return (<LoadingDots />)
     return (
@@ -112,6 +114,7 @@ const Connections = () => {
                 </div>
 
             </div>
+            {ToastComponent}
         </div>
     )
 }

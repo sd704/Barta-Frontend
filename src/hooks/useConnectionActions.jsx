@@ -33,7 +33,7 @@ const mapConnectionResponse = (user, response, actionType) => {
 
 }
 
-const useConnectionActions = () => {
+const useConnectionActions = (triggerToast) => {
 
     const dispatch = useDispatch()
     const [loadingIds, setLoadingIds] = useState(new Set())
@@ -59,10 +59,24 @@ const useConnectionActions = () => {
 
             dispatch(updatePerson(updatedUser))
 
-            // triggerToast({ text: action.toast.success })
+            // Toast Success
+            const toastProps = {
+                hasPfp: Boolean(updatedUser.pfp),
+                pfp: updatedUser.pfp ?? '',
+                text: action.toast.success(updatedUser.name),
+                addCloseBtn: false
+            }
+            triggerToast(toastProps)
 
         } catch (err) {
-            // triggerToast({ text: action.toast.error })
+            // Toast Error
+            const toastProps = {
+                hasPfp: Boolean(user.pfp),
+                pfp: user.pfp ?? '',
+                text: action.toast.error,
+                addCloseBtn: false
+            }
+            triggerToast(toastProps)
             console.error(err)
         } finally {
             // Stop loading

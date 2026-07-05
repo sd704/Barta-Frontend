@@ -7,6 +7,7 @@ import PublicRoute from "../components/PublicRoute"
 import Login from "./Login"
 import Messages from "./Messages"
 import Chat from "./Chat"
+import Notifications from "./Notifications"
 import Connections from "./Connections"
 import ConnectionProfile from "./ConnectionProfile"
 import ConnectionProfileInfo from "./ConnectionProfileInfo"
@@ -34,7 +35,7 @@ const Body = () => {
             { path: ":uid", element: <Chat /> } //messages/john.doe
           ]
         },
-        { path: "notification", element: "NOTIFICATIONS" },
+        { path: "notification", element: <Notifications /> },
         {
           path: "people",
           children: [
