@@ -7,7 +7,13 @@ const UserNotFound = () => {
     const navigate = useNavigate()
     const index = 2
 
-    const handleBack = () => { navigate(-1) }
+    const handleBack = () => {
+        if (window.history.length > 1) {
+            navigate(-1)
+        } else {
+            navigate("/people", { replace: true })
+        }
+    }
 
     return (
         <div className="size-full flex items-center justify-center">

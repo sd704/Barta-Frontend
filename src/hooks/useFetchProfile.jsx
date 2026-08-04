@@ -3,8 +3,6 @@ import { useSelector, useDispatch } from "react-redux"
 import { addPerson } from "../redux/peopleSlice"
 import { GET_USER_BY_ID } from "../utils/ApiRoutes"
 
-const connectionTypes = ["discover", "received", "pending", "connected", "blocked"]
-
 const useFetchProfile = (uid, setLoading, setNotFound) => {
     const dispatch = useDispatch()
     const loggedInUser = useSelector(store => store.user)

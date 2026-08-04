@@ -1,21 +1,23 @@
 import { useState } from 'react'
 import { useSelector } from "react-redux"
 import { Navigate, useParams } from 'react-router-dom'
-import useFetchProfile from '../hooks/useFetchProfile'
+import { useGetUserByIdQuery } from "../redux/api/userApi"
 import UserNotFound from './UserNotFound'
 import LoadingDots from '../components/LoadingDots'
 import ProfileInfoUI from "./ProfileInfoUI"
 
 const ConnectionProfileInfo = () => {
-  const [loading, setLoading] = useState(true)
-  const [notFound, setNotFound] = useState(false)
 
   const loggedUser = useSelector(store => store.user)
   const people = useSelector(store => store.people)
   const { uid } = useParams()
   const person = people?.[uid]
 
-  useFetchProfile(uid, setLoading, setNotFound)
+  const { isLoading, isError, isSuccess } = useGetUserByIdQuery(uid, {
+    skip: (!uid || !loggedUser) || (uid === loggedUser?._id) || (!!person)
+  })
+  const loading = !person && isLoading
+  const notFound = isError || (isSuccess && !person)
 
   if (uid === loggedUser?._id) {
     return <Navigate to="/profile/info" replace />

@@ -11,6 +11,7 @@ const validatePass = (pass) => {
 
 const validateLogin = (email, password) => {
     if (!email.trim()) return "Email required!"
+    if (!validateEmail(email.trim())) return "Invalid Email!"
     if (!password.trim()) return "Password required!"
     return null
 }
@@ -18,7 +19,9 @@ const validateLogin = (email, password) => {
 const validateSignup = (firstName, lastName, email, password) => {
     if (!firstName.trim()) return "Firstname required!"
     if (!lastName.trim()) return "Lastname required!"
+    if (!email.trim()) return "Email required!"
     if (!validateEmail(email.trim())) return "Invalid Email!"
+    if (!password.trim()) return "Password required!"
     if (!validatePass(password)) {
         return "Your password must be 8-60 characters and include at least one uppercase letter, one lowercase letter, one number, and one special character."
     }

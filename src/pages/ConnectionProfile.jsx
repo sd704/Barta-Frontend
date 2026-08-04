@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { Navigate, useNavigate, useParams, useLocation } from 'react-router-dom'
 import { Grid, List, Settings, Heart, MessageCircle, Users, User, Info } from 'lucide-react'
 import { useSelector } from "react-redux"
-import useFetchProfile from '../hooks/useFetchProfile'
+import { useGetUserByIdQuery } from "../redux/api/userApi"
 import StatsCard from '../components/StatsCard'
 import ProfileHeaderButton from '../components/ProfileHeaderButton'
 import ListGridButton from '../components/ListGridButton'
@@ -29,21 +29,24 @@ const ConnectionProfile = () => {
     const navigate = useNavigate()
     const location = useLocation()
     const { ToastComponent, triggerToast } = useToast()
-    const [loading, setLoading] = useState(true)
-    const [notFound, setNotFound] = useState(false)
     const [activeTab, setActiveTab] = useState('grid')
 
     const loggedUser = useSelector(store => store.user)
     const people = useSelector(store => store.people)
     const { uid } = useParams()
     const person = people?.[uid]
+
+    const { isLoading, isError, isSuccess } = useGetUserByIdQuery(uid, {
+        skip: (!uid || !loggedUser) || (uid === loggedUser?._id) || (!!person)
+    }) // skip if uid is not available, or if the user is viewing their own profile, or if the person is already in the store
+    const loading = !person && isLoading
+    const notFound = isError || (isSuccess && !person)
+
     const pfp = person?.pfp
     const statusButtonText = getStatusButtonText(person, loggedUser)
     const isAccent = ["Connect", "Accept"].includes(statusButtonText)
 
-    useFetchProfile(uid, setLoading, setNotFound)
-
-    const { sendRequest, isLoading: isRequestLoading } = useConnectionActions()
+    const { sendRequest, isLoading: isRequestLoading } = useConnectionActions(triggerToast)
 
     const handleClick = () => {
         if (isAccent) {

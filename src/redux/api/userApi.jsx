@@ -1,6 +1,10 @@
 import baseApi from "./baseApi"
 
-const transformResData = (res) => ({ ...res.data, isOnline: false })
+const transformResData = (res) => {
+    const user = res?.data
+    if (!user) return null
+    return { ...user, name: `${user.firstName} ${user.lastName}`, isOnline: false }
+}
 const syncLoggedInUser = async (dispatch, queryFulfilled) => {
     try {
         const { data: user } = await queryFulfilled
@@ -28,11 +32,16 @@ const userApi = baseApi.injectEndpoints({
             async onQueryStarted(_arg, { dispatch, queryFulfilled }) {
                 await syncLoggedInUser(dispatch, queryFulfilled)
             }
+        }),
+        getUserById: builder.query({
+            query: (uid) => ({ url: `/search/id?id=${uid}`, method: 'GET' }),
+            transformResponse: transformResData,
+            providesTags: (result, error, uid) => [{ type: 'User', id: uid }]
         })
     })
 })
 
-export const { useGetLoggedInUserQuery, useLoginMutation, useSignupMutation } = userApi
+export const { useGetLoggedInUserQuery, useLoginMutation, useSignupMutation, useGetUserByIdQuery } = userApi
 export default userApi
 
 
