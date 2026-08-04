@@ -2,13 +2,13 @@
 export const BASE_URL = "http://localhost:7000/api"
 
 // AUTH API
-export const LOGIN_URL = BASE_URL + "/auth/login"
-export const SIGNUP_URL = BASE_URL + "/users"
-export const GET_USER_URL = BASE_URL + "/users"
-export const UPDATE_USER_URL = BASE_URL + "/users"
-export const LOGOUT_URL = BASE_URL + "/auth/logout"
+export const LOGIN_URL = BASE_URL + "/auth/login" // requestType: POST
+export const SIGNUP_URL = BASE_URL + "/users" // requestType: POST
+export const GET_USER_URL = BASE_URL + "/users" // requestType: GET
+export const UPDATE_USER_URL = BASE_URL + "/users" // requestType: PATCH
+export const LOGOUT_URL = BASE_URL + "/auth/logout" // requestType: POST
 
-// GET CONNECTIONS API
+// GET CONNECTIONS API -> requestType: GET
 export const DISCOVER_URL = BASE_URL + "/connections/feed"
 export const RECEIVED_URL = BASE_URL + "/connections/received"
 export const PENDING_URL = BASE_URL + "/connections/sent"

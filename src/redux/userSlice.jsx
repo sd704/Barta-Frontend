@@ -1,4 +1,6 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice } from "@reduxjs/toolkit"
+import baseApi from "./api/baseApi"
+
 const ALLOWED_UPDATES = ["firstName", "lastName", "about", "description", "age", "gender", "pfp"]
 
 const userSlice = createSlice({
@@ -27,6 +29,14 @@ const userSlice = createSlice({
         removeUser: (state, action) => {
             return null
         }
+    },
+    extraReducers: (builder) => {
+        builder.addMatcher(
+            baseApi.endpoints.getLoggedInUser.matchFulfilled,
+            (state, action) => action.payload
+            // This will sync the query result with the userSlice state, 
+            // so that we can use the userSlice state in other components
+        )
     }
 })
 

@@ -1,6 +1,5 @@
 import { createBrowserRouter, RouterProvider } from "react-router-dom"
-import { useState } from "react"
-import useFetchLoggedInUser from "../hooks/useFetchLoggedInUser"
+import { useGetLoggedInUserQuery } from "../redux/api/userApi"
 import SideNavbar from "../components/SideNavbar"
 import ProtectedRoute from "../components/ProtectedRoute"
 import PublicRoute from "../components/PublicRoute"
@@ -17,7 +16,7 @@ import Logout from "./Logout"
 import NotFound from "./NotFound"
 
 const Body = () => {
-  const [loading, setLoading] = useState(true)
+  const { isLoading } = useGetLoggedInUserQuery()
 
   const appRouter = createBrowserRouter([
     {
@@ -62,12 +61,16 @@ const Body = () => {
     }
   ])
 
-  useFetchLoggedInUser(setLoading)
+  let content = null
 
-  // Preventing Auth hydration race condition
-  if (loading) return (<div className="bg-zinc-200 h-screen w-screen"></div>)
+  if (isLoading) {
+    // Preventing Auth hydration race condition
+    content = <div className="bg-zinc-200 h-screen w-screen"></div>
+  } else {
+    content = <RouterProvider router={appRouter} />
+  }
 
-  return (<>      <RouterProvider router={appRouter} />    </>)
+  return content
 }
 
 export default Body
