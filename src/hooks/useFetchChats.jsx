@@ -23,6 +23,7 @@ const useFetchChats = (targetUserId, loggedInUserId, setLoading) => {
         if (res.ok) {
             const chat = resObj?.data // chat -> { _id, participants:[u1,u2], messages}
 
+            // We can just pass targetUserId, as we don't need the whole userData object
             const targetUser = chat?.participants?.find(p => p._id !== loggedInUserId) || null
 
             if (chat?._id && targetUser) {

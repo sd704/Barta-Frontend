@@ -1,85 +1,56 @@
 import { useParams, useNavigate } from "react-router-dom"
 import { useSelector } from "react-redux"
-import { useRef, useEffect, useState } from "react"
+import { useRef, useMemo, useEffect, useState } from "react"
 import { motion, AnimatePresence } from "motion/react"
 import ChatHeader from "../components/ChatHeader"
 import MessageBubble from "../components/MessageBubble"
 import ChatInputBox from "../components/ChatInputBox"
 import { getSocket } from "../utils/socket"
-import useFetchChats from "../hooks/useFetchChats"
 import LoadingDots from '../components/LoadingDots'
-import getDateLabel from '../utils/getDateLabel'
-// import dummyTexts from "../utils/dummyTexts"
+import addDateSeparators from '../utils/addDateSeparators'
+import { useGetUserByIdQuery } from "../redux/api/userApi"
+import { useGetMessagesQuery } from "../redux/api/chatApi"
+import useChatTyping from "../hooks/useChatTyping"
+import useMarkMsgsAsSeen from "../hooks/useMarkMsgsAsSeen"
+import useScrollToBottom from "../hooks/useScrollToBottom"
 
 const Chat = () => {
     const navigate = useNavigate()
-    const [loading, setLoading] = useState(true)
-    const [isTyping, setIsTyping] = useState(false)
     const { uid: targetUserId } = useParams()
     const loggedInUser = useSelector(store => store.user)
     const loggedInUserId = loggedInUser?._id
     const peopleStore = useSelector(store => store.people ?? {})
     const chatStore = useSelector(store => store.messages ?? {})
+    const chatId = chatStore?.[targetUserId]?.chatId
     const messages = chatStore?.[targetUserId]?.messages ?? []
+    const timeLine = useMemo(() => addDateSeparators(messages), [messages])
     const messagesEndRef = useRef(null)
-    const targetUserData = peopleStore?.[targetUserId]
-    const isConnected = targetUserData?.connectionData?.status === 'accepted'
-    const isConnectionOk = isConnected && !targetUserData?.connectionData?.blockedByMe && !targetUserData?.connectionData?.blockedMe
+    const scrollToBottom = () => { messagesEndRef.current?.scrollIntoView({ behavior: "smooth" }) }
+    const person = peopleStore?.[targetUserId]
+    const { isFetching: userIsLoading } = useGetUserByIdQuery(targetUserId, {
+        skip: (!targetUserId || !loggedInUser) || (!!person)
+    })
+    const { isFetching: msgsIsLoading } = useGetMessagesQuery(targetUserId, {
+        skip: (!targetUserId || !loggedInUser)
+    })
+    const loading = (!person && userIsLoading) || msgsIsLoading
 
-    const addDateSeparators = (messages) => {
-        const result = []
-        let lastDate = null
-
-        messages.forEach((msg) => {
-            const msgDate = new Date(msg.createdAt).toDateString()
-
-            if (msgDate !== lastDate) {
-                result.push({ type: "DATE", data: getDateLabel(msg.createdAt) })
-                lastDate = msgDate
-            }
-
-            result.push({ type: "MESSAGE", data: msg })
-        })
-
-        return result
-    }
+    const isConnected = person?.connectionData?.status === 'accepted'
+    const isConnectionOk = isConnected && !person?.connectionData?.blockedByMe && !person?.connectionData?.blockedMe
 
     const handleSendMessage = (text) => {
         const socket = getSocket()
         socket.emit("sendMessage", { targetUserId, text })
     }
 
-    const scrollToBottom = () => { messagesEndRef.current?.scrollIntoView({ behavior: "smooth" }) }
+    // Handles typing indicator
+    const isTyping = useChatTyping(targetUserId)
 
-    useEffect(() => {
-        // This is required when user changes the chat user, the page does not reload to loading=false, so set it to true
-        setLoading(true)
-        const socket = getSocket()
-        const handleTyping = ({ userId, status }) => {
-            if (userId === targetUserId) {
-                setIsTyping(status)
-                if (status)
-                    scrollToBottom()
-            }
-        }
-        socket.on("typing", handleTyping)
+    // Marks messages as seen when the user views them
+    useMarkMsgsAsSeen(targetUserId, messages, chatId, loading)
 
-        return () => { socket.off("typing", handleTyping) }
-    }, [targetUserId])
-
-    useEffect(() => {
-        if (!loading) { scrollToBottom() }
-        const socket = getSocket()
-        // msgs where targetUser is sender and isRead is false
-        const stringMessageIds = messages.filter(msg => msg.senderId === targetUserId && !msg.isRead).map(m => m._id)
-        const stringChatId = chatStore?.[targetUserId]?.chatId
-
-        if (stringMessageIds.length > 0) {
-            socket.emit("updateMsgSeen", { stringChatId, stringMessageIds })
-        }
-    }, [targetUserId, messages, loading])
-
-    useFetchChats(targetUserId, loggedInUserId, setLoading)
+    // Auto-scrolls to bottom when new messages arrive
+    useScrollToBottom(messages, isTyping, scrollToBottom, loading)
 
     return (
         //<div className="h-screen bg-zinc-200">       
@@ -88,16 +59,16 @@ const Chat = () => {
 
             {/* Header */}
             <ChatHeader
-                userExists={!!targetUserData}
+                userExists={!!person}
                 isConnectionOk={isConnectionOk}
                 isConnected={isConnected}
-                isBlocked={targetUserData?.connectionData?.blockedByMe}
-                hasBlockedMe={targetUserData?.connectionData?.blockedMe}
-                name={targetUserData?.name}
+                isBlocked={person?.connectionData?.blockedByMe}
+                hasBlockedMe={person?.connectionData?.blockedMe}
+                name={person?.name}
                 uid={targetUserId}
-                isOnline={targetUserData?.isOnline}
-                lastSeen={targetUserData?.lastSeen}
-                avatar={targetUserData?.pfp}
+                isOnline={person?.isOnline}
+                lastSeen={person?.lastSeen}
+                avatar={person?.pfp}
                 onBack={() => navigate("/messages")}
             />
 
@@ -106,7 +77,7 @@ const Chat = () => {
 
                 {loading
                     ? <LoadingDots />
-                    : !targetUserData
+                    : !person
                         ? <div className="size-full flex flex-col items-center justify-center ">
                             <h1 className="mb-2 text-xl uppercase font-mono tracking-widest text-zinc-900">User Not Found!</h1>
                             <p className="text-xs leading-relaxed tracking-wide font-mono text-zinc-500 text-center px-40">
@@ -117,7 +88,7 @@ const Chat = () => {
                             ? <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.5 }}>
 
                                 {
-                                    addDateSeparators(messages).map(({ type, data }) => {
+                                    timeLine.map(({ type, data }) => {
                                         if (type === "DATE") {
                                             return <div className="flex items-center justify-center my-6" key={data}>
                                                 <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }}
@@ -140,7 +111,7 @@ const Chat = () => {
                                             <div className="flex items-center gap-2">
                                                 <div className="px-4 py-3 bg-zinc-200 rounded-xl rounded-bl-none inline-flex gap-1 items-center"
                                                     style={{ boxShadow: "8px 8px 16px rgba(0,0,0,0.15), -6px -6px 12px rgba(255,255,255,0.7)" }}>
-                                                    <span className="mr-1 text-sm font-mono text-orange-600">{`${targetUserData.firstName} is typing`}</span>
+                                                    <span className="mr-1 text-sm font-mono text-orange-600">{`${person.firstName} is typing`}</span>
                                                     <motion.div className="w-2 h-2 bg-orange-600 rounded-full" animate={{ opacity: [0.3, 1, 0.3] }} transition={{ duration: 1.5, repeat: Infinity, delay: 0 }} />
                                                     <motion.div className="w-2 h-2 bg-orange-600 rounded-full" animate={{ opacity: [0.3, 1, 0.3] }} transition={{ duration: 1.5, repeat: Infinity, delay: 0.2 }} />
                                                     <motion.div className="w-2 h-2 bg-orange-600 rounded-full" animate={{ opacity: [0.3, 1, 0.3] }} transition={{ duration: 1.5, repeat: Infinity, delay: 0.4 }} />
@@ -154,14 +125,14 @@ const Chat = () => {
                             </motion.div>
                             : <div className="size-full flex flex-col items-center justify-center ">
                                 {!isConnected && <h1 className="mb-2 text-l font-mono tracking-widest text-zinc-900">
-                                    Connect with {targetUserData?.firstName} to start a conversation
+                                    Connect with {person?.firstName} to start a conversation
                                 </h1>}
                             </div>
                 }
 
                 {/* 
                     Show <LoadingDots /> if loading == true
-                    else if targetUserData is null or undefined -> Show "User Not Found!"
+                    else if person is null or undefined -> Show "User Not Found!"
                     else if messages array length > 0 -> Show messages
                     else if messages length == 0 and user is not connected -> Show "Connect"
                 */}
