@@ -1,6 +1,6 @@
 import { configureStore } from "@reduxjs/toolkit"
 import baseApi from "./api/baseApi"
-import userApi from "./api/userApi"
+import userApi from "./api/userApi" // Intentional side-effect import to register the endpoints with baseApi
 import userReducer from "./userSlice"
 import peopleSlice from "./peopleSlice"
 import messageSlice from "./messageSlice"

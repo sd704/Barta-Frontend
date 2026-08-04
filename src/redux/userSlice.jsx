@@ -31,14 +31,25 @@ const userSlice = createSlice({
         }
     },
     extraReducers: (builder) => {
-        builder.addMatcher(
-            baseApi.endpoints.getLoggedInUser.matchFulfilled,
-            (state, action) => action.payload
-            // This will sync the query result with the userSlice state, 
-            // so that we can use the userSlice state in other components
-        )
+        builder
+            .addMatcher(
+                baseApi.endpoints.getLoggedInUser.matchFulfilled,
+                (_state, action) => action.payload
+            )
+            .addMatcher(
+                baseApi.endpoints.login.matchFulfilled,
+                (_state, action) => action.payload
+            )
+            .addMatcher(
+                baseApi.endpoints.signup.matchFulfilled,
+                (_state, action) => action.payload
+            )
     }
 })
 
 export const { addUser, updateUser, updateNetwork, removeUser } = userSlice.actions
 export default userSlice.reducer
+
+
+// addMatcher() -> This will sync the query/mutation result with the userSlice state, 
+// so that we can use the userSlice state in other components

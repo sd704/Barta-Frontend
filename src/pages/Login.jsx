@@ -1,15 +1,13 @@
 import { useState, useEffect } from "react"
-import { useDispatch } from "react-redux"
 import { addUser } from "../redux/userSlice"
 import { motion, AnimatePresence } from "motion/react"
 import ModeSwitch from "../components/ModeSwitch"
 import InputBox from "../components/InputBox"
 import SubmitButton from "../components/SubmitButton"
-import { LOGIN_URL, SIGNUP_URL } from "../utils/ApiRoutes"
-import { validateEmail, validatePass } from "../utils/validate"
+import { validateLogin, validateSignup } from "../utils/validate"
+import { useLoginMutation, useSignupMutation } from "../redux/api/userApi"
 
 const Login = () => {
-    const dispatch = useDispatch()
     const [isSignup, setIsSignup] = useState(false)
     const [email, setEmail] = useState("")
     const [password, setPassword] = useState("")
@@ -17,69 +15,36 @@ const Login = () => {
     const [lastName, setLastName] = useState("")
     const [errorMsg, setError] = useState(null)
     const [index, setIndex] = useState(2)
-    const [isProcessing, setIsProcessing] = useState(false)
+
+    const [login, { isLoading: isLogginIn }] = useLoginMutation()
+    const [signup, { isLoading: isSigningUp }] = useSignupMutation()
+    const isProcessing = isLogginIn || isSigningUp
 
     const handleSubmit = async () => {
 
-        // Signup-only validation
-        if (isSignup) {
+        const validationError = isSignup ? validateSignup(firstName, lastName, email, password)
+            : validateLogin(email, password)
 
-            if (!firstName.trim()) {
-                setError("Firstname required!");
-                return;
-            }
-
-            if (!lastName.trim()) {
-                setError("Lastname required!");
-                return;
-            }
-
-            // Email validation
-            if (!validateEmail(email.trim())) {
-                setError("Invalid Email!")
-                return
-            }
-
-            // Password validation
-            if (!validatePass(password)) {
-                setError("Your password must be 8-60 characters and include at least one uppercase letter, one lowercase letter, one number, and one special character.")
-                return
-            }
+        if (validationError) {
+            setError(validationError)
+            return
         }
 
-        setError(null)
-        setIsProcessing(true)
+        const body = { firstName: firstName.trim(), lastName: lastName.trim(), email: email.trim(), password }
+        // API will ignore name if its login route
 
         try {
             // Authentication
-            const URL = isSignup ? SIGNUP_URL : LOGIN_URL
-            const res = await fetch(URL, {
-                method: "POST",
-                headers: { "Content-Type": "application/json", },
-                credentials: "include",
-                body: JSON.stringify({ firstName: firstName.trim(), lastName: lastName.trim(), email: email.trim(), password }),
-            }) // API will ignore name if its login route
-
-            const data = await res.json()
-
-            if (!res.ok) {
-                const message = data?.message?.toLowerCase()
-                if (message.includes("duplicate key error")) {
-                    setError("User already exists!");
-                } else {
-                    setError(data?.message || "Something went wrong")
-                }
-                setIsProcessing(false)
-                return
-            }
-
-            // Success
-            let obj = data?.data
-            obj["isOnline"] = false
-            dispatch(addUser(obj))
+            const mutation = isSignup ? signup : login
+            await mutation(body).unwrap() // unwrap() will throw an error if the mutation fails, so we can catch it in the catch block
+            // on success, the cache is updated by the userApi
         } catch (err) {
-            setIsProcessing(false)
-            setError("Something went wrong!")
+            const message = err?.data?.message?.toLowerCase?.() || ''
+            if (message.includes("duplicate key error")) {
+                setError("User already exists!")
+            } else {
+                setError(err?.data?.message || "Something went wrong")
+            }
         }
     }
 
