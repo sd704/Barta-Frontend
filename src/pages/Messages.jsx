@@ -6,19 +6,16 @@ import SearchBar from "../components/SearchBar"
 import TabButton from "../components/TabButton"
 import ChatItem from "../components/ChatItem"
 import { useSelector } from "react-redux"
-// import useFetchAllChats from "../hooks/useFetchAllChats"
 import useNetworkStatus from "../hooks/useNetworkStatus"
 import LoadingDots from '../components/LoadingDots'
 import getDateLabel from '../utils/getDateLabel'
 import { useGetAllChatsQuery } from "../redux/api/chatApi"
 import { getChatListStats, filterAndSortChats, getChatPreviewText } from "../utils/chatListHelpers"
-// import Chat from "./Chat"
-// import chats from "../utils/dummyChats"
+
 const FILTERS = ["ALL", "UNREAD", "GROUPS", "ARCHIVE"]
 const variants = { initial: { opacity: 0 }, animate: { opacity: 1, transition: { duration: 0.5, staggerChildren: 0.05 } } }
 
 const Messages = () => {
-    // const [loading, setLoading] = useState(true)
     const user = useSelector(store => store.user)
     const loggedInUserId = user?._id
 
@@ -36,8 +33,6 @@ const Messages = () => {
     const [activeTab, setActiveTab] = useState("ALL")
     const { onlineUserCount, unreadChatsCount } = useMemo(() => getChatListStats(chats, peopleStore), [chats, peopleStore])
     const filteredChats = useMemo(() => filterAndSortChats(chats, peopleStore, searchQuery, activeTab), [chats, peopleStore, searchQuery, activeTab])
-
-    // useFetchAllChats(userCount, setLoading, loggedInUserId)
 
     return (
         <div className="h-screen flex justify-center">

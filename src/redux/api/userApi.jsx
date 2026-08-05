@@ -37,11 +37,29 @@ const userApi = baseApi.injectEndpoints({
             query: (uid) => ({ url: `/search/id?id=${uid}`, method: 'GET' }),
             transformResponse: transformResData,
             providesTags: (result, error, uid) => [{ type: 'User', id: uid }]
+        }),
+        updateUser: builder.mutation({
+            query: (body) => ({ url: '/users', method: 'PATCH', body }),
+            transformResponse: (res) => res?.updatedFields,
+            invalidatesTags: ['User'],
+            async onQueryStarted(patch, { dispatch, queryFulfilled }) {
+                try {
+                    const { data: updatedFields } = await queryFulfilled
+                    if (!updatedFields) return
+
+                    dispatch(baseApi.util.updateQueryData('getLoggedInUser', undefined, (draft) => {
+                        Object.assign(draft, updatedFields)
+                        if (updatedFields.firstName || updatedFields.lastName) {
+                            draft.name = `${draft.firstName} ${draft.lastName}` // Update 'name'
+                        }
+                    }))
+                } catch (err) { }
+            }
         })
     })
 })
 
-export const { useGetLoggedInUserQuery, useLoginMutation, useSignupMutation, useGetUserByIdQuery } = userApi
+export const { useGetLoggedInUserQuery, useLoginMutation, useSignupMutation, useGetUserByIdQuery, useUpdateUserMutation } = userApi
 export default userApi
 
 

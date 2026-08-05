@@ -1,14 +1,12 @@
 import { motion } from "motion/react"
 import { useState, useRef } from "react"
-import { useDispatch } from "react-redux"
 import { useNavigate } from 'react-router-dom'
 import { SquarePen, X, Check, User, Camera, ArrowLeft } from "lucide-react"
 import InputBox from "../components/InputBox"
 import InputTextArea from "../components/InputTextArea"
 import InputSelect from "../components/InputSelect"
 import SubmitButton from "../components/SubmitButton"
-import { UPDATE_USER_URL } from "../utils/ApiRoutes"
-import { updateUser } from "../redux/userSlice"
+import { useUpdateUserMutation } from "../redux/api/userApi"
 import imageCompression from "browser-image-compression"
 import useToast from "../hooks/useToast"
 
@@ -21,7 +19,7 @@ const imageOptions = { initialQuality: 0.6, maxWidthOrHeight: 320, useWebWorker:
 const selectOptions = { "male": "Male", "female": "Female", "other": "Non-binary", "null": "Prefer not to say" }
 
 const ProfileInfoUI = ({ user, isEditAllowed }) => {
-    const dispatch = useDispatch()
+    const [updateUser, { isFetching: isSaving }] = useUpdateUserMutation()
     const navigate = useNavigate()
     const { ToastComponent, triggerToast } = useToast()
     const [isEditing, setIsEditing] = useState(false)
@@ -89,30 +87,14 @@ const ProfileInfoUI = ({ user, isEditAllowed }) => {
                 return
             }
 
-            const res = await fetch(UPDATE_USER_URL, {
-                method: "PATCH",
-                headers: { "Content-Type": "application/json", },
-                credentials: "include",
-                body: JSON.stringify(updatedUserData),
-            })
-
-            if (!res.ok) {
-                const toastProps = { hasPfp: true, pfp: updatedUserData.pfp, text: "Failed to save changes!" }
-                triggerToast(toastProps)
-                setError("Something went wrong!")
-            } else {
-                const updatedFields = (await res.json())?.updatedFields
-                if (updatedFields) {
-                    dispatch(updateUser(updatedFields))
-                }
-                setIsEditing(false)
-                const toastProps = { hasPfp: true, pfp: updatedUserData.pfp, text: "Changes saved successfully!" }
-                triggerToast(toastProps)
-            }
+            await updateUser(updatedUserData).unwrap()
+            setIsEditing(false)
+            const toastProps = { hasPfp: true, pfp: updatedUserData.pfp, text: "Changes saved successfully!" }
+            triggerToast(toastProps)
         } catch (e) {
             const toastProps = { hasPfp: true, pfp: pfp, text: "Failed to save changes!" }
             triggerToast(toastProps)
-            // console.error("Something went wrong!")
+            setError("Something went wrong!")
         }
     }
 
@@ -191,7 +173,7 @@ const ProfileInfoUI = ({ user, isEditAllowed }) => {
                         {!isEditing && <SubmitButton onClick={() => navigate(-1)}><ArrowLeft size={16} />Back</SubmitButton>}
                         {!isEditing && <SubmitButton onClick={() => setIsEditing(true)} style={orangeButton}><SquarePen size={16} />EDIT</SubmitButton>}
                         {isEditing && <SubmitButton onClick={handleRefresh}><X size={16} />CANCEL</SubmitButton>}
-                        {isEditing && <SubmitButton onClick={handleSave} style={orangeButton}><Check size={16} />SAVE</SubmitButton>}
+                        {isEditing && <SubmitButton onClick={handleSave} style={orangeButton} disabled={isSaving}><Check size={16} />SAVE</SubmitButton>}
                     </div>}
 
                     {!isEditAllowed && <div className="pt-4 flex gap-3">

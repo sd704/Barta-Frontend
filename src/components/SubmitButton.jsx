@@ -1,11 +1,12 @@
 import { motion } from "motion/react"
 
-const SubmitButton = ({ children, onClick, style = null }) => {
+const SubmitButton = ({ children, onClick, style = null, disabled = false }) => {
 
     // Login page Submit Button
 
     return (
         <motion.button
+            disabled={disabled}
             className={`relative flex gap-2 justify-center px-8 py-3 w-full font-mono text-sm tracking-wider overflow-hidden rounded-xl ${style ? style : "bg-zinc-900 text-zinc-100 hover:bg-zinc-800"} cursor-pointer`}
             onClick={onClick}
             whileTap={{ scale: 0.98 }}

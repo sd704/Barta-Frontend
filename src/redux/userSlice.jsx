@@ -44,6 +44,18 @@ const userSlice = createSlice({
                 baseApi.endpoints.signup.matchFulfilled,
                 (_state, action) => action.payload
             )
+            .addMatcher(
+                baseApi.endpoints.updateUser.matchFulfilled,
+                (state, action) => {
+                    if (!state) return
+                    const userData = action.payload
+                    Object.keys(userData).forEach((key) => {
+                        if (ALLOWED_UPDATES.includes(key)) {
+                            state[key] = userData[key]
+                        }
+                    })
+                }
+            )
     }
 })
 
