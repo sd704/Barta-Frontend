@@ -1,5 +1,4 @@
 import { useState, useEffect } from "react"
-import { addUser } from "../redux/userSlice"
 import { motion, AnimatePresence } from "motion/react"
 import ModeSwitch from "../components/ModeSwitch"
 import InputBox from "../components/InputBox"

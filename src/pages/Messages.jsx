@@ -25,7 +25,6 @@ const Messages = () => {
     const peopleStore = useSelector(store => store.people ?? {})
     const chatStore = useSelector(store => store.messages ?? {})
     const chats = Object.values(chatStore)
-    const userCount = chats?.length
     const { isFetching } = useGetAllChatsQuery(undefined, { skip: !loggedInUserId })
     const loading = isFetching
     const navigate = useNavigate()

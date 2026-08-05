@@ -1,4 +1,7 @@
 import baseApi from "./baseApi"
+import { removeUser } from "../userSlice"
+import { clearPeople } from "../peopleSlice"
+import { clearMsgs } from "../messageSlice"
 
 const transformResData = (res) => {
     const user = res?.data
@@ -42,7 +45,7 @@ const userApi = baseApi.injectEndpoints({
             query: (body) => ({ url: '/users', method: 'PATCH', body }),
             transformResponse: (res) => res?.updatedFields,
             invalidatesTags: ['User'],
-            async onQueryStarted(patch, { dispatch, queryFulfilled }) {
+            async onQueryStarted(_arg, { dispatch, queryFulfilled }) {
                 try {
                     const { data: updatedFields } = await queryFulfilled
                     if (!updatedFields) return
@@ -55,11 +58,30 @@ const userApi = baseApi.injectEndpoints({
                     }))
                 } catch (err) { }
             }
+        }),
+        logout: builder.mutation({
+            query: () => ({ url: 'auth/logout', method: 'POST' }),
+            async onQueryStarted(_arg, { dispatch, queryFulfilled }) {
+                try {
+                    await queryFulfilled
+                    dispatch(baseApi.util.resetApiState()) // clears all RTK cache
+                    dispatch(removeUser())
+                    dispatch(clearPeople())
+                    dispatch(clearMsgs())
+                } catch (err) { }
+            }
         })
     })
 })
 
-export const { useGetLoggedInUserQuery, useLoginMutation, useSignupMutation, useGetUserByIdQuery, useUpdateUserMutation } = userApi
+export const {
+    useGetLoggedInUserQuery,
+    useLoginMutation,
+    useSignupMutation,
+    useGetUserByIdQuery,
+    useUpdateUserMutation,
+    useLogoutMutation
+} = userApi
 export default userApi
 
 

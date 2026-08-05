@@ -1,36 +1,17 @@
 import { motion } from "motion/react"
 import { Power, LogOut } from "lucide-react"
 import SubmitButton from "../components/SubmitButton"
-import { LOGOUT_URL } from "../utils/ApiRoutes"
-import { removeUser } from "../redux/userSlice"
-import { clearPeople } from "../redux/peopleSlice"
-import { clearMsgs } from "../redux/messageSlice"
-import { useDispatch } from "react-redux"
-import { useState } from "react"
+import { useLogoutMutation } from "../redux/api/userApi"
+const index = 2
 
 const Logout = () => {
-    const dispatch = useDispatch()
-    const [isLoggingOut, setIsLoggingOut] = useState(false)
-    const index = 2
+    const [logout, { isLoading: isLoggingOut }] = useLogoutMutation()
 
     const handleLogout = async () => {
         try {
-            setIsLoggingOut(true)
-            const res = await fetch(LOGOUT_URL, {
-                method: "POST",
-                headers: { "Content-Type": "application/json", },
-                credentials: "include"
-            })
-            if (!res.ok) {
-                throw new Error("Logout Unsuccessful!")
-            }
-            dispatch(removeUser())
-            dispatch(clearPeople())
-            dispatch(clearMsgs())
+            await logout().unwrap()
         } catch (e) {
-            console.error(e)
-        } finally {
-            setIsLoggingOut(false)
+            console.error(e) // Logout Unsuccessful!
         }
     }
 
@@ -74,7 +55,7 @@ const Logout = () => {
                     </span>
                 </div>
 
-                {!isLoggingOut && <SubmitButton onClick={handleLogout}><LogOut size={16} />LOG OUT</SubmitButton>}
+                {!isLoggingOut && <SubmitButton onClick={handleLogout} ><LogOut size={16} />LOG OUT</SubmitButton>}
 
 
                 {/* Corner Details - dots */}
