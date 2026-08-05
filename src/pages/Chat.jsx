@@ -1,6 +1,6 @@
 import { useParams, useNavigate } from "react-router-dom"
 import { useSelector } from "react-redux"
-import { useRef, useMemo, useEffect, useState } from "react"
+import { useRef, useMemo } from "react"
 import { motion, AnimatePresence } from "motion/react"
 import ChatHeader from "../components/ChatHeader"
 import MessageBubble from "../components/MessageBubble"
@@ -9,7 +9,7 @@ import { getSocket } from "../utils/socket"
 import LoadingDots from '../components/LoadingDots'
 import addDateSeparators from '../utils/addDateSeparators'
 import { useGetUserByIdQuery } from "../redux/api/userApi"
-import { useGetMessagesQuery } from "../redux/api/chatApi"
+import { useGetChatsQuery } from "../redux/api/chatApi"
 import useChatTyping from "../hooks/useChatTyping"
 import useMarkMsgsAsSeen from "../hooks/useMarkMsgsAsSeen"
 import useScrollToBottom from "../hooks/useScrollToBottom"
@@ -25,12 +25,11 @@ const Chat = () => {
     const messages = chatStore?.[targetUserId]?.messages ?? []
     const timeLine = useMemo(() => addDateSeparators(messages), [messages])
     const messagesEndRef = useRef(null)
-    const scrollToBottom = () => { messagesEndRef.current?.scrollIntoView({ behavior: "smooth" }) }
     const person = peopleStore?.[targetUserId]
     const { isFetching: userIsLoading } = useGetUserByIdQuery(targetUserId, {
         skip: (!targetUserId || !loggedInUser) || (!!person)
     })
-    const { isFetching: msgsIsLoading } = useGetMessagesQuery(targetUserId, {
+    const { isFetching: msgsIsLoading } = useGetChatsQuery(targetUserId, {
         skip: (!targetUserId || !loggedInUser)
     })
     const loading = (!person && userIsLoading) || msgsIsLoading
@@ -50,12 +49,12 @@ const Chat = () => {
     useMarkMsgsAsSeen(targetUserId, messages, chatId, loading)
 
     // Auto-scrolls to bottom when new messages arrive
-    useScrollToBottom(messages, isTyping, scrollToBottom, loading)
+    useScrollToBottom(messages, isTyping, messagesEndRef, loading)
 
     return (
         //<div className="h-screen bg-zinc-200">       
         <motion.div className="w-2xl h-screen flex flex-col"
-            key="chat-window" initial={{ opacity: 0, x: -100 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -100 }} transition={{ duration: 0.3 }}>
+            key={targetUserId} initial={{ opacity: 0, x: -100 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -100 }} transition={{ duration: 0.3 }}>
 
             {/* Header */}
             <ChatHeader

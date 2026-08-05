@@ -1,10 +1,10 @@
 import { useEffect } from "react"
 
-const useScrollToBottom = (messages, isTyping, scrollToBottom, loading) => {
+const useScrollToBottom = (messages, isTyping, messagesEndRef, loading) => {
     useEffect(() => {
         if (loading) return
-        scrollToBottom()
-    }, [messages, isTyping, scrollToBottom, loading])
+        messagesEndRef.current?.scrollIntoView({ behavior: "smooth" })
+    }, [messages, isTyping, messagesEndRef, loading])
 }
 
 export default useScrollToBottom

@@ -3,7 +3,3 @@
 
 @import "tailwindcss";
 @plugin "tailwind-scrollbar";
-
-@plugin "daisyui" {
-    themes: light --default, dark --prefersdark;
-};

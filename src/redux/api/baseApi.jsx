@@ -7,7 +7,7 @@ const baseApi = createApi({
         baseUrl: BASE_URL,
         credentials: 'include'
     }),
-    tagTypes: ['User'], // tagTypes are used to declare the label types we can use in our API
+    tagTypes: ['User', 'Chats'], // tagTypes are used to declare the label types we can use in our API
     endpoints: () => ({}) // We will add endpoints via injectEndpoints in other files
 })
 
