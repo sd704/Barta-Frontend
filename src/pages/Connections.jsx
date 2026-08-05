@@ -4,11 +4,11 @@ import { motion, AnimatePresence } from "motion/react"
 import SearchBar from "../components/SearchBar"
 import TabButtonAccent from "../components/TabButtonAccent"
 import UserCard from "../components/UserCard"
-import useFetchAllConnections from "../hooks/useFetchAllConnections"
 import LoadingDots from '../components/LoadingDots'
 import { CONNECTION_ACTIONS, CONNECTION_TABS } from "../utils/connectionConfig"
 import useConnectionActions from "../hooks/useConnectionActions"
 import useToast from "../hooks/useToast"
+import { useGetDiscoverQuery, useGetReceivedQuery, useGetPendingQuery, useGetConnectedQuery, useGetBlockedQuery } from "../redux/api/connectionsApi"
 
 // Tabs List
 const TABS = Object.keys(CONNECTION_TABS)
@@ -18,7 +18,6 @@ const variants = { initial: { opacity: 0 }, animate: { opacity: 1, transition: {
 
 const Connections = () => {
     const { ToastComponent, triggerToast } = useToast()
-    const [loading, setLoading] = useState(true)
     const loggedInUser = useSelector(store => store.user)
     const loggedInUserId = loggedInUser?._id
     const peopleStore = useSelector(store => store.people ?? {})
@@ -42,7 +41,15 @@ const Connections = () => {
         activeList.filter(person => person.name.toLowerCase().includes(search.toLowerCase()))
     ), [activeList, search])
 
-    useFetchAllConnections(setLoading, loggedInUserId)
+    // Fetch All
+    const skip = !loggedInUserId
+    const queryArg = { loggedInUserId }
+    const discover = useGetDiscoverQuery(queryArg, { skip })
+    const received = useGetReceivedQuery(queryArg, { skip })
+    const pending = useGetPendingQuery(queryArg, { skip })
+    const connected = useGetConnectedQuery(queryArg, { skip })
+    const blocked = useGetBlockedQuery(queryArg, { skip })
+    const loading = discover.isLoading || received.isLoading || pending.isLoading || connected.isLoading || blocked.isLoading
 
     const connectionActions = useConnectionActions(triggerToast)
 

@@ -8,9 +8,11 @@ const peopleSlice = createSlice({
         addPeople: (state, action) => {
             const usersList = action.payload
             usersList.forEach((user) => {
-                state[user._id] = user
-                state[user._id]["name"] = user.firstName + " " + user.lastName
-                state[user._id]["isOnline"] = false
+                state[user._id] = {
+                    ...user,
+                    name: user.firstName + " " + user.lastName,
+                    isOnline: false
+                }
             })
         },
         addPerson: (state, action) => {
@@ -55,6 +57,7 @@ const peopleSlice = createSlice({
                         ...(existingUserData && {
                             isOnline: existingUserData.isOnline,
                             lastSeen: existingUserData.lastSeen,
+                            connectionData: action.payload.connectionData ?? existingUserData.connectionData
                         }),
                     }
                 }
