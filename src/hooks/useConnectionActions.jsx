@@ -1,19 +1,16 @@
 import { useState } from "react"
 import { useDispatch } from "react-redux"
 import { updatePerson } from "../redux/peopleSlice"
-
-const requestConnection = async (url, requestType) => {
-
-    const res = await fetch(url, {
-        method: requestType, headers: { "Content-Type": "application/json" }, credentials: "include"
-    })
-
-    const data = await res.json()
-
-    if (!res.ok) { throw new Error(data.message) }
-
-    return data.data ?? {}
-}
+import {
+    useConnectMutation,
+    useIgnoreMutation,
+    useAcceptMutation,
+    useRejectMutation,
+    useWithdrawMutation,
+    useRemoveMutation,
+    useBlockMutation,
+    useUnblockMutation
+} from "../redux/api/requestsApi"
 
 const mapConnectionResponse = (user, response, actionType) => {
 
@@ -37,7 +34,20 @@ const useConnectionActions = (triggerToast) => {
 
     const dispatch = useDispatch()
     const [loadingIds, setLoadingIds] = useState(new Set())
-    const isLoading = (userId) => loadingIds.has(userId)
+
+
+    const [connect] = useConnectMutation()
+    const [ignore] = useIgnoreMutation()
+    const [accept] = useAcceptMutation()
+    const [reject] = useRejectMutation()
+    const [withdraw] = useWithdrawMutation()
+    const [remove] = useRemoveMutation()
+    const [block] = useBlockMutation()
+    const [unblock] = useUnblockMutation()
+
+    const mutations = {
+        connect, ignore, accept, reject, withdraw, remove, block, unblock
+    }
 
     const sendRequest = async (event, user, action) => {
 
@@ -50,13 +60,14 @@ const useConnectionActions = (triggerToast) => {
             return next
         })
 
+        const triggerQuery = mutations[action.type]
+        if (!triggerQuery) return
+
         try {
 
-            const { url, requestType } = action.endpoint(user._id)
-            const response = await requestConnection(url, requestType)
+            const response = await triggerQuery(user._id).unwrap()
 
             const updatedUser = mapConnectionResponse(user, response, action.type)
-
             dispatch(updatePerson(updatedUser))
 
             // Toast Success
@@ -86,8 +97,8 @@ const useConnectionActions = (triggerToast) => {
         }
     }
 
+    const isLoading = (userId) => loadingIds.has(userId)
     return { sendRequest, isLoading }
-
 }
 
 export default useConnectionActions
