@@ -8,7 +8,7 @@ import ChatInputBox from "../components/ChatInputBox"
 import { getSocket } from "../utils/socket"
 import LoadingDots from '../components/LoadingDots'
 import addDateSeparators from '../utils/addDateSeparators'
-import { useGetUserByIdQuery } from "../redux/api/userApi"
+import { useGetLoggedInUserQuery, useGetUserByIdQuery } from "../redux/api/userApi"
 import { useGetChatsQuery } from "../redux/api/chatApi"
 import useChatTyping from "../hooks/useChatTyping"
 import useMarkMsgsAsSeen from "../hooks/useMarkMsgsAsSeen"
@@ -17,23 +17,24 @@ import useScrollToBottom from "../hooks/useScrollToBottom"
 const Chat = () => {
     const navigate = useNavigate()
     const { uid: targetUserId } = useParams()
-    const loggedInUser = useSelector(store => store.user)
+    const { data: loggedInUser } = useGetLoggedInUserQuery()
     const loggedInUserId = loggedInUser?._id
-    const peopleStore = useSelector(store => store.people ?? {})
-    const chatStore = useSelector(store => store.messages ?? {})
-    const chatId = chatStore?.[targetUserId]?.chatId
-    const messages = chatStore?.[targetUserId]?.messages ?? []
-    const timeLine = useMemo(() => addDateSeparators(messages), [messages])
-    const chatUserPresence = useSelector(s => s.presence[targetUserId] ?? {})
-    const messagesEndRef = useRef(null)
-    const person = peopleStore?.[targetUserId]
-    const { isFetching: userIsLoading } = useGetUserByIdQuery(targetUserId, {
-        skip: (!targetUserId || !loggedInUser) || (!!person)
-    })
-    const { isFetching: msgsIsLoading } = useGetChatsQuery(targetUserId, {
+
+    const { data: person, isFetching: userIsLoading } = useGetUserByIdQuery(targetUserId, {
         skip: (!targetUserId || !loggedInUser)
     })
-    const loading = (!person && userIsLoading) || msgsIsLoading
+    const { data: chat, isFetching: msgsIsLoading } = useGetChatsQuery(targetUserId, {
+        skip: (!targetUserId || !loggedInUser)
+    })
+    const loading = (userIsLoading && !person) || (msgsIsLoading && !chat)
+
+    const messages = chat?.messages ?? []
+    const timeLine = useMemo(() => addDateSeparators(messages), [messages])
+    const messagesEndRef = useRef(null)
+
+    const chatId = chat?.chatId
+    const EMPTY = {}
+    const chatUserPresence = useSelector(s => s.presence[targetUserId] ?? EMPTY)
 
     const isConnected = person?.connectionData?.status === 'accepted'
     const isConnectionOk = isConnected && !person?.connectionData?.blockedByMe && !person?.connectionData?.blockedMe
@@ -66,9 +67,7 @@ const Chat = () => {
                 hasBlockedMe={person?.connectionData?.blockedMe}
                 name={person?.name}
                 uid={targetUserId}
-                // isOnline={person?.isOnline}
                 isOnline={chatUserPresence?.isOnline}
-                // lastSeen={person?.lastSeen}
                 lastSeen={chatUserPresence?.lastSeen}
                 avatar={person?.pfp}
                 onBack={() => navigate("/messages")}

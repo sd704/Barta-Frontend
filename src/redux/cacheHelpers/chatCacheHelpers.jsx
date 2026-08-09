@@ -1,14 +1,30 @@
 import baseApi from "../api/baseApi"
 
 const appendMsg = ({ peerId, chatId, lastMessage, loggedInUserId }) => {
-    return baseApi.util.updateQueryData('getChats', peerId, (draft) => {
-        if (!draft) return
-        draft.chatId = draft.chatId ?? chatId
-        draft.messages.push(lastMessage)
-        if (lastMessage.senderId !== loggedInUserId) {
-            draft.unread = (draft.unread ?? 0) + 1
+    return (dispatch, getState) => {
+        const existingChat = baseApi.endpoints.getChats.select(peerId)(getState())?.data
+
+        // upsert new chat
+        if (!existingChat) {
+            dispatch(baseApi.util.upsertQueryData('getChats', peerId, {
+                chatId,
+                peerId,
+                userData: { _id: peerId }, // Needed for fillConvo(), remove after migration
+                messages: [lastMessage],
+                unread: lastMessage.senderId !== loggedInUserId ? 1 : 0
+            }))
+            return
         }
-    })
+
+        // Append to existing chat
+        dispatch(baseApi.util.updateQueryData('getChats', peerId, (draft) => {
+            draft.chatId = draft.chatId ?? chatId
+            draft.messages.push(lastMessage)
+            if (lastMessage.senderId !== loggedInUserId) {
+                draft.unread = (draft.unread ?? 0) + 1
+            }
+        }))
+    }
 }
 
 const updateMsgInInbox = ({ peerId, peer, chatId, lastMessage, loggedInUserId }) => {

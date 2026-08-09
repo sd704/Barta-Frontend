@@ -35,6 +35,7 @@ const useSocket = (loggedInUserId) => {
             dispatch(addPerson(receiver)) // To be removed after migration
             dispatch(addMsg({ chatId, lastMessage, receiver, loggedInUserId })) // To be removed after migration
 
+            // console.log({ peerId, peer, chatId, lastMessage, loggedInUserId })
             dispatch(appendMsg({ peerId, chatId, lastMessage, loggedInUserId }))
             dispatch(updateMsgInInbox({ peerId, peer, chatId, lastMessage, loggedInUserId }))
         }

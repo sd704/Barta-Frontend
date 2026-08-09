@@ -23,7 +23,6 @@ const Messages = () => {
 
     // Show online if network and socket are both connected
     const networkStatus = useNetworkStatus() && !!selfOnline
-    // const networkStatus = useNetworkStatus() && user?.isOnline
 
     const peopleStore = useSelector(store => store.people ?? {})
     const chatStore = useSelector(store => store.messages ?? {})
@@ -103,7 +102,6 @@ const Messages = () => {
                                 message={text}
                                 time={getDateLabel(lastMessage.createdAt, false)}
                                 unread={chat.unread}
-                                // isOnline={peopleStore[chat.uid]?.isOnline}
                                 isOnline={presence[chat.uid]?.isOnline}
                                 onClick={() => navigate(`/messages/${chat.uid}`)}
                             />
