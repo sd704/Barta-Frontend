@@ -8,12 +8,29 @@ const transformChatResData = (res, _meta, targetUserId) => {
     if (!chat?._id) return null
     return {
         chatId: chat._id,
-        // Need to remove userData after complete migration to RTK Query
-        userData: { _id: targetUserId },
-        messages: chat.messages ?? []
+        peerId: targetUserId,
+        userData: { _id: targetUserId }, // Needed for fillConvo, fillMsgs -> remove userData after complete migration
+        messages: chat.messages ?? [],
+        unread: 0
     }
 }
-const transformMultiChatResData = (res) => res?.data ?? []
+
+const transformMultiChatResData = (res) => {
+    const chats = res?.data ?? []
+    return chats.map(c => ({
+        chatId: c._id,
+        peerId: c.userData._id,
+        unread: c.unreadCount ?? 0,
+        isGroup: false,
+        isArchive: false,
+        messages: c.lastMessage ? [c.lastMessage] : [],
+        peer: {
+            ...c.userData,
+            name: `${c.userData.firstName} ${c.userData.lastName}`,
+            connectionData: c.connectionData
+        }
+    }))
+}
 
 const chatApi = baseApi.injectEndpoints({
     endpoints: (builder) => ({
@@ -43,7 +60,7 @@ const chatApi = baseApi.injectEndpoints({
                 try {
                     const { data: chats } = await queryFulfilled
                     if (!chats?.length) return
-                    dispatch(addPeople(chats.map(c => ({ ...c.userData, connectionData: c.connectionData }))))
+                    dispatch(addPeople(chats.map(c => ({ ...c.peer }))))
                     dispatch(fillMsgs(chats))
                 } catch (err) { }
             }
@@ -53,3 +70,16 @@ const chatApi = baseApi.injectEndpoints({
 
 export const { useGetChatsQuery, useGetAllChatsQuery } = chatApi
 export default chatApi
+
+
+// getAllChats -> onQueryStarted -> chats structure
+// {
+//     "chatId","peerId","unread","isGroup","isArchive",
+//     "messages": [
+//         { "senderId","text","isRead","_id","createdAt","updatedAt" }
+//     ],
+//     "peer": {
+//         "_id","firstName","lastName","email","about","description","age","gender","pfp","name",
+//         "connectionData": { "status","senderId","blockedByMe","blockedMe" }
+//     }
+// }

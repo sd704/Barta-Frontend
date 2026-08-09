@@ -18,9 +18,12 @@ const variants = { initial: { opacity: 0 }, animate: { opacity: 1, transition: {
 const Messages = () => {
     const user = useSelector(store => store.user)
     const loggedInUserId = user?._id
+    const presence = useSelector(s => s.presence ?? {})
+    const selfOnline = presence[loggedInUserId]?.isOnline
 
     // Show online if network and socket are both connected
-    const networkStatus = useNetworkStatus() && user?.isOnline
+    const networkStatus = useNetworkStatus() && !!selfOnline
+    // const networkStatus = useNetworkStatus() && user?.isOnline
 
     const peopleStore = useSelector(store => store.people ?? {})
     const chatStore = useSelector(store => store.messages ?? {})
@@ -30,7 +33,7 @@ const Messages = () => {
     const navigate = useNavigate()
     const [searchQuery, setSearchQuery] = useState("")
     const [activeTab, setActiveTab] = useState("ALL")
-    const { onlineUserCount, unreadChatsCount } = useMemo(() => getChatListStats(chats, peopleStore), [chats, peopleStore])
+    const { onlineUserCount, unreadChatsCount } = useMemo(() => getChatListStats(chats, presence), [chats, peopleStore])
     const filteredChats = useMemo(() => filterAndSortChats(chats, peopleStore, searchQuery, activeTab), [chats, peopleStore, searchQuery, activeTab])
 
     return (
@@ -96,7 +99,12 @@ const Messages = () => {
                         {filteredChats.map(chat => {
                             const lastMessage = chat.messages.at(-1)
                             const text = getChatPreviewText(chat, peopleStore)
-                            return <ChatItem key={chat.chatId} userData={peopleStore[chat.uid]} message={text} time={getDateLabel(lastMessage.createdAt, false)} unread={chat.unread} isOnline={peopleStore[chat.uid]?.isOnline}
+                            return <ChatItem key={chat.chatId} userData={peopleStore[chat.uid]}
+                                message={text}
+                                time={getDateLabel(lastMessage.createdAt, false)}
+                                unread={chat.unread}
+                                // isOnline={peopleStore[chat.uid]?.isOnline}
+                                isOnline={presence[chat.uid]?.isOnline}
                                 onClick={() => navigate(`/messages/${chat.uid}`)}
                             />
                         })}

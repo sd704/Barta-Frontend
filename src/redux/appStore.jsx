@@ -7,18 +7,17 @@ import requestsApi from "./api/requestsApi" // Intentional side-effect import
 import userReducer from "./userSlice"
 import peopleSlice from "./peopleSlice"
 import messageSlice from "./messageSlice"
+import presenceReducer from "./presenceSlice"
 
 const appStore = configureStore({
     reducer: {
         user: userReducer,
         people: peopleSlice,
         messages: messageSlice,
-
+        presence: presenceReducer,
         [baseApi.reducerPath]: baseApi.reducer
     },
-    middleware: (getDefaultMiddleware) =>
-        getDefaultMiddleware()
-            .concat(baseApi.middleware)
+    middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(baseApi.middleware)
 })
 
 export default appStore

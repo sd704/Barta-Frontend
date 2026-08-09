@@ -55,8 +55,8 @@ const peopleSlice = createSlice({
 
                         // Preserve existing data if available
                         ...(existingUserData && {
-                            isOnline: existingUserData.isOnline,
-                            lastSeen: existingUserData.lastSeen,
+                            // isOnline: existingUserData.isOnline, // We use Presence slice for this
+                            // lastSeen: existingUserData.lastSeen,
                             connectionData: action.payload.connectionData ?? existingUserData.connectionData
                         }),
                     }

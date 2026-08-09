@@ -24,6 +24,7 @@ const Chat = () => {
     const chatId = chatStore?.[targetUserId]?.chatId
     const messages = chatStore?.[targetUserId]?.messages ?? []
     const timeLine = useMemo(() => addDateSeparators(messages), [messages])
+    const chatUserPresence = useSelector(s => s.presence[targetUserId] ?? {})
     const messagesEndRef = useRef(null)
     const person = peopleStore?.[targetUserId]
     const { isFetching: userIsLoading } = useGetUserByIdQuery(targetUserId, {
@@ -65,8 +66,10 @@ const Chat = () => {
                 hasBlockedMe={person?.connectionData?.blockedMe}
                 name={person?.name}
                 uid={targetUserId}
-                isOnline={person?.isOnline}
-                lastSeen={person?.lastSeen}
+                // isOnline={person?.isOnline}
+                isOnline={chatUserPresence?.isOnline}
+                // lastSeen={person?.lastSeen}
+                lastSeen={chatUserPresence?.lastSeen}
                 avatar={person?.pfp}
                 onBack={() => navigate("/messages")}
             />

@@ -1,9 +1,9 @@
-const getChatListStats = (chats, peopleStore) => {
+const getChatListStats = (chats, presence) => {
     let onlineUserCount = 0
     let unreadChatsCount = 0
 
     chats.forEach(c => {
-        if (peopleStore[c.uid]?.isOnline) onlineUserCount++
+        if (presence[c.uid]?.isOnline) onlineUserCount++
         if (Number(c.unread) > 0) unreadChatsCount++
     })
 

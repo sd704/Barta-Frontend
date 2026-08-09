@@ -2,6 +2,7 @@ import baseApi from "./baseApi"
 import { removeUser } from "../userSlice"
 import { clearPeople } from "../peopleSlice"
 import { clearMsgs } from "../messageSlice"
+import { clearPresence } from "../presenceSlice"
 
 const transformResData = (res) => {
     const user = res?.data
@@ -66,8 +67,9 @@ const userApi = baseApi.injectEndpoints({
                     await queryFulfilled
                     dispatch(baseApi.util.resetApiState()) // clears all RTK cache
                     dispatch(removeUser())
-                    dispatch(clearPeople())
+                    dispatch(clearPresence())
                     dispatch(clearMsgs())
+                    dispatch(clearPeople())
                 } catch (err) { }
             }
         })

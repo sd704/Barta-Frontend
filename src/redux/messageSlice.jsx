@@ -8,14 +8,14 @@ const messageSlice = createSlice({
             const chats = action.payload // [{ _id, userData, lastMessage, unreadCount }, {...}, {...}]
 
             chats.forEach(item => {
-                if (item.userData._id && !state[item.userData._id]) {
-                    state[item.userData._id] = {
-                        chatId: item._id,
-                        uid: item.userData._id,
-                        unread: item.unreadCount,
-                        isGroup: false,
-                        isArchive: false,
-                        messages: [item.lastMessage]
+                if (item.peerId && !state[item.peerId]) {
+                    state[item.peerId] = {
+                        chatId: item.chatId,
+                        uid: item.peerId,
+                        unread: item.unread,
+                        isGroup: item.isGroup,
+                        isArchive: item.isArchive,
+                        messages: item.messages
                     }
                 }
             })

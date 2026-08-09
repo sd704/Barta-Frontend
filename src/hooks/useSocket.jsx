@@ -3,7 +3,8 @@ import { getSocket } from "../utils/socket"
 import { useDispatch, useSelector } from "react-redux"
 import { addMsg, markAsSeen } from "../redux/messageSlice"
 import { addPerson, updateIsOnline } from "../redux/peopleSlice"
-import { updateNetwork } from "../redux/userSlice"
+import { setPresence } from "../redux/presenceSlice"
+// import { updateNetwork } from "../redux/userSlice"
 
 const useSocket = (loggedInUserId) => {
     const dispatch = useDispatch()
@@ -42,18 +43,20 @@ const useSocket = (loggedInUserId) => {
             console.log(err) // "INVALID_TOKEN"
         })
 
-        const handlePresence = ({ uid, status, lastSeen }) => {
-            if (uid === loggedInUserId) {
-                dispatch(updateNetwork(status))
-            } else {
-                dispatch(updateIsOnline({ uid, status, lastSeen }))
-            }
-        }
+        // const handlePresence = ({ uid, status, lastSeen }) => {
+        //     if (uid === loggedInUserId) {
+        //         dispatch(updateNetwork(status))
+        //     } else {
+        //         dispatch(updateIsOnline({ uid, status, lastSeen }))
+        //     }
+        // }
+        const handlePresence = ({ uid, status, lastSeen }) => { dispatch(setPresence({ uid, isOnline: status, lastSeen })) }
         socket.on("presence:initial", handlePresence)
         socket.on("presence:update", handlePresence)
 
 
-        const handleDisconnect = (reason) => { dispatch(updateNetwork(false)) }
+        // const handleDisconnect = (reason) => { dispatch(updateNetwork(false)) }
+        const handleDisconnect = () => { dispatch(setPresence({ uid: loggedInUserId, isOnline: false })) }
         socket.on('disconnecting', handleDisconnect)
         socket.on('disconnect', handleDisconnect)
 
