@@ -56,15 +56,15 @@ const messageSlice = createSlice({
             state[receiver._id].unread += (lastMessage.senderId != loggedInUserId) ? 1 : 0
         },
         markAsSeen: (state, action) => {
-            const { receiverId, msgReceiverId, stringChatId, stringMessageIds, loggedInUserId } = action.payload
-            if (!receiverId || !stringChatId) return
+            const { receiverId, msgReceiverId, chatId, msgIds, loggedInUserId } = action.payload
+            if (!receiverId || !chatId) return
 
             // "receiver" is not technically receiver of "stringMessageIds"
             // Its just the other person in this convo beside the loggedInUser
-            if (state[receiverId]?.chatId === stringChatId) {
+            if (state[receiverId]?.chatId === chatId) {
                 let isReadCount = 0
                 state[receiverId].messages.forEach(msg => {
-                    if (stringMessageIds.includes(msg._id) && !msg.isRead) {
+                    if (msgIds.includes(msg._id) && !msg.isRead) {
                         msg.isRead = true
                         // Not all "stringMessageIds" will be marked as isRead=true [possibility]
                         // so "isReadCount" is inside this condition
