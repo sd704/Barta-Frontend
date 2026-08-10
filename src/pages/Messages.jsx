@@ -17,7 +17,6 @@ const FILTERS = ["ALL", "UNREAD", "GROUPS", "ARCHIVE"]
 const variants = { initial: { opacity: 0 }, animate: { opacity: 1, transition: { duration: 0.5, staggerChildren: 0.05 } } }
 
 const Messages = () => {
-    // const user = useSelector(store => store.user)
     const { data: loggedInUser } = useGetLoggedInUserQuery()
     const loggedInUserId = loggedInUser?._id
 
@@ -27,9 +26,6 @@ const Messages = () => {
     // Show online if network and socket are both connected
     const networkStatus = useNetworkStatus() && !!selfOnline
 
-    // const peopleStore = useSelector(store => store.people ?? {})
-    // const chatStore = useSelector(store => store.messages ?? {})
-    // const chats = Object.values(chatStore)
     const { data: chats = [], isLoading: isInboxLoading } = useGetAllChatsQuery(undefined, { skip: !loggedInUserId })
     const loading = isInboxLoading
     const navigate = useNavigate()

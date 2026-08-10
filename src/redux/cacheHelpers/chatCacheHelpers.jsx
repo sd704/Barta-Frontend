@@ -4,15 +4,9 @@ const appendMsg = ({ peerId, chatId, lastMessage, loggedInUserId }) => {
     return (dispatch, getState) => {
         const existingChat = baseApi.endpoints.getChats.select(peerId)(getState())?.data
 
-        // upsert new chat
-        if (!existingChat) {
-            dispatch(baseApi.util.upsertQueryData('getChats', peerId, {
-                chatId,
-                peerId,
-                userData: { _id: peerId }, // Needed for fillConvo(), remove after migration
-                messages: [lastMessage],
-                unread: lastMessage.senderId !== loggedInUserId ? 1 : 0
-            }))
+        // refetch for new chat to get chatId
+        if (!existingChat?.chatId) {
+            dispatch(baseApi.util.invalidateTags([{ type: 'Chats', id: peerId }]))
             return
         }
 

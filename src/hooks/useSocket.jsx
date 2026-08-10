@@ -1,8 +1,6 @@
 import { useEffect } from "react"
 import { getSocket } from "../utils/socket"
 import { useDispatch, useSelector } from "react-redux"
-import { addMsg, markAsSeen } from "../redux/messageSlice"
-import { addPerson, updateIsOnline } from "../redux/peopleSlice"
 import { setPresence } from "../redux/presenceSlice"
 import { appendMsg, updateMsgInInbox } from "../redux/cacheHelpers/chatCacheHelpers"
 import { markMsgsSeen, markInboxItemSeen } from "../redux/cacheHelpers/msgSeenHelpers"
@@ -30,22 +28,16 @@ const useSocket = (loggedInUserId) => {
 
         // Receiving msg from server
         const addMsgHandler = ({ chatId, lastMessage, receiver, connectionData }) => {
-            receiver["connectionData"] = connectionData // To be removed after migration
             const peerId = receiver._id
-            const peer = { ...receiver, connectionData }
-            dispatch(addPerson(receiver)) // To be removed after migration
-            dispatch(addMsg({ chatId, lastMessage, receiver, loggedInUserId })) // To be removed after migration
-
+            const peer = { ...receiver, name: `${receiver.firstName} ${receiver.lastName}`, connectionData }
             dispatch(appendMsg({ peerId, chatId, lastMessage, loggedInUserId }))
             dispatch(updateMsgInInbox({ peerId, peer, chatId, lastMessage, loggedInUserId }))
         }
         socket.on("messageReceived", addMsgHandler)
 
         // Update messages as seen
-        const msgSeenHandler = ({ receiverId, msgReceiverId, stringChatId: chatId, stringMessageIds: msgIds }) => {
-            const peerId = receiverId
+        const msgSeenHandler = ({ receiverId: peerId, msgReceiverId, stringChatId: chatId, stringMessageIds: msgIds }) => {
             const counter = { readCount: 0 }
-            dispatch(markAsSeen({ receiverId, msgReceiverId, chatId, msgIds, loggedInUserId })) // To be removed after migration
 
             // we sent reference of the obj, so modifying it will modify that obj
             dispatch(markMsgsSeen({ peerId, chatId, msgIds, msgReceiverId, loggedInUserId, counter }))
@@ -61,8 +53,6 @@ const useSocket = (loggedInUserId) => {
         socket.on("presence:initial", handlePresence)
         socket.on("presence:update", handlePresence)
 
-
-        // const handleDisconnect = (reason) => { dispatch(updateNetwork(false)) }
         const handleDisconnect = () => { dispatch(setPresence({ uid: loggedInUserId, isOnline: false })) }
         socket.on('disconnecting', handleDisconnect)
         socket.on('disconnect', handleDisconnect)

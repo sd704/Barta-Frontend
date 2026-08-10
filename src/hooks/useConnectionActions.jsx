@@ -1,5 +1,4 @@
 import { useState } from "react"
-import { useDispatch } from "react-redux"
 import {
     useConnectMutation,
     useIgnoreMutation,
@@ -11,29 +10,8 @@ import {
     useUnblockMutation
 } from "../redux/api/requestsApi"
 
-const mapConnectionResponse = (user, response, actionType) => {
-
-    const { sender, status } = response
-
-    // If status exists in res data, then save that status
-    // If not, then check the type, if block/unblock -> save previous status, else status=''
-
-    return {
-        ...user,
-        connectionData: {
-            senderId: sender?._id ?? "",
-            status: status ?? (["block", "unblock"].includes(actionType) ? user.connectionData.status : ""),
-            blockedByMe: actionType === "block"
-        }
-    }
-
-}
-
 const useConnectionActions = (triggerToast) => {
-
-    const dispatch = useDispatch()
     const [loadingIds, setLoadingIds] = useState(new Set())
-
 
     const [connect] = useConnectMutation()
     const [ignore] = useIgnoreMutation()
@@ -44,9 +22,7 @@ const useConnectionActions = (triggerToast) => {
     const [block] = useBlockMutation()
     const [unblock] = useUnblockMutation()
 
-    const mutations = {
-        connect, ignore, accept, reject, withdraw, remove, block, unblock
-    }
+    const mutations = { connect, ignore, accept, reject, withdraw, remove, block, unblock }
 
     const sendRequest = async (event, user, action) => {
 
@@ -66,13 +42,11 @@ const useConnectionActions = (triggerToast) => {
 
             const response = await triggerQuery(user._id).unwrap()
 
-            const updatedUser = mapConnectionResponse(user, response, action.type)
-
             // Toast Success
             const toastProps = {
-                hasPfp: Boolean(updatedUser.pfp),
-                pfp: updatedUser.pfp ?? '',
-                text: action.toast.success(updatedUser.name)
+                hasPfp: Boolean(user.pfp),
+                pfp: user.pfp ?? '',
+                text: action.toast.success(user.name)
             }
             triggerToast(toastProps)
 

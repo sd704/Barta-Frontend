@@ -19,7 +19,7 @@ const imageOptions = { initialQuality: 0.6, maxWidthOrHeight: 320, useWebWorker:
 const selectOptions = { "male": "Male", "female": "Female", "other": "Non-binary", "null": "Prefer not to say" }
 
 const ProfileInfoUI = ({ user, isEditAllowed }) => {
-    const [updateUser, { isFetching: isSaving }] = useUpdateUserMutation()
+    const [updateUser, { isLoading: isSaving }] = useUpdateUserMutation()
     const navigate = useNavigate()
     const { ToastComponent, triggerToast } = useToast()
     const [isEditing, setIsEditing] = useState(false)

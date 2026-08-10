@@ -1,13 +1,11 @@
 import baseApi from "./baseApi"
-import { removeUser } from "../userSlice"
-import { clearPeople } from "../peopleSlice"
-import { clearMsgs } from "../messageSlice"
+import { GET_USER, LOGIN, SIGNUP, GET_USER_BY_ID, UPDATE_USER, LOGOUT } from "../../utils/ApiRoutes"
 import { clearPresence } from "../presenceSlice"
 
 const transformResData = (res) => {
     const user = res?.data
     if (!user) return null
-    return { ...user, name: `${user.firstName} ${user.lastName}`, isOnline: false }
+    return { ...user, name: `${user.firstName} ${user.lastName}` }
 }
 const syncLoggedInUser = async (dispatch, queryFulfilled) => {
     try {
@@ -19,37 +17,40 @@ const syncLoggedInUser = async (dispatch, queryFulfilled) => {
 const userApi = baseApi.injectEndpoints({
     endpoints: (builder) => ({
         getLoggedInUser: builder.query({
-            query: () => ({ url: '/users', method: 'GET' }),
+            query: () => GET_USER(),
             transformResponse: transformResData,
             providesTags: ['User']
         }),
         login: builder.mutation({
-            query: (body) => ({ url: '/auth/login', method: 'POST', body }),
+            query: (body) => ({ ...LOGIN(), body }),
             transformResponse: transformResData,
             async onQueryStarted(_arg, { dispatch, queryFulfilled }) {
                 await syncLoggedInUser(dispatch, queryFulfilled)
             }
         }),
         signup: builder.mutation({
-            query: (body) => ({ url: '/users', method: 'POST', body }),
+            query: (body) => ({ ...SIGNUP(), body }),
             transformResponse: transformResData,
             async onQueryStarted(_arg, { dispatch, queryFulfilled }) {
                 await syncLoggedInUser(dispatch, queryFulfilled)
             }
         }),
         getUserById: builder.query({
-            query: (uid) => ({ url: `/search/id?id=${uid}`, method: 'GET' }),
+            query: (uid) => GET_USER_BY_ID(uid),
             transformResponse: transformResData,
             providesTags: (result, error, uid) => [{ type: 'User', id: uid }]
         }),
         updateUser: builder.mutation({
-            query: (body) => ({ url: '/users', method: 'PATCH', body }),
+            query: (body) => ({ ...UPDATE_USER(), body }),
             transformResponse: (res) => res?.updatedFields,
-            invalidatesTags: ['User'],
+            // invalidatesTags: ['User'],
             async onQueryStarted(_arg, { dispatch, queryFulfilled }) {
                 try {
                     const { data: updatedFields } = await queryFulfilled
                     if (!updatedFields) return
+
+                    // We could use invalidatesTags, that will refetch
+                    // But we have the changes, so better merge and avoid api call
 
                     dispatch(baseApi.util.updateQueryData('getLoggedInUser', undefined, (draft) => {
                         Object.assign(draft, updatedFields)
@@ -61,7 +62,7 @@ const userApi = baseApi.injectEndpoints({
             }
         }),
         logout: builder.mutation({
-            query: () => ({ url: 'auth/logout', method: 'POST' }),
+            query: () => LOGOUT(),
             async onQueryStarted(_arg, { dispatch, queryFulfilled }) {
                 try {
                     await queryFulfilled

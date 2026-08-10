@@ -4,16 +4,10 @@ import userApi from "./api/userApi" // Intentional side-effect import to registe
 import chatApi from "./api/chatApi" // Intentional side-effect import
 import connectionsApi from "./api/connectionsApi" // Intentional side-effect import
 import requestsApi from "./api/requestsApi" // Intentional side-effect import
-import userReducer from "./userSlice"
-import peopleSlice from "./peopleSlice"
-import messageSlice from "./messageSlice"
 import presenceReducer from "./presenceSlice"
 
 const appStore = configureStore({
     reducer: {
-        user: userReducer,
-        people: peopleSlice,
-        messages: messageSlice,
         presence: presenceReducer,
         [baseApi.reducerPath]: baseApi.reducer
     },

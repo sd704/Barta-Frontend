@@ -1,5 +1,4 @@
 import { useState } from 'react'
-import { useSelector } from "react-redux"
 import { Navigate, useParams } from 'react-router-dom'
 import { useGetLoggedInUserQuery, useGetUserByIdQuery } from "../redux/api/userApi"
 import UserNotFound from './UserNotFound'

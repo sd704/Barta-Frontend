@@ -1,5 +1,4 @@
 import { NavLink, Outlet } from 'react-router-dom'
-import { useDispatch, useSelector } from "react-redux"
 import { Newspaper, NotebookPen, Users, MessageCircle, Bell, User, LogOut } from "lucide-react"
 import SideNavbarButton from './SideNavbarButton'
 import useSocket from '../hooks/useSocket'
