@@ -9,6 +9,7 @@ import { useSelector } from "react-redux"
 import useNetworkStatus from "../hooks/useNetworkStatus"
 import LoadingDots from '../components/LoadingDots'
 import getDateLabel from '../utils/getDateLabel'
+import { useGetLoggedInUserQuery } from "../redux/api/userApi"
 import { useGetAllChatsQuery } from "../redux/api/chatApi"
 import { getChatListStats, filterAndSortChats, getChatPreviewText } from "../utils/chatListHelpers"
 
@@ -16,24 +17,26 @@ const FILTERS = ["ALL", "UNREAD", "GROUPS", "ARCHIVE"]
 const variants = { initial: { opacity: 0 }, animate: { opacity: 1, transition: { duration: 0.5, staggerChildren: 0.05 } } }
 
 const Messages = () => {
-    const user = useSelector(store => store.user)
-    const loggedInUserId = user?._id
+    // const user = useSelector(store => store.user)
+    const { data: loggedInUser } = useGetLoggedInUserQuery()
+    const loggedInUserId = loggedInUser?._id
+
     const presence = useSelector(s => s.presence ?? {})
     const selfOnline = presence[loggedInUserId]?.isOnline
 
     // Show online if network and socket are both connected
     const networkStatus = useNetworkStatus() && !!selfOnline
 
-    const peopleStore = useSelector(store => store.people ?? {})
-    const chatStore = useSelector(store => store.messages ?? {})
-    const chats = Object.values(chatStore)
-    const { isFetching } = useGetAllChatsQuery(undefined, { skip: !loggedInUserId })
-    const loading = isFetching
+    // const peopleStore = useSelector(store => store.people ?? {})
+    // const chatStore = useSelector(store => store.messages ?? {})
+    // const chats = Object.values(chatStore)
+    const { data: chats = [], isLoading: isInboxLoading } = useGetAllChatsQuery(undefined, { skip: !loggedInUserId })
+    const loading = isInboxLoading
     const navigate = useNavigate()
     const [searchQuery, setSearchQuery] = useState("")
     const [activeTab, setActiveTab] = useState("ALL")
-    const { onlineUserCount, unreadChatsCount } = useMemo(() => getChatListStats(chats, presence), [chats, peopleStore])
-    const filteredChats = useMemo(() => filterAndSortChats(chats, peopleStore, searchQuery, activeTab), [chats, peopleStore, searchQuery, activeTab])
+    const { onlineUserCount, unreadChatsCount } = useMemo(() => getChatListStats(chats, presence), [chats, presence])
+    const filteredChats = useMemo(() => filterAndSortChats(chats, searchQuery, activeTab), [chats, searchQuery, activeTab])
 
     return (
         <div className="h-screen flex justify-center">
@@ -97,13 +100,13 @@ const Messages = () => {
                     <motion.div variants={variants} initial="initial" animate="animate" className="py-4 px-6 flex-1 overflow-y-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
                         {filteredChats.map(chat => {
                             const lastMessage = chat.messages.at(-1)
-                            const text = getChatPreviewText(chat, peopleStore)
-                            return <ChatItem key={chat.chatId} userData={peopleStore[chat.uid]}
+                            const text = getChatPreviewText(chat)
+                            return <ChatItem key={chat.chatId} userData={chat.peer}
                                 message={text}
                                 time={getDateLabel(lastMessage.createdAt, false)}
                                 unread={chat.unread}
-                                isOnline={presence[chat.uid]?.isOnline}
-                                onClick={() => navigate(`/messages/${chat.uid}`)}
+                                isOnline={presence[chat.peerId]?.isOnline}
+                                onClick={() => navigate(`/messages/${chat.peerId}`)}
                             />
                         })}
 

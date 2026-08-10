@@ -6,17 +6,18 @@ import { addPerson, updateIsOnline } from "../redux/peopleSlice"
 import { setPresence } from "../redux/presenceSlice"
 import { appendMsg, updateMsgInInbox } from "../redux/cacheHelpers/chatCacheHelpers"
 import { markMsgsSeen, markInboxItemSeen } from "../redux/cacheHelpers/msgSeenHelpers"
-// import { updateNetwork } from "../redux/userSlice"
+import baseApi from "../redux/api/baseApi"
 
 const useSocket = (loggedInUserId) => {
     const dispatch = useDispatch()
+
     // We subscribe isOnline data using chatStore uids, so if a new chat is opened, that uid is not subscribed
     // So if new chat user is a friend, add to store to subscribe
-    const chatStore = useSelector(store => store.messages ?? {})
-    const peopleStore = useSelector(store => store.people ?? {})
-    // We don't need to subscribe to online status of blocked users, Done on API lvl
-    const userIds = Object.keys(chatStore)
-    const userCount = userIds.length
+    // We don't need to skip subscribe to online status of blocked users, Done on API lvl
+
+    // We use useSelector instead of useGet.. so that we don't fetch here, useSelector is read-only
+    const chats = useSelector(baseApi.endpoints.getAllChats.select(undefined))?.data ?? []
+    const userIds = chats.map(c => c.peerId).filter(Boolean) // filter(Boolean) drops falsy values (undefined, null, 0, '')
 
     useEffect(() => {
         if (!loggedInUserId) { return }
@@ -35,7 +36,6 @@ const useSocket = (loggedInUserId) => {
             dispatch(addPerson(receiver)) // To be removed after migration
             dispatch(addMsg({ chatId, lastMessage, receiver, loggedInUserId })) // To be removed after migration
 
-            // console.log({ peerId, peer, chatId, lastMessage, loggedInUserId })
             dispatch(appendMsg({ peerId, chatId, lastMessage, loggedInUserId }))
             dispatch(updateMsgInInbox({ peerId, peer, chatId, lastMessage, loggedInUserId }))
         }
@@ -57,13 +57,6 @@ const useSocket = (loggedInUserId) => {
             console.log(err) // "INVALID_TOKEN"
         })
 
-        // const handlePresence = ({ uid, status, lastSeen }) => {
-        //     if (uid === loggedInUserId) {
-        //         dispatch(updateNetwork(status))
-        //     } else {
-        //         dispatch(updateIsOnline({ uid, status, lastSeen }))
-        //     }
-        // }
         const handlePresence = ({ uid, status, lastSeen }) => { dispatch(setPresence({ uid, isOnline: status, lastSeen })) }
         socket.on("presence:initial", handlePresence)
         socket.on("presence:update", handlePresence)
@@ -89,12 +82,13 @@ const useSocket = (loggedInUserId) => {
     }, [loggedInUserId])
 
     useEffect(() => {
-        const socket = getSocket()
+        if (!userIds.length) return
 
-        if (userIds && userIds.length > 0) {
-            socket.emit("presence:subscribe", { userIds })
-        }
-    }, [userIds])
+        const socket = getSocket()
+        socket.emit("presence:subscribe", { userIds })
+    }, [userIds.join('|')])
+    // we use join because without it userIds is a new array on every render (even if ids are same)
+    // which will trigger useEffect() for no reason
 }
 
 export default useSocket

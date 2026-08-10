@@ -20,10 +20,10 @@ const Chat = () => {
     const { data: loggedInUser } = useGetLoggedInUserQuery()
     const loggedInUserId = loggedInUser?._id
 
-    const { data: person, isFetching: userIsLoading } = useGetUserByIdQuery(targetUserId, {
+    const { currentData: person, isFetching: userIsLoading } = useGetUserByIdQuery(targetUserId, {
         skip: (!targetUserId || !loggedInUser)
     })
-    const { data: chat, isFetching: msgsIsLoading } = useGetChatsQuery(targetUserId, {
+    const { currentData: chat, isFetching: msgsIsLoading } = useGetChatsQuery(targetUserId, {
         skip: (!targetUserId || !loggedInUser)
     })
     const loading = (userIsLoading && !person) || (msgsIsLoading && !chat)

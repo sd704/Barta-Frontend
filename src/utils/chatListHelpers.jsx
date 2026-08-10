@@ -3,17 +3,17 @@ const getChatListStats = (chats, presence) => {
     let unreadChatsCount = 0
 
     chats.forEach(c => {
-        if (presence[c.uid]?.isOnline) onlineUserCount++
+        if (presence[c.peerId]?.isOnline) onlineUserCount++
         if (Number(c.unread) > 0) unreadChatsCount++
     })
 
     return { onlineUserCount, unreadChatsCount }
 }
 
-const filterAndSortChats = (chats, peopleStore, searchQuery, activeTab) => {
+const filterAndSortChats = (chats, searchQuery, activeTab) => {
     const q = searchQuery?.toLowerCase()
     return chats
-        .filter(chat => peopleStore[chat.uid]?.name.toLowerCase().includes(q))
+        .filter(chat => chat.peer?.name.toLowerCase().includes(q))
         .filter(chat => (chat.messages?.length ?? 0) > 0)
         .filter(chat => {
             if (activeTab === "UNREAD") return chat.unread > 0
@@ -23,11 +23,11 @@ const filterAndSortChats = (chats, peopleStore, searchQuery, activeTab) => {
         }).sort((a, b) => new Date(b.messages.at(-1).createdAt) - new Date(a.messages.at(-1).createdAt))
 }
 
-const getChatPreviewText = (chat, peopleStore) => {
+const getChatPreviewText = (chat) => {
     const lastMessage = chat.messages?.at(-1)
     if (!lastMessage) return ""
 
-    const sender = chat.uid === lastMessage.senderId ? peopleStore[chat.uid]?.firstName : "You"
+    const sender = chat.peerId === lastMessage.senderId ? chat.peer?.firstName : "You"
     return `${sender}: ${lastMessage.text}`
 }
 
