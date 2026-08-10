@@ -13,13 +13,13 @@ const transformTabResponse = (res, tab, loggedInUserId) => {
     }))
 }
 
-const syncPeople = async (dispatch, queryFulfilled) => {
-    try {
-        const { data } = await queryFulfilled
-        if (!data?.length) return
-        dispatch(addPeople(data))
-    } catch (err) { }
-}
+// const syncPeople = async (dispatch, queryFulfilled) => {
+//     try {
+//         const { data } = await queryFulfilled
+//         if (!data?.length) return
+//         dispatch(addPeople(data))
+//     } catch (err) { }
+// }
 
 const connectionsApi = baseApi.injectEndpoints({
     endpoints: (builder) => ({
@@ -27,41 +27,41 @@ const connectionsApi = baseApi.injectEndpoints({
             query: () => ({ url: '/connections/feed', method: 'GET' }),
             transformResponse: (res, _meta, { loggedInUserId }) => transformTabResponse(res, 'discover', loggedInUserId),
             providesTags: [{ type: 'Connections', id: 'DISCOVER' }],
-            async onQueryStarted(_arg, { dispatch, queryFulfilled }) {
-                await syncPeople(dispatch, queryFulfilled)
-            }
+            // async onQueryStarted(_arg, { dispatch, queryFulfilled }) {
+            //     await syncPeople(dispatch, queryFulfilled)
+            // }
         }),
         getReceived: builder.query({
             query: () => ({ url: '/connections/received', method: 'GET' }),
             transformResponse: (res, _meta, { loggedInUserId }) => transformTabResponse(res, 'received', loggedInUserId),
             providesTags: [{ type: 'Connections', id: 'RECEIVED' }],
-            async onQueryStarted(_arg, { dispatch, queryFulfilled }) {
-                await syncPeople(dispatch, queryFulfilled)
-            }
+            // async onQueryStarted(_arg, { dispatch, queryFulfilled }) {
+            //     await syncPeople(dispatch, queryFulfilled)
+            // }
         }),
         getPending: builder.query({
             query: () => ({ url: '/connections/sent', method: 'GET' }),
             transformResponse: (res, _meta, { loggedInUserId }) => transformTabResponse(res, 'pending', loggedInUserId),
             providesTags: [{ type: 'Connections', id: 'PENDING' }],
-            async onQueryStarted(_arg, { dispatch, queryFulfilled }) {
-                await syncPeople(dispatch, queryFulfilled)
-            }
+            // async onQueryStarted(_arg, { dispatch, queryFulfilled }) {
+            //     await syncPeople(dispatch, queryFulfilled)
+            // }
         }),
         getConnected: builder.query({
             query: () => ({ url: '/connections/accepted', method: 'GET' }),
             transformResponse: (res, _meta, { loggedInUserId }) => transformTabResponse(res, 'connected', loggedInUserId),
             providesTags: [{ type: 'Connections', id: 'CONNECTED' }],
-            async onQueryStarted(_arg, { dispatch, queryFulfilled }) {
-                await syncPeople(dispatch, queryFulfilled)
-            }
+            // async onQueryStarted(_arg, { dispatch, queryFulfilled }) {
+            //     await syncPeople(dispatch, queryFulfilled)
+            // }
         }),
         getBlocked: builder.query({
             query: () => ({ url: '/connections/blocked', method: 'GET' }),
             transformResponse: (res, _meta, { loggedInUserId }) => transformTabResponse(res, 'blocked', loggedInUserId),
             providesTags: [{ type: 'Connections', id: 'BLOCKED' }],
-            async onQueryStarted(_arg, { dispatch, queryFulfilled }) {
-                await syncPeople(dispatch, queryFulfilled)
-            }
+            // async onQueryStarted(_arg, { dispatch, queryFulfilled }) {
+            //     await syncPeople(dispatch, queryFulfilled)
+            // }
         })
     })
 })

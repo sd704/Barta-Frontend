@@ -68,7 +68,7 @@ const useConnectionActions = (triggerToast) => {
             const response = await triggerQuery(user._id).unwrap()
 
             const updatedUser = mapConnectionResponse(user, response, action.type)
-            dispatch(updatePerson(updatedUser))
+            // dispatch(updatePerson(updatedUser)) // remove after migration
 
             // Toast Success
             const toastProps = {

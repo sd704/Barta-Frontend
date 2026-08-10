@@ -26,21 +26,6 @@ const Connections = () => {
     const [activeTabIndex, setActiveTabIndex] = useState(0) // Tab Index in Filters array
     const activeTab = TABS[activeTabIndex]
 
-    const allLists = useMemo(() => (
-        Object.fromEntries(
-            TABS.map(tab => [tab, people.filter(p => CONNECTION_TABS[tab].filter(p, loggedInUserId))])
-        )
-    ), [people, loggedInUserId])
-
-    const activeList = useMemo(() => (
-        [...allLists[activeTab]].sort((a, b) => a.name.localeCompare(b.name))
-    ), [allLists, activeTab])
-
-    // Filter for search
-    const filteredList = useMemo(() => (
-        activeList.filter(person => person.name.toLowerCase().includes(search.toLowerCase()))
-    ), [activeList, search])
-
     // Fetch All
     const skip = !loggedInUserId
     const queryArg = { loggedInUserId }
@@ -50,6 +35,31 @@ const Connections = () => {
     const connected = useGetConnectedQuery(queryArg, { skip })
     const blocked = useGetBlockedQuery(queryArg, { skip })
     const loading = discover.isLoading || received.isLoading || pending.isLoading || connected.isLoading || blocked.isLoading
+    // Switch to per-tab lazy loading later
+
+    const tabsObj = {
+        discover: discover.data ?? [],
+        received: received.data ?? [],
+        pending: pending.data ?? [],
+        connected: connected.data ?? [],
+        blocked: blocked.data ?? []
+    }
+
+    // const allLists = useMemo(() => (
+    //     Object.fromEntries(
+    //         TABS.map(tab => [tab, people.filter(p => CONNECTION_TABS[tab].filter(p, loggedInUserId))])
+    //     )
+    // ), [people, loggedInUserId])
+
+    const activeList = useMemo(() => (
+        [...(tabsObj[activeTab] ?? [])].sort((a, b) => a.name.localeCompare(b.name))
+    ), [tabsObj, activeTab])
+
+    // Filter for search
+    const filteredList = useMemo(() => (
+        activeList.filter(person => person.name.toLowerCase().includes(search.toLowerCase()))
+    ), [activeList, search])
+
 
     const connectionActions = useConnectionActions(triggerToast)
 
@@ -74,7 +84,7 @@ const Connections = () => {
                     {TABS.map((tab, i) => <TabButtonAccent
                         key={tab}
                         label={CONNECTION_TABS[tab].label}
-                        count={allLists[tab].length}
+                        count={tabsObj[tab].length}
                         isActive={i === activeTabIndex}
                         onClick={() => setActiveTabIndex(i)}
                     />)}
