@@ -17,42 +17,43 @@ const requestsApi = baseApi.injectEndpoints({
         connect: builder.mutation({
             query: (uid) => ({ url: `/requests/${uid}/interested`, method: 'POST' }),
             transformResponse: transformRequestRes,
-            invalidatesTags: filterTabs('DISCOVER', 'PENDING')
+            invalidatesTags: (result, error, uid) => [...filterTabs('DISCOVER', 'PENDING'), { type: 'User', id: uid }]
         }),
         ignore: builder.mutation({
             query: (uid) => ({ url: `/requests/${uid}/ignored`, method: 'POST' }),
             transformResponse: transformRequestRes,
-            invalidatesTags: filterTabs('DISCOVER')
+            invalidatesTags: (result, error, uid) => [...filterTabs('DISCOVER'), { type: 'User', id: uid }]
         }),
         accept: builder.mutation({
             query: (uid) => ({ url: `/requests/${uid}/accepted`, method: 'PATCH' }),
             transformResponse: transformRequestRes,
-            invalidatesTags: filterTabs('RECEIVED', 'CONNECTED')
+            invalidatesTags: (result, error, uid) => [...filterTabs('RECEIVED', 'CONNECTED'), { type: 'User', id: uid }]
         }),
         reject: builder.mutation({
             query: (uid) => ({ url: `/requests/${uid}/rejected`, method: 'PATCH' }),
             transformResponse: transformRequestRes,
-            invalidatesTags: filterTabs('RECEIVED', 'DISCOVER')
+            invalidatesTags: (result, error, uid) => [...filterTabs('RECEIVED', 'DISCOVER'), { type: 'User', id: uid }]
         }),
         withdraw: builder.mutation({
             query: (uid) => ({ url: `/requests/${uid}/withdraw`, method: 'DELETE' }),
             transformResponse: transformRequestRes,
-            invalidatesTags: filterTabs('PENDING', 'DISCOVER')
+            invalidatesTags: (result, error, uid) => [...filterTabs('PENDING', 'DISCOVER'), { type: 'User', id: uid }]
         }),
         remove: builder.mutation({
             query: (uid) => ({ url: `/requests/${uid}/remove`, method: 'DELETE' }),
             transformResponse: transformRequestRes,
-            invalidatesTags: filterTabs('CONNECTED', 'DISCOVER')
+            invalidatesTags: (result, error, uid) => [...filterTabs('CONNECTED', 'DISCOVER'), { type: 'User', id: uid }]
         }),
         block: builder.mutation({
             query: (uid) => ({ url: `/blocks/${uid}`, method: 'POST' }),
             transformResponse: transformRequestRes,
-            invalidatesTags: CONNECTION_LIST_TABS // We don't know where user will block from
+            invalidatesTags: (result, error, uid) => [...CONNECTION_LIST_TABS, { type: 'User', id: uid }]
+            // We don't know where user will block from
         }),
         unblock: builder.mutation({
             query: (uid) => ({ url: `/blocks/${uid}`, method: 'DELETE' }),
             transformResponse: transformRequestRes,
-            invalidatesTags: CONNECTION_LIST_TABS
+            invalidatesTags: (result, error, uid) => [...CONNECTION_LIST_TABS, { type: 'User', id: uid }]
         })
     })
 })

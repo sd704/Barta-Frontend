@@ -1,25 +1,26 @@
 import { useState } from 'react'
 import { useSelector } from "react-redux"
 import { Navigate, useParams } from 'react-router-dom'
-import { useGetUserByIdQuery } from "../redux/api/userApi"
+import { useGetLoggedInUserQuery, useGetUserByIdQuery } from "../redux/api/userApi"
 import UserNotFound from './UserNotFound'
 import LoadingDots from '../components/LoadingDots'
 import ProfileInfoUI from "./ProfileInfoUI"
 
 const ConnectionProfileInfo = () => {
 
-  const loggedUser = useSelector(store => store.user)
-  const people = useSelector(store => store.people)
+  const { data: loggedInUser } = useGetLoggedInUserQuery()
+  const loggedInUserId = loggedInUser?._id
   const { uid } = useParams()
-  const person = people?.[uid]
 
-  const { isLoading, isError, isSuccess } = useGetUserByIdQuery(uid, {
-    skip: (!uid || !loggedUser) || (uid === loggedUser?._id) || (!!person)
+  const { data: person, isLoading, isError, isSuccess, isFetching } = useGetUserByIdQuery(uid, {
+    skip: (!uid || !loggedInUser) || (uid === loggedInUserId)
+    // skip if uid is not available, or if the user is viewing their own profile
   })
-  const loading = !person && isLoading
+
+  const loading = isLoading || (isFetching && !person)
   const notFound = isError || (isSuccess && !person)
 
-  if (uid === loggedUser?._id) {
+  if (uid === loggedInUserId) {
     return <Navigate to="/profile/info" replace />
   }
 

@@ -8,6 +8,7 @@ import LoadingDots from '../components/LoadingDots'
 import { CONNECTION_ACTIONS, CONNECTION_TABS } from "../utils/connectionConfig"
 import useConnectionActions from "../hooks/useConnectionActions"
 import useToast from "../hooks/useToast"
+import { useGetLoggedInUserQuery } from "../redux/api/userApi"
 import { useGetDiscoverQuery, useGetReceivedQuery, useGetPendingQuery, useGetConnectedQuery, useGetBlockedQuery } from "../redux/api/connectionsApi"
 
 // Tabs List
@@ -18,10 +19,8 @@ const variants = { initial: { opacity: 0 }, animate: { opacity: 1, transition: {
 
 const Connections = () => {
     const { ToastComponent, triggerToast } = useToast()
-    const loggedInUser = useSelector(store => store.user)
+    const { data: loggedInUser } = useGetLoggedInUserQuery()
     const loggedInUserId = loggedInUser?._id
-    const peopleStore = useSelector(store => store.people ?? {})
-    const people = Object.values(peopleStore)
     const [search, setSearch] = useState("") // Search String
     const [activeTabIndex, setActiveTabIndex] = useState(0) // Tab Index in Filters array
     const activeTab = TABS[activeTabIndex]
@@ -45,12 +44,6 @@ const Connections = () => {
         blocked: blocked.data ?? []
     }
 
-    // const allLists = useMemo(() => (
-    //     Object.fromEntries(
-    //         TABS.map(tab => [tab, people.filter(p => CONNECTION_TABS[tab].filter(p, loggedInUserId))])
-    //     )
-    // ), [people, loggedInUserId])
-
     const activeList = useMemo(() => (
         [...(tabsObj[activeTab] ?? [])].sort((a, b) => a.name.localeCompare(b.name))
     ), [tabsObj, activeTab])
@@ -59,7 +52,6 @@ const Connections = () => {
     const filteredList = useMemo(() => (
         activeList.filter(person => person.name.toLowerCase().includes(search.toLowerCase()))
     ), [activeList, search])
-
 
     const connectionActions = useConnectionActions(triggerToast)
 

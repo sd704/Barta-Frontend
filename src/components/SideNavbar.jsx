@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from "react-redux"
 import { Newspaper, NotebookPen, Users, MessageCircle, Bell, User, LogOut } from "lucide-react"
 import SideNavbarButton from './SideNavbarButton'
 import useSocket from '../hooks/useSocket'
+import { useGetLoggedInUserQuery } from "../redux/api/userApi"
 
 const navItems = [
     { route: "feed", icon: Newspaper, label: "Feed" },
@@ -15,9 +16,9 @@ const navItems = [
 ]
 
 const SideNavbar = () => {
-    const user = useSelector(store => store.user)
-    const loggedInUserId = user?._id
-    const pfp = user?.pfp
+    const { data: loggedInUser } = useGetLoggedInUserQuery()
+    const loggedInUserId = loggedInUser?._id
+    const pfp = loggedInUser?.pfp
 
     useSocket(loggedInUserId)
 

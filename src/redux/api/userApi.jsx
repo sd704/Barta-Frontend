@@ -66,10 +66,7 @@ const userApi = baseApi.injectEndpoints({
                 try {
                     await queryFulfilled
                     dispatch(baseApi.util.resetApiState()) // clears all RTK cache
-                    dispatch(removeUser())
                     dispatch(clearPresence())
-                    dispatch(clearMsgs())
-                    dispatch(clearPeople())
                 } catch (err) { }
             }
         })

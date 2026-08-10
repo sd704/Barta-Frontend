@@ -65,7 +65,13 @@ const Body = () => {
 
   if (isLoading) {
     // Preventing Auth hydration race condition
-    content = <div className="bg-zinc-200 h-screen w-screen"></div>
+    content = <div
+      className='h-screen w-screen bg-zinc-200'
+      style={{
+        backgroundImage: `linear-gradient(to right, rgba(0,0,0,0.04) 1px, transparent 1px), linear-gradient(to bottom, rgba(0,0,0,0.04) 1px, transparent 1px)`,
+        backgroundSize: '20px 20px'
+      }}
+    />
   } else {
     content = <RouterProvider router={appRouter} />
   }

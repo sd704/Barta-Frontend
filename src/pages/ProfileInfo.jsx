@@ -1,11 +1,12 @@
 import { useSelector } from "react-redux"
 import ProfileInfoUI from "./ProfileInfoUI"
+import { useGetLoggedInUserQuery } from "../redux/api/userApi"
 
 const ProfileInfo = () => {
-    const user = useSelector(store => store.user)
+    const { data: loggedInUser } = useGetLoggedInUserQuery()
 
     return (
-        <ProfileInfoUI user={user} isEditAllowed={true} />
+        <ProfileInfoUI user={loggedInUser} isEditAllowed={true} />
     )
 }
 

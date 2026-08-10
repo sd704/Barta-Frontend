@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { Navigate, useNavigate, useParams, useLocation } from 'react-router-dom'
 import { Grid, List, Settings, Heart, MessageCircle, Users, User, Info } from 'lucide-react'
 import { useSelector } from "react-redux"
-import { useGetUserByIdQuery } from "../redux/api/userApi"
+import { useGetLoggedInUserQuery, useGetUserByIdQuery } from "../redux/api/userApi"
 import StatsCard from '../components/StatsCard'
 import ProfileHeaderButton from '../components/ProfileHeaderButton'
 import ListGridButton from '../components/ListGridButton'
@@ -14,13 +14,13 @@ import useConnectionActions from '../hooks/useConnectionActions'
 import { CONNECTION_ACTIONS } from '../utils/connectionConfig'
 import useToast from "../hooks/useToast"
 
-const getStatusButtonText = (person, loggedUser) => {
+const getStatusButtonText = (person, loggedInUser) => {
     if (!person?.connectionData) return ""
 
     const { status, blockedByMe, senderId } = person.connectionData
 
     if (blockedByMe) return "Blocked"
-    if (status === "interested") return senderId === loggedUser?._id ? "Pending" : "Accept"
+    if (status === "interested") return senderId === loggedInUser?._id ? "Pending" : "Accept"
     if (status === "accepted") return "Connected"
     return "Connect"
 }
@@ -31,19 +31,20 @@ const ConnectionProfile = () => {
     const { ToastComponent, triggerToast } = useToast()
     const [activeTab, setActiveTab] = useState('grid')
 
-    const loggedUser = useSelector(store => store.user)
-    const people = useSelector(store => store.people)
+    const { data: loggedInUser } = useGetLoggedInUserQuery()
+    const loggedInUserId = loggedInUser?._id
     const { uid } = useParams()
-    const person = people?.[uid]
 
-    const { isLoading, isError, isSuccess } = useGetUserByIdQuery(uid, {
-        skip: (!uid || !loggedUser) || (uid === loggedUser?._id) || (!!person)
-    }) // skip if uid is not available, or if the user is viewing their own profile, or if the person is already in the store
-    const loading = !person && isLoading
+    const { data: person, isLoading, isError, isSuccess, isFetching } = useGetUserByIdQuery(uid, {
+        skip: (!uid || !loggedInUser) || (uid === loggedInUserId)
+        // skip if uid is not available, or if the user is viewing their own profile
+    })
+
+    const loading = isLoading || (isFetching && !person)
     const notFound = isError || (isSuccess && !person)
 
     const pfp = person?.pfp
-    const statusButtonText = getStatusButtonText(person, loggedUser)
+    const statusButtonText = getStatusButtonText(person, loggedInUser)
     const isAccent = ["Connect", "Accept"].includes(statusButtonText)
 
     const { sendRequest, isLoading: isRequestLoading } = useConnectionActions(triggerToast)
@@ -74,7 +75,7 @@ const ConnectionProfile = () => {
         triggerToast({ showPfp: false, text, })
     }
 
-    if (uid === loggedUser?._id) {
+    if (uid === loggedInUserId) {
         return <Navigate to="/profile" replace />
     }
 

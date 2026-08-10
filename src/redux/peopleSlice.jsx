@@ -41,27 +41,6 @@ const peopleSlice = createSlice({
         clearPeople: () => {
             return {}
         }
-    },
-    extraReducers: (builder) => {
-        builder
-            .addMatcher(
-                baseApi.endpoints.getUserById.matchFulfilled,
-                (state, action) => {
-                    if (!action.payload?._id) return // Return if payload is null or undefined
-
-                    const existingUserData = state[action.payload._id]
-                    state[action.payload._id] = {
-                        ...action.payload,
-
-                        // Preserve existing data if available
-                        ...(existingUserData && {
-                            // isOnline: existingUserData.isOnline, // We use Presence slice for this
-                            // lastSeen: existingUserData.lastSeen,
-                            connectionData: action.payload.connectionData ?? existingUserData.connectionData
-                        }),
-                    }
-                }
-            )
     }
 })
 

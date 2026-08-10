@@ -1,6 +1,5 @@
 import { useState } from "react"
 import { useDispatch } from "react-redux"
-import { updatePerson } from "../redux/peopleSlice"
 import {
     useConnectMutation,
     useIgnoreMutation,
@@ -68,7 +67,6 @@ const useConnectionActions = (triggerToast) => {
             const response = await triggerQuery(user._id).unwrap()
 
             const updatedUser = mapConnectionResponse(user, response, action.type)
-            // dispatch(updatePerson(updatedUser)) // remove after migration
 
             // Toast Success
             const toastProps = {

@@ -29,33 +29,6 @@ const userSlice = createSlice({
         removeUser: (state, action) => {
             return null
         }
-    },
-    extraReducers: (builder) => {
-        builder
-            .addMatcher(
-                baseApi.endpoints.getLoggedInUser.matchFulfilled,
-                (_state, action) => action.payload
-            )
-            .addMatcher(
-                baseApi.endpoints.login.matchFulfilled,
-                (_state, action) => action.payload
-            )
-            .addMatcher(
-                baseApi.endpoints.signup.matchFulfilled,
-                (_state, action) => action.payload
-            )
-            .addMatcher(
-                baseApi.endpoints.updateUser.matchFulfilled,
-                (state, action) => {
-                    if (!state) return
-                    const userData = action.payload
-                    Object.keys(userData).forEach((key) => {
-                        if (ALLOWED_UPDATES.includes(key)) {
-                            state[key] = userData[key]
-                        }
-                    })
-                }
-            )
     }
 })
 

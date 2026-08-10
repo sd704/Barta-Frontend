@@ -7,15 +7,16 @@ import ProfileHeaderButton from '../components/ProfileHeaderButton'
 import ListGridButton from '../components/ListGridButton'
 import POSTDATA from "../utils/dummyPosts"
 import PostCard from '../components/PostCard'
+import { useGetLoggedInUserQuery } from "../redux/api/userApi"
 
 const Profile = () => {
     const navigate = useNavigate()
     const location = useLocation()
-    const user = useSelector(store => store.user)
+    const { data: user } = useGetLoggedInUserQuery()
     const [activeTab, setActiveTab] = useState('grid')
 
     const path = location.pathname.split("/")[1]
-    const name = path == "profile" ? user?.firstName + " " + user?.lastName : ""
+    const name = path == "profile" ? user?.name : ""
     const pfp = path == "profile" ? user?.pfp : ""
     const about = path == "profile" ? user?.about : ""
     const description = path == "profile" ? user?.description : ""
