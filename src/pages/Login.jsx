@@ -7,7 +7,8 @@ import { validateLogin, validateSignup } from "../utils/validate"
 import { useLoginMutation, useSignupMutation } from "../redux/api/userApi"
 
 const Login = () => {
-    const [isSignup, setIsSignup] = useState(false)
+    const initialIsSignup = window.location.hash === "#signup"
+    const [isSignup, setIsSignup] = useState(initialIsSignup) // true for signup, false for login
     const [email, setEmail] = useState("")
     const [password, setPassword] = useState("")
     const [firstName, setFirstName] = useState("")
@@ -47,6 +48,21 @@ const Login = () => {
         }
     }
 
+    const setAuthMode = (signup) => {
+        setIsSignup(signup)
+        setError(null)
+        window.history.pushState(null, "", `/auth#${signup ? "signup" : "login"}`) // Update the URL hash to reflect the current mode without reloading the page
+    }
+
+    useEffect(() => {
+        // Set the initial hash to "#login" if no hash is present, ensuring that the app has a default state.
+        if (!window.location.hash) { window.history.replaceState(null, "", "/auth#login") }
+
+        const handlePopState = () => setIsSignup(window.location.hash === "#signup")
+        window.addEventListener("popstate", handlePopState) // Listen for back/forward navigation to update the auth mode accordingly.
+        return () => { window.removeEventListener("popstate", handlePopState) }
+    }, [])
+
     useEffect(() => {
         if (!isProcessing) return;
 
@@ -55,7 +71,7 @@ const Login = () => {
         }, 500);
 
         return () => clearInterval(interval); // cleanup
-    }, [isProcessing]);
+    }, [isProcessing])
 
     return (
         <div className="min-h-screen bg-zinc-200 flex items-center justify-center p-4"
@@ -86,10 +102,7 @@ const Login = () => {
                 <div className="flex justify-center mb-8">
                     <div className="flex flex-col items-center gap-2">
                         <div className="text-xs font-mono text-zinc-400 tracking-wider">{isSignup ? "NEW USER" : "EXISTING USER"}</div>
-                        <ModeSwitch isOn={isSignup} onToggle={() => {
-                            setError(null)
-                            setIsSignup(!isSignup)
-                        }} />
+                        <ModeSwitch isOn={isSignup} onToggle={() => setAuthMode(!isSignup)} />
                     </div>
                 </div>
 
@@ -150,8 +163,7 @@ const Login = () => {
 
                 {/* Footer Info */}
                 <div className="mt-8 text-center">
-                    <div className="inline-flex items-center gap-3 text-xs font-mono text-zinc-500 px-4 py-2 rounded-xl bg-zinc-200"
-                        style={{ boxShadow: "4px 4px 8px rgba(0,0,0,0.15), -4px -4px 8px rgba(255,255,255,0.7)" }}>
+                    <div className="inline-flex items-center gap-3 text-xs font-mono text-zinc-500 px-4 py-2 rounded-xl backdrop-blur supports-backdrop-filter:bg-zinc-200/70">
                         <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse" style={{ boxShadow: "0 0 8px rgba(34,197,94,0.6)" }} />
                         <span>SECURE CONNECTION</span>
                     </div>
