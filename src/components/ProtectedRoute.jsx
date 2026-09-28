@@ -1,4 +1,4 @@
-import { Navigate } from "react-router-dom"
+import { Navigate, Outlet } from "react-router-dom"
 import { useGetLoggedInUserQuery } from "../redux/api/userApi"
 
 const ProtectedRoute = ({ children }) => {
@@ -9,7 +9,8 @@ const ProtectedRoute = ({ children }) => {
         return <Navigate to="/auth" replace />
     }
 
-    return children
+    // return children
+    return <Outlet />
 }
 
 export default ProtectedRoute

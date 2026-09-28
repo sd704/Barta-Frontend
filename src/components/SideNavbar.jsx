@@ -30,7 +30,7 @@ const SideNavbar = () => {
 
             <div className="fixed left-0 z-40 w-20 h-screen py-4 flex flex-col items-center gap-6">
 
-                <NavLink to="/profile" aria-label="Profile Picture">
+                <NavLink to="/profile" aria-label="Profile">
                     <div className={`flex items-center justify-center w-14 h-14 rounded-full overflow-hidden ${pfp ? "" : "text-zinc-200 bg-zinc-900"}`}
                         style={{ boxShadow: "8px 8px 16px rgba(0,0,0,0.4), -4px -4px 12px rgba(60,60,60,0.3)" }}>
                         {pfp && <img className="w-full h-full object-cover" alt="Profile" src={`${pfp}`} />}

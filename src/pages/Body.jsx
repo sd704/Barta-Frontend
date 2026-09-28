@@ -14,46 +14,57 @@ import Profile from "./Profile"
 import ProfileInfo from "./ProfileInfo"
 import Logout from "./Logout"
 import NotFound from "./NotFound"
+import Filler from "../components/Filler"
 
 const appRouter = createBrowserRouter([
   {
-    path: "auth",
-    element: <PublicRoute><Login /></PublicRoute>,
+    path: "",
+    element: Filler("Landing Page")
   }, {
-    element: <ProtectedRoute><SideNavbar /></ProtectedRoute>,
+    element: <PublicRoute />,
     children: [
-      { path: "feed", element: "FEED" },
-      { path: "journal", element: "JOURNAL" },
+      { path: "auth", element: <Login /> }
+    ],
+  }, {
+    element: <ProtectedRoute />,
+    children: [
       {
-        path: "messages",
-        element: <Messages />, //messages
+        element: <SideNavbar />,
         children: [
-          { path: ":uid", element: <Chat /> } //messages/john.doe
-        ]
-      },
-      { path: "notification", element: <Notifications /> },
-      {
-        path: "people",
-        children: [
-          { index: true, element: <Connections /> },  //connections
+          { path: "feed", element: Filler("FEED") },
+          { path: "journal", element: Filler("JOURNAL") },
           {
-            path: ":uid",
+            path: "messages",
+            element: <Messages />, //messages
             children: [
-              { index: true, element: <ConnectionProfile /> },  //connections/john.doe
-              { path: "info", element: <ConnectionProfileInfo /> } //connections/john.doe/info
+              { path: ":uid", element: <Chat /> } //messages/john.doe
             ]
-          }
+          },
+          { path: "notification", element: <Notifications /> },
+          {
+            path: "people",
+            children: [
+              { index: true, element: <Connections /> },  //connections
+              {
+                path: ":uid",
+                children: [
+                  { index: true, element: <ConnectionProfile /> },  //connections/john.doe
+                  { path: "info", element: <ConnectionProfileInfo /> } //connections/john.doe/info
+                ]
+              }
+            ]
+          },
+          {
+            path: "profile",
+            children: [
+              { index: true, element: <Profile /> },  //profile
+              { path: "info", element: <ProfileInfo /> } //profile/info
+            ]
+          },
+          { path: "logout", element: <Logout /> },
+          { path: "*", element: <NotFound /> }
         ]
-      },
-      {
-        path: "profile",
-        children: [
-          { index: true, element: <Profile /> },  //profile
-          { path: "info", element: <ProfileInfo /> } //profile/info
-        ]
-      },
-      { path: "logout", element: <Logout /> },
-      { path: "*", element: <NotFound /> }
+      }
     ]
   }
 ])

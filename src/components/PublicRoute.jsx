@@ -1,4 +1,4 @@
-import { Navigate } from "react-router-dom"
+import { Navigate, Outlet } from "react-router-dom"
 import { useGetLoggedInUserQuery } from "../redux/api/userApi"
 
 const PublicRoute = ({ children }) => {
@@ -9,7 +9,8 @@ const PublicRoute = ({ children }) => {
         return <Navigate to="/messages" replace />
     }
 
-    return children
+    // return children
+    return <Outlet />
 }
 
 export default PublicRoute
