@@ -173,14 +173,7 @@ function FilterBar({ filter, setFilter, counts, query, setQuery, }) {
                                 )}
                             >
                                 <span className="tracking-tight">{f.label}</span>
-                                <span
-                                    className={cn(
-                                        "font-mono text-[10px] tabular-nums",
-                                        active ? "text-[#FDFAF4]/70" : "text-[#6B6159]/70",
-                                    )}
-                                >
-                                    {count}
-                                </span>
+                                <span className={cn("font-mono text-[10px] tabular-nums", active ? "text-[#FDFAF4]/70" : "text-[#6B6159]/70",)}>{count}</span>
                             </button>
                         );
                     })}

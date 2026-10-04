@@ -15,6 +15,9 @@ import ProfileInfo from "./ProfileInfo"
 import Logout from "./Logout"
 import NotFound from "./NotFound"
 import Filler from "../components/Filler"
+import JournalFeed from "./JournalFeed"
+import JournalOverview from "./JournalOverview"
+import JournalEntry from "./JournalEntry"
 
 const appRouter = createBrowserRouter([
   {
@@ -32,7 +35,19 @@ const appRouter = createBrowserRouter([
         element: <SideNavbar />,
         children: [
           { path: "feed", element: Filler("FEED") },
-          { path: "journal", element: Filler("JOURNAL") },
+          {
+            path: "journal",
+            children: [
+              { index: true, element: <JournalFeed /> }, //journal
+              {
+                path: ":jid",
+                children: [
+                  { index: true, element: <JournalOverview /> }, //journal/123
+                  { path: "entry/:eid", element: <JournalEntry /> } //journal/123/entry/6853
+                ]
+              }
+            ]
+          },
           {
             path: "messages",
             element: <Messages />, //messages
