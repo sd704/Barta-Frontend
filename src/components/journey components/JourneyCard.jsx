@@ -25,7 +25,7 @@ const JourneyCard = ({ journey }) => {
     const MotionLink = motion.create(Link)
 
     return (
-        <MotionLink to={`/journal/${journey.slug}`} className="group block bg-white border border-black/8 rounded-[10px] p-1.5 relative"
+        <MotionLink to={`/journal/${journey.slug}`} className="group block bg-zinc-100 rounded-[10px] p-1.5 relative"
             whileHover={{ y: -2, boxShadow: "0 2px 0 rgba(0, 0, 0, 0.02), 0 12px 28px -12px rgba(24, 24, 27, 0.18)", borderColor: "rgba(0, 0, 0, 0.14)" }}
             transition={{ duration: 0.22, ease: [0.16, 1, 0.3, 1], }}
         >
@@ -79,7 +79,7 @@ const JourneyCard = ({ journey }) => {
                 </div>
 
                 <div className="mt-4 flex items-center gap-3">
-                    <div className="h-1 flex-1 rounded-full bg-[#efeeea] overflow-hidden">
+                    <div className="h-1 flex-1 rounded-full bg-zinc-200 overflow-hidden">
                         <div
                             className={`h-full ${journey.status === "completed" ?
                                 "bg-green-600" : journey.status === "paused" ?

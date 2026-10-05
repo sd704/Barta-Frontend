@@ -1,6 +1,5 @@
 import { useMemo, useState } from "react";
 import { Plus, Search, ChevronDown } from "lucide-react";
-// import AppNav from "../components/journey components/AppNav"
 import JourneyCard from "../components/journey components/JourneyCard"
 import { demoJourneys } from "../components/journey components/JourneyData"
 import { motion } from "motion/react"
@@ -40,15 +39,16 @@ const JournalFeed = () => {
 
     return (
         <div className="h-screen w-screen overflow-y-auto">
-            {/* <AppNav /> */}
 
             <main className="mx-auto max-w-7xl px-5 sm:px-8 py-12 sm:py-16">
+
                 {/* Page header */}
                 <motion.header className="mb-10 sm:mb-12" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}>
                     <div className="grid grid-cols-[minmax(0,1fr)_auto] items-end gap-4 sm:flex sm:flex-wrap sm:justify-between sm:items-end">
                         <div className="min-w-0">
-                            {/* <div className="font-mono text-[10px] font-semibold tracking-[0.18em] uppercase text-[var(--color-te-orange)] mb-2">Archive v.01 · Personal Log</div> */}
                             <h1 className="text-3xl sm:text-4xl font-medium tracking-tight text-balance">Journal</h1>
+                            
+                            {/* 6 journeys · 443 entries logged · 3 currently active. */}
                             <p className="mt-2 text-sm sm:text-base text-[#71717A] max-w-xl">
                                 {demoJourneys.length} journeys · {demoJourneys.reduce((n, j) => n + j.entryCount, 0)} entries
                                 logged · {demoJourneys.filter((j) => j.status === "active").length} currently active.
@@ -64,24 +64,25 @@ const JournalFeed = () => {
                 {/* Controls bar */}
                 <div className="mb-8 grid grid-cols-1 lg:grid-cols-[1fr_auto_auto] gap-3 items-center">
                     {/* Search */}
-                    <div className="flex items-center gap-2 rounded-sm bg-[#fafaf8] px-3 py-2 border border-[rgba(0,0,0,0.08)] focus-within:border-[#18181b]/40 transition-colors">
-                        <Search className="size-4 text-[#71717a] shrink-0" />
+                    <div className="flex items-center gap-2 rounded-sm bg-zinc-100 px-3 py-2 border border-zinc-300 hover:border-zinc-500 focus-within:border-zinc-500 transition-colors">
+                        {/* Search Icon */}
+                        <Search className="size-4 text-zinc-400 shrink-0" />
                         <input
                             type="text"
                             placeholder="Search journeys, tags, categories…"
                             value={query}
                             onChange={(e) => setQuery(e.target.value)}
-                            className="w-full bg-transparent text-sm placeholder:text-[#71717a]/70 focus:outline-none"
+                            className="w-full bg-transparent text-sm placeholder:text-zinc-400 focus:outline-none"
                         />
                     </div>
 
-                    {/* Filter chips */}
-                    <div className="flex items-center gap-1 rounded-sm bg-[#fafaf8] p-1 border border-[rgba(0,0,0,0.08)] overflow-x-auto">
+                    {/* Filter Tabs */}
+                    <div className="flex items-center gap-1 rounded-sm bg-zinc-100 p-1 border border-zinc-300 overflow-x-auto">
                         {FILTERS.map((f) => (
                             <button
                                 key={f.value}
                                 onClick={() => setFilter(f.value)}
-                                className={`font-mono text-[10px] font-semibold tracking-[0.18em] uppercase shrink-0 px-3 py-1.5 rounded-xs transition-colors ${filter === f.value
+                                className={`font-mono text-[10px] font-semibold tracking-[0.18em] uppercase shrink-0 px-3 py-1.5 rounded-xs transition-colors cursor-pointer ${filter === f.value
                                     ? "bg-[#ffffff] text-[#18181b] shadow-sm border border-[rgba(0, 0, 0, 0.08)]"
                                     : "text-[#71717a] hover:text-[#18181b]"
                                     }`}
@@ -92,12 +93,12 @@ const JournalFeed = () => {
                     </div>
 
                     {/* Sort dropdown */}
-                    <div className="relative inline-flex items-center gap-2 rounded-sm bg-[#fafaf8] px-3 py-2.5 border border-[rgba(0,0,0,0.08)]">
+                    <div className="relative inline-flex items-center rounded-sm bg-zinc-100 px-3 py-2.5 border border-zinc-300 hover:border-zinc-500 transition-colors cursor-pointer">
                         <span className="font-mono text-[10px] font-semibold tracking-[0.18em] uppercase text-[#71717a]">{"Sort:"}</span>
                         <select
                             value={sort}
                             onChange={(e) => setSort(e.target.value)}
-                            className="appearance-none bg-transparent font-mono text-[12px] font-medium pr-5 focus:outline-none cursor-pointer"
+                            className="appearance-none bg-zinc-100 font-mono text-[12px] font-medium pl-3 pr-5 focus:outline-none cursor-pointer"
                         >
                             <option value="updated">Last updated</option>
                             <option value="alpha">Alphabetical</option>
@@ -138,18 +139,12 @@ const JournalFeed = () => {
 
 function EmptyState() {
     return (
-        <div className="mx-auto max-w-md text-center py-24">
-            <div className="mx-auto mb-6 grid size-16 place-items-center rounded-sm bg-[#efeeea] border border-[rgba(0,0,0,0.08)]">
-                <Plus className="size-6 text-[#71717a]" />
-            </div>
+        <div className="mx-auto max-w-md text-center py-64">
             <h3 className="text-xl font-medium tracking-tight">Start your first journey</h3>
             <p className="mt-2 text-sm text-[#71717a]">
                 A journey is a long-form thread of entries — building something, learning something,
                 becoming something. Begin when you're ready.
             </p>
-            <button className="mt-6 inline-flex items-center gap-2 rounded-sm bg-[#18181b] py-2 pl-2 pr-3 text-[#f4f3f0]">
-                <Plus className="size-4" /> Create Journey
-            </button>
         </div>
     );
 }
