@@ -1,4 +1,4 @@
-const ProgressRing = ({ value, size = 96, stroke = 6, color = "var(--color-te-orange)", trackColor = "var(--color-surface-2)" }) => {
+const ProgressRing = ({ value, size = 96, stroke = 6, color = "#ff5c35", trackColor = "#e4e4e7" }) => {
 
     const r = (size - stroke) / 2;
     const c = 2 * Math.PI * r;
@@ -24,7 +24,7 @@ const ProgressRing = ({ value, size = 96, stroke = 6, color = "var(--color-te-or
             <div className="absolute inset-0 grid place-items-center">
                 <div className="text-center">
                     <div className="font-mono text-lg font-semibold tracking-tighter tabular-nums">{value}%</div>
-                    <div className="label-mono text-[8px] text-muted-foreground -mt-0.5">Complete</div>
+                    <div className="font-mono font-semibold tracking-[0.18em] uppercase text-[8px] text-[#71717a] -mt-0.5">Complete</div>
                 </div>
             </div>
         </div>

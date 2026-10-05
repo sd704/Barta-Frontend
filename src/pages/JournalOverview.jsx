@@ -39,12 +39,12 @@ const JournalOverview = () => {
 
       {/* Reading progress bar */}
       <div className="sticky top-14 z-40 h-0.5 w-full bg-transparent">
-        <div className="h-full bg-[var(--color-te-orange)] transition-[width] duration-150" style={{ width: `${progress}%` }} />
+        <div className="h-full bg-[#ff5c35] transition-[width] duration-150" style={{ width: `${progress}%` }} />
       </div>
 
       <div className="mx-auto max-w-6xl px-5 sm:px-8">
         {/* Breadcrumb */}
-        <Link to="/" className="mt-8 inline-flex items-center gap-2 label-mono text-muted-foreground hover:text-foreground transition-colors">
+        <Link to="/journal" className="mt-8 inline-flex items-center gap-2 font-mono text-[10px] font-semibold tracking-[0.18em] uppercase text-[#71717a] hover:text-[#18181b] transition-colors">
           <ArrowLeft className="size-3" /> Journal
         </Link>
 
@@ -52,89 +52,89 @@ const JournalOverview = () => {
         <section className="mt-6 animate-fade-up">
           <div className="grid grid-cols-1 lg:grid-cols-[1fr_320px] gap-8 lg:gap-12 items-start">
             <div className="min-w-0">
-              <div className="aspect-[16/9] overflow-hidden rounded-[8px] hairline bg-surface-2">
+              <div className="aspect-video overflow-hidden rounded-lg border border-black/8 bg-[#efeeea]">
                 <img src={journey.cover} alt="" width={1280} height={720} className="size-full object-cover" />
               </div>
 
               <div className="mt-8 flex flex-wrap items-center gap-2">
-                <span className="label-mono rounded-sm bg-foreground text-background px-2 py-1">Project · {journey.category}</span>
-                <span className="label-mono rounded-sm hairline px-2 py-1 text-muted-foreground">Status · {journey.status}</span>
-                <span className="label-mono rounded-sm hairline px-2 py-1 text-muted-foreground inline-flex items-center gap-1.5">
+                <span className="font-mono text-[10px] font-semibold tracking-[0.18em] uppercase rounded-sm bg-[#18181b] text-[#f4f3f0] px-2 py-1">Project · {journey.category}</span>
+                <span className="font-mono text-[10px] font-semibold tracking-[0.18em] uppercase rounded-sm border border-black/8 px-2 py-1 text-[#71717a]">Status · {journey.status}</span>
+                <span className="font-mono text-[10px] font-semibold tracking-[0.18em] uppercase rounded-sm border border-black/8 px-2 py-1 text-[#71717a] inline-flex items-center gap-1.5">
                   <VisibilityIcon className="size-3" />
                   {visibilityMeta[journey.visibility].label}
                 </span>
               </div>
 
               <h1 className="mt-5 text-4xl sm:text-5xl font-medium tracking-tight text-balance">{journey.title}</h1>
-              <p className="mt-4 text-lg sm:text-xl text-muted-foreground leading-snug max-w-2xl text-pretty">{journey.description}</p>
+              <p className="mt-4 text-lg sm:text-xl text-[#71717a] leading-snug max-w-2xl text-pretty">{journey.description}</p>
 
               <div className="mt-8 flex flex-wrap items-center gap-3">
-                <button className="inline-flex items-center gap-2 rounded-sm bg-foreground py-2 pl-2 pr-3 text-background ring-1 ring-foreground hover:bg-foreground/90 transition-colors">
+                <button className="inline-flex items-center gap-2 rounded-sm bg-[#18181b] py-2 pl-2 pr-3 text-[#f4f3f0] hover:bg-[#18181b]/90 transition-colors">
                   <Plus className="size-4" strokeWidth={2.25} />
                   <span className="text-sm font-medium">Add Entry</span>
                 </button>
                 <button
                   onClick={() => setFollowing((f) => !f)}
-                  className={`inline-flex items-center gap-2 rounded-sm py-2 pl-2 pr-3 ring-1 transition-colors ${following
-                    ? "bg-[var(--color-te-orange)] text-white ring-[var(--color-te-orange)]"
-                    : "bg-card ring-border hover:border-foreground/40"
+                  className={`inline-flex items-center gap-2 rounded-sm py-2 pl-2 pr-3 transition-colors ${following
+                    ? "bg-[#ff5c35] text-white"
+                    : "bg-[#ffffff] border border-white hover:border-orange-600"
                     }`}
                 >
                   <Heart className="size-4" strokeWidth={2.25} fill={following ? "currentColor" : "none"} />
                   <span className="text-sm font-medium">{following ? "Following" : "Follow Journey"}</span>
                 </button>
-                <button className="inline-flex items-center gap-2 rounded-sm bg-card py-2 pl-2 pr-3 hairline hover:border-foreground/40 transition-colors">
-                  <Share2 className="size-4 text-muted-foreground" strokeWidth={2.25} />
+                <button className="inline-flex items-center gap-2 rounded-sm bg-[#ffffff] py-2 pl-2 pr-3 border border-black/8 hover:border-[#18181b]/40 transition-colors">
+                  <Share2 className="size-4 text-[#71717a]" strokeWidth={2.25} />
                   <span className="text-sm font-medium">Share</span>
                 </button>
-                <button className="inline-flex items-center gap-2 rounded-sm bg-card py-2 pl-2 pr-3 hairline hover:border-foreground/40 transition-colors">
-                  <Pencil className="size-4 text-muted-foreground" strokeWidth={2.25} />
+                <button className="inline-flex items-center gap-2 rounded-sm bg-[#ffffff] py-2 pl-2 pr-3 border border-black/8 hover:border-[#18181b]/40 transition-colors">
+                  <Pencil className="size-4 text-[#71717a]" strokeWidth={2.25} />
                   <span className="text-sm font-medium">Edit</span>
                 </button>
-                <button className="grid place-items-center size-9 rounded-sm bg-card hairline hover:border-foreground/40 transition-colors">
-                  <MoreHorizontal className="size-4 text-muted-foreground" />
+                <button className="grid place-items-center size-9 rounded-sm bg-[#ffffff] border border-black/8 hover:border-[#18181b]/40 transition-colors">
+                  <MoreHorizontal className="size-4 text-[#71717a]" />
                 </button>
               </div>
             </div>
 
             {/* Stat panel */}
             <aside className="lg:sticky lg:top-24 space-y-4">
-              <div className="rounded-[8px] bg-card hairline p-5">
-                <div className="label-mono text-muted-foreground mb-5">Stats Monitor</div>
-                <div className="grid grid-cols-3 lg:grid-cols-1 gap-5 lg:gap-0 lg:divide-y lg:divide-border">
+              <div className="rounded-lg bg-[#ffffff] border border-black/8 p-5">
+                <div className="font-mono text-[10px] font-semibold tracking-[0.18em] uppercase text-[#71717a] mb-5">Stats Monitor</div>
+                <div className="grid grid-cols-3 lg:grid-cols-1 gap-5 lg:gap-0 lg:divide-y lg:divide-[rgba(0, 0, 0, 0.08)]">
                   <Stat label="Days" value={journey.durationDays.toString()} />
                   <Stat label="Entries" value={journey.entryCount.toString()} />
                   <Stat label="Milestones" value={journey.milestoneCount.toString()} />
                 </div>
-                <div className="mt-6 pt-5 border-t border-border flex items-center justify-between">
+                <div className="mt-6 pt-5 border-t border-[rgba(0, 0, 0, 0.08)] flex items-center justify-between">
                   <ProgressRing value={journey.progress} size={84} stroke={5} />
                   <div className="text-right">
                     <div className="font-mono text-2xl font-semibold tabular-nums">{journey.followers.toLocaleString()}</div>
-                    <div className="label-mono text-muted-foreground">Followers</div>
+                    <div className="font-mono text-[10px] font-semibold tracking-[0.18em] uppercase text-[#71717a]">Followers</div>
                   </div>
                 </div>
               </div>
 
-              <div className="rounded-[8px] bg-[var(--color-te-blue)]/5 border border-[var(--color-te-blue)]/20 p-5">
+              <div className="rounded-lg bg-[#007aff]/5 border border-[#007aff]/20 p-5">
                 <div className="flex items-center gap-2 mb-2">
-                  <Sparkles className="size-3.5 text-[var(--color-te-blue)]" />
-                  <span className="label-mono text-[var(--color-te-blue)]">AI Summary</span>
+                  <Sparkles className="size-3.5 text-[#007aff]" />
+                  <span className="font-mono text-[10px] font-semibold tracking-[0.18em] uppercase text-[#007aff]">AI Summary</span>
                 </div>
-                <p className="text-sm text-foreground/80 leading-relaxed text-pretty">{journey.aiSummary}</p>
+                <p className="text-sm text-[#18181b]/80 leading-relaxed text-pretty">{journey.aiSummary}</p>
               </div>
             </aside>
           </div>
         </section>
 
         {/* CHAPTER NAV (sticky) */}
-        <nav className="sticky top-0 z-30 mt-16 -mx-5 sm:-mx-8 px-5 sm:px-8 py-3 bg-background/85 backdrop-blur-md border-y border-border">
+        <nav className="sticky top-0 z-30 mt-16 -mx-5 sm:-mx-8 px-5 sm:px-8 py-3 bg-zinc-200/85 backdrop-blur-md border-y border-[rgba(0, 0, 0, 0.08)]">
           <div className="flex items-center gap-1 overflow-x-auto">
-            <span className="label-mono text-muted-foreground mr-3 shrink-0">Chapters</span>
+            <span className="font-mono text-[10px] font-semibold tracking-[0.18em] uppercase text-[#71717a] mr-3 shrink-0">Chapters</span>
             {journey.chapters.map((ch) => (
               <a
                 key={ch.id}
                 href={`#chapter-${ch.id}`}
-                className="label-mono shrink-0 rounded-sm px-2.5 py-1.5 text-muted-foreground hover:bg-surface-2 hover:text-foreground transition-colors"
+                className="font-mono text-[10px] font-semibold tracking-[0.18em] uppercase shrink-0 rounded-sm px-2.5 py-1.5 text-[#71717a] hover:text-orange-600 transition-colors"
               >
                 {ch.number} · {ch.title}
               </a>
@@ -149,12 +149,12 @@ const JournalOverview = () => {
 
         {/* SHARE CARD */}
         <section className="mb-24">
-          <div className="rounded-[10px] bg-foreground text-background p-8 sm:p-12 overflow-hidden relative">
+          <div className="rounded-[10px] bg-[#18181b] text-[#f4f3f0] p-8 sm:p-12 overflow-hidden relative">
             <div className="grid grid-cols-1 sm:grid-cols-[1fr_auto] gap-8 items-end">
               <div>
-                <div className="label-mono text-background/60 mb-3">Share Card</div>
+                <div className="font-mono text-[10px] font-semibold tracking-[0.18em] uppercase text-[#f4f3f0]/60 mb-3">Share Card</div>
                 <h3 className="text-2xl sm:text-3xl font-medium tracking-tight">{journey.title}</h3>
-                <p className="mt-2 text-background/70 text-sm max-w-md">
+                <p className="mt-2 text-[#f4f3f0]/70 text-sm max-w-md">
                   By {author.name} · {journey.durationDays} days · {journey.progress}% complete
                 </p>
                 <div className="mt-6 flex flex-wrap items-center gap-6">
@@ -165,11 +165,11 @@ const JournalOverview = () => {
                 </div>
               </div>
               <div className="flex flex-col gap-2">
-                <button className="inline-flex items-center gap-2 rounded-sm bg-[var(--color-te-orange)] py-2 pl-2 pr-3 text-white hover:opacity-95 transition-opacity">
+                <button className="inline-flex items-center gap-2 rounded-sm bg-[#ff5c35] py-2 pl-2 pr-3 text-white hover:opacity-95 transition-opacity">
                   <Share2 className="size-4" strokeWidth={2.25} />
                   <span className="text-sm font-medium">Share to feed</span>
                 </button>
-                <button className="inline-flex items-center gap-2 rounded-sm bg-background/10 ring-1 ring-background/20 py-2 pl-2 pr-3 text-background hover:bg-background/15 transition-colors">
+                <button className="inline-flex items-center gap-2 rounded-sm bg-[#f4f3f0]/10 ring-1 ring-[#f4f3f0]/20 py-2 pl-2 pr-3 text-[#f4f3f0] hover:bg-[#f4f3f0]/15 transition-colors">
                   <span className="text-sm font-medium">Create social post</span>
                 </button>
               </div>
@@ -183,9 +183,9 @@ const JournalOverview = () => {
 
 function Stat({ label, value, dark }) {
   return (
-    <div className={`lg:py-4 lg:first:pt-0 lg:last:pb-0`}>
-      <div className={`font-mono text-2xl font-semibold tabular-nums tracking-tighter ${dark ? "text-background" : ""}`}>{value}</div>
-      <div className={`label-mono ${dark ? "text-background/60" : "text-muted-foreground"}`}>{label}</div>
+    <div>
+      <div className={`font-mono text-2xl font-semibold tabular-nums tracking-tighter ${dark ? "text-[#f4f3f0]" : ""}`}>{value}</div>
+      <div className={`font-mono text-[10px] font-semibold tracking-[0.18em] uppercase ${dark ? "text-[#f4f3f0]/60" : "text-[#71717a]"}`}>{label}</div>
     </div>
   );
 }
