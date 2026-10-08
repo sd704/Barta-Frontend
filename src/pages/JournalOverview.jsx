@@ -2,9 +2,9 @@ import { useEffect, useState } from "react";
 import { useParams } from 'react-router-dom'
 import { Link } from "react-router";
 import { Plus, Share2, Heart, MoreHorizontal, ArrowLeft, Sparkles, Pencil, Globe, Lock, Users } from "lucide-react";
-import ProgressRing from "../components/journey components/ProgressRing"
-import Timeline from "../components/journey components/Timeline"
-import { journeyBySlug, author } from "../components/journey components/JourneyData";
+import ProgressRing from "../components/journeyComponents/ProgressRing"
+import Timeline from "../components/journeyComponents/Timeline"
+import { journeyBySlug, author } from "../components/journeyComponents/JourneyData";
 
 const visibilityMeta = {
   public: { Icon: Globe, label: "Public" },
@@ -33,7 +33,7 @@ const JournalOverview = () => {
   }, []);
 
   return (
-    <div className="h-screen w-screen overflow-y-auto">
+    <div className="h-screen w-screen overflow-y-scroll">
 
       {/* Reading progress bar */}
       <div className="sticky top-14 z-40 h-0.5 w-full bg-transparent">

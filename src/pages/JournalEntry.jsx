@@ -4,10 +4,10 @@ import { Link } from "react-router";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm"; // support for GitHub Flavored Markdown (GFM)
 import { ArrowLeft, Globe, Lock, Users } from "lucide-react";
-import { journeyBySlug, author } from "../components/journey components/JourneyData";
-import PrevNextCard from "../components/journey components/PrevNextCard";
-import CommentsSection from "../components/journey components/CommentsSection";
-import FloatingDock from "../components/journey components/FloatingDock";
+import { journeyBySlug, author } from "../components/journeyComponents/JourneyData";
+import PrevNextCard from "../components/journeyComponents/PrevNextCard";
+import CommentsSection from "../components/journeyComponents/CommentsSection";
+import FloatingDock from "../components/journeyComponents/FloatingDock";
 
 const visibilityMeta = {
     public: { Icon: Globe, label: "Public" },

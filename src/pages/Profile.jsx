@@ -22,7 +22,7 @@ const Profile = () => {
     const description = path == "profile" ? user?.description : ""
 
     return (
-        <div className="h-screen p-6 md:p-12 overflow-y-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
+        <div className="h-screen p-6 md:p-12 overflow-y-scroll">
             <div className="max-w-6xl mx-auto">
 
 

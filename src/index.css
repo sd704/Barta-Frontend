@@ -5,6 +5,38 @@
 @plugin "tailwind-scrollbar";
 
 
+::-webkit-scrollbar {
+    width: 10px;
+}
+
+::-webkit-scrollbar:hover {
+    width: 12px;
+}
+
+::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #71717b;
+    border-radius: 9999px;
+    border: 2px solid transparent;
+    background-clip: padding-box;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #3f3f46;
+    border: 2px solid transparent;
+    background-clip: padding-box;
+}
+
+::-webkit-scrollbar-thumb:active {
+    background: #EA580C;
+    border: 2px solid transparent;
+    background-clip: padding-box;
+}
+
+
 /* Markdown prose tuning */
 .entry-prose {
     color: rgb(39 39 42 / 0.92);

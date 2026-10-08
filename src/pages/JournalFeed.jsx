@@ -1,7 +1,7 @@
 import { useMemo, useState } from "react";
 import { Plus, Search, ChevronDown } from "lucide-react";
-import JourneyCard from "../components/journey components/JourneyCard"
-import { demoJourneys } from "../components/journey components/JourneyData"
+import JourneyCard from "../components/journeyComponents/JourneyCard"
+import { demoJourneys } from "../components/journeyComponents/JourneyData"
 import { motion } from "motion/react"
 
 const FILTERS = [
@@ -38,7 +38,7 @@ const JournalFeed = () => {
     }, [filter, sort, query]);
 
     return (
-        <div className="h-screen w-screen overflow-y-auto">
+        <div className="h-screen w-screen overflow-y-scroll">
 
             <main className="mx-auto max-w-7xl px-5 sm:px-8 py-12 sm:py-16">
 
